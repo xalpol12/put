@@ -1,5 +1,6 @@
 package com.xalpol12.recipes.model;
 
+import com.xalpol12.recipes.model.valueobject.Ingredient;
 import com.xalpol12.recipes.model.valueobject.TextParagraph;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,23 +11,31 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 @Entity(name = "recipes")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Recipe {
     @Id
+    @Column(name = "recipe_id")
     private Long id;
 
     private int executionTime; //TODO: Find better name
 
+    @ElementCollection
     private List<Ingredient> ingredients;
 
+    @ElementCollection
     private List<TextParagraph> descriptions;
 
-    @ManyToMany(mappedBy = "images")
+    @ManyToMany
+    @JoinTable(
+            name = "recipe_images",
+            joinColumns = @JoinColumn(name = "recipe_id"),
+            inverseJoinColumns = @JoinColumn(name = "image_id")
+    )
     private List<Image> images;
 
-    @ManyToMany(mappedBy = "recipe_collections")
+    @ManyToMany(mappedBy = "recipes")
     List<RecipeCollection> collections;
 }

@@ -6,12 +6,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Types;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Class representing "images" table structure
@@ -46,4 +48,7 @@ public class Image {
     @Column(nullable = false)
     @LastModifiedDate
     LocalDateTime modifiedAt;
+
+    @ManyToMany(mappedBy = "images") // "images" field in Recipe entity
+    List<Recipe> recipes;
 }
