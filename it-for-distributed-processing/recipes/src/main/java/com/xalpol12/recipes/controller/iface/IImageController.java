@@ -56,17 +56,6 @@ public interface IImageController {
                                         @RequestParam(required = false, defaultValue = "100") String height);
 
     @Operation(
-            summary = "Download image",
-            description = "Redirects browser to download image with given ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully send attachment to download image for given ID"),
-            @ApiResponse(responseCode = "404", description = "Image with given ID not found in the database"),
-    })
-    @GetMapping(ImagePath.ROOT + "/{uuid}/download")
-    ResponseEntity<byte[]> redirectToImageDataDownload(@Parameter(name = "uuid", description = "Unique Image entity identifier")
-                                                       @PathVariable("uuid") String uuid);
-
-    @Operation(
             summary = "Return image info",
             description = "Returns image info in the form of ImageOutput")
     @ApiResponses(value = {
