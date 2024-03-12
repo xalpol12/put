@@ -1,9 +1,12 @@
 package com.xalpol12.recipes.controller;
 
+import com.xalpol12.recipes.controller.iface.IImageController;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-public class ImageController {
+@RequiredArgsConstructor
+public class ImageController implements IImageController {
 }
