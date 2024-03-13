@@ -16,10 +16,11 @@ import java.net.URI;
 import java.util.List;
 
 @Tag(name = "Images API", description = "API for managing images")
+@RequestMapping(IImageController.ImagePath.ROOT)
 public interface IImageController {
 
     class ImagePath {
-        public static final String ROOT = "/api/image";
+        public static final String ROOT = "/api/images";
         private ImagePath() {}
     }
 
@@ -31,7 +32,7 @@ public interface IImageController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the image body for given image ID"),
             @ApiResponse(responseCode = "404", description = "Image with given ID not found in the database"),
     })
-    @GetMapping(ImagePath.ROOT + "/{uuid}")
+    @GetMapping("/{uuid}")
     ResponseEntity<byte[]> getFullImageData(@Parameter(name = "uuid", description = "Unique Image entity identifier")
                                             @PathVariable("uuid") String uuid);
 
@@ -43,7 +44,7 @@ public interface IImageController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the message body for given image ID"),
             @ApiResponse(responseCode = "404", description = "Image with given ID not found in the database"),
     })
-    @GetMapping(ImagePath.ROOT + "/{uuid}" + "/thumbnail")
+    @GetMapping("/{uuid}/thumbnail")
     ResponseEntity<byte[]> getThumbnail(@Parameter(name = "uuid", description = "Unique Image entity identifier")
                                         @PathVariable("uuid") String uuid,
                                         @Parameter(name = "width", description = "Width of the thumbnail (in pixels) that " +
@@ -62,7 +63,7 @@ public interface IImageController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved available image info"),
             @ApiResponse(responseCode = "404", description = "Image with given ID not found in the database"),
     })
-    @GetMapping(ImagePath.ROOT + "/{uuid}/details")
+    @GetMapping("/{uuid}/details")
     ResponseEntity<ImageOutput> getImageInfo(@Parameter(name = "uuid", description = "Unique Image entity identifier")
                                           @PathVariable("uuid") String uuid);
 
@@ -72,7 +73,7 @@ public interface IImageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved all available image infos"),
     })
-    @GetMapping(ImagePath.ROOT + "s")
+    @GetMapping
     ResponseEntity<List<ImageOutput>> getAllImageInfos();
 
     @Operation(
@@ -82,7 +83,7 @@ public interface IImageController {
             @ApiResponse(responseCode = "201", description = "Successfully saved new entity in the database"),
             @ApiResponse(responseCode = "400", description = "Couldn't access image data bytes"),
     })
-    @PostMapping(path = ImagePath.ROOT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<URI> uploadImage(@Parameter(name = "file details", description = "ImageInput object")
                                     @RequestPart ImageInput fileDetails,
                                     @Parameter(name = "file", description = "MultipartFile object, actual image file")
@@ -96,7 +97,7 @@ public interface IImageController {
             @ApiResponse(responseCode = "204", description = "Successfully deleted the entity with given UUID from the database"),
             @ApiResponse(responseCode = "404", description = "Image with given ID not found in the database"),
     })
-    @DeleteMapping(ImagePath.ROOT + "/{uuid}")
+    @DeleteMapping("/{uuid}")
     ResponseEntity<Void> deleteImage(@Parameter(name = "uuid", description = "Unique Image entity identifier")
                                      @PathVariable("uuid") String uuid);
 
@@ -107,7 +108,7 @@ public interface IImageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Successfully deleted all Image entities from the database"),
     })
-    @DeleteMapping(ImagePath.ROOT + "s")
+    @DeleteMapping
     ResponseEntity<Void> deleteAllImages();
 
     @Operation(
@@ -134,7 +135,7 @@ public interface IImageController {
             @ApiResponse(responseCode = "200", description = "Successfully deleted entity with given ID in the database"),
             @ApiResponse(responseCode = "404", description = "Image with given ID not found in the database"),
     })
-    @PatchMapping(ImagePath.ROOT + "/{uuid}/details")
+    @PatchMapping("/{uuid}/details")
     ResponseEntity<Void> updateImageDetails(@Parameter(name = "uuid", description = "Unique Image entity identifier")
                                             @PathVariable("uuid") String uuid,
                                             @Parameter(name = "file details", description = "ImageInput object")
@@ -148,7 +149,7 @@ public interface IImageController {
             @ApiResponse(responseCode = "400", description = "Couldn't access image data bytes"),
             @ApiResponse(responseCode = "404", description = "Image with given ID not found in the database"),
     })
-    @PatchMapping(value = ImagePath.ROOT + "/{uuid}/data", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/{uuid}/data", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<Void> updateImageData(@Parameter(name = "uuid", description = "Unique Image entity identifier")
                                          @PathVariable("uuid") String uuid,
                                          @Parameter(name = "file", description = "MultipartFile object, actual image file")
