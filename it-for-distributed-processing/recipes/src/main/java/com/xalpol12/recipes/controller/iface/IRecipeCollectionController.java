@@ -15,8 +15,8 @@ public interface IRecipeCollectionController {
         private RecipeCollectionPath() {}
     }
 
-    @GetMapping(RecipeCollectionPath.ROOT + "/{uuid}")
-    ResponseEntity<RecipeCollectionOutput> getRecipeCollection(@PathVariable("uuid") String uuid);
+    @GetMapping(RecipeCollectionPath.ROOT + "/{id}")
+    ResponseEntity<RecipeCollectionOutput> getRecipeCollection(@PathVariable("id") Long id);
 
     @GetMapping
     ResponseEntity<List<RecipeCollectionOutput>> getAllRecipeCollections();
@@ -24,15 +24,15 @@ public interface IRecipeCollectionController {
     @PostMapping
     ResponseEntity<URI> addRecipeCollection(RecipeCollectionInput recipeCollectionInput);
 
-    @DeleteMapping("/{uuid}")
-    ResponseEntity<Void> deleteRecipeCollection(@PathVariable("uuid") String uuid);
+    @DeleteMapping("/{id}")
+    ResponseEntity<Void> deleteRecipeCollection(@PathVariable("id") Long id);
 
     @DeleteMapping
     ResponseEntity<Void> deleteAllRecipeCollections();
 
-    @PutMapping("/{uuid}")
+    @PutMapping("/{id}")
     ResponseEntity<Void> updateRecipeCollection(
-            @PathVariable("uuid") String uuid,
+            @PathVariable("id") Long id,
             RecipeCollectionInput recipeCollectionInput);
 
     //TODO: add real true PATCH
