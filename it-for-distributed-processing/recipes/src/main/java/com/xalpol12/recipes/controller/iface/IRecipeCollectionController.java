@@ -11,7 +11,7 @@ import java.util.List;
 @RequestMapping(IRecipeCollectionController.RecipeCollectionPath.ROOT)
 public interface IRecipeCollectionController {
     class RecipeCollectionPath {
-        public static final String ROOT = "/api/recipe/collection";
+        public static final String ROOT = "/api/lists";
         private RecipeCollectionPath() {}
     }
 
