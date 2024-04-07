@@ -1,0 +1,17 @@
+{
+  "name": "guessing-game-websocket",
+  "version": "1.0.0",
+  "description": "Make Kurnik great again",
+  "scripts": {
+    "build": "tsc",
+    "server": "live-server . --verbose"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "typescript": "^4.9.5"
+  },
+  "main": "js/index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
