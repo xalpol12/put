@@ -6,9 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalambury</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components/canvas.css">
+    <link rel="stylesheet" href="css/components/chat.css">
 </head>
 
 <body>
-    <h1>Hello there</h1>
+    <div class="page-container">
+
+        <div class="title">
+            <h1>Kalambury</h1>
+        </div>
+
+        <div class="main-flexbox">
+
+            <div class="canvas-container">
+                <canvas id="drawing-canvas" />
+            </div>
+
+            <div class="chat-container">
+                <div class="input-container">
+                    <input type="text">
+                    <button type="button">Send</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
     <script type="module" src="js/script.js"></script>
 </body>
+
+</html>
