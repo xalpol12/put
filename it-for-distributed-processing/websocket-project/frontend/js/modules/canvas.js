@@ -1,29 +1,36 @@
 export function createCanvas() {
     window.addEventListener('DOMContentLoaded', () => {
+        const parent = document.getElementById('canvas-flexbox');
         const canvas = document.getElementById('drawing-canvas');
         if (!canvas) {
-            console.warn("Canvas element not found");
             return;
         }
-        let ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d');
         if (!ctx) {
             console.warn("Canvas context not supported");
             return;
         }
-        resize();
         let pos = { x: 0, y: 0 };
+        resize();
+        window.addEventListener('load', resize);
         window.addEventListener('resize', resize);
         document.addEventListener('mousemove', draw);
         document.addEventListener('mousedown', setPosition);
         document.addEventListener('mouseenter', setPosition);
-        function setPosition(e) {
-            const rect = canvas.getBoundingClientRect();
-            pos.x = e.clientX - rect.left;
-            pos.y = e.clientY - rect.top;
-        }
         function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            if (!parent) {
+                console.warn("canvas-container is null");
+                return;
+            }
+            canvas.width = parent.offsetWidth;
+            canvas.height = parent.offsetHeight;
+        }
+        function setPosition(e) {
+            pos.x = e.clientX - canvas.offsetLeft;
+            pos.y = e.clientY - canvas.offsetTop;
+        }
+        function clear() {
+            ctx === null || ctx === void 0 ? void 0 : ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
         function draw(e) {
             if (e.buttons !== 1)
