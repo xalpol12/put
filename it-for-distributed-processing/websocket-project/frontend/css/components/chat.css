@@ -1,10 +1,17 @@
 .chat-container {
     display: flex;
     flex-direction: column;
-    flex: 1;
     border: 1px solid blue;
     margin: 5px;
-    width: 33%;
-    max-width: 33%;
+    flex: 1;
+    max-width: calc(33% - 10px);
     overflow-y: auto;
+}
+
+@media screen and (max-width: 660px) {
+    .chat-container {
+        flex: none;
+        max-width: 100%;
+        height: calc(33vh - 10px);
+    }
 }
