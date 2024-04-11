@@ -18,5 +18,4 @@ public class TestController {
         log.info("GET /test called");
         return ResponseEntity.ok("Test");
     }
-
 }

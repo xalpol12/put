@@ -28,12 +28,7 @@ public class Recipe {
     @ElementCollection
     private List<TextParagraph> descriptions;
 
-    @ManyToMany
-    @JoinTable(
-            name = "recipe_images",
-            joinColumns = @JoinColumn(name = "recipe_id"),
-            inverseJoinColumns = @JoinColumn(name = "image_id")
-    )
+    @OneToMany
     private List<Image> images;
 
     @ManyToMany(mappedBy = "recipes")

@@ -18,34 +18,4 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RecipeController implements IRecipeController {
     private final RecipeService service;
-
-    @Override
-    public ResponseEntity<RecipeOutput> getRecipe(String uuid) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<List<RecipeOutput>> getAllRecipes() {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<URI> addRecipe(RecipeInput recipeInput) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<Void> deleteRecipe(String uuid) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<Void> deleteAllRecipes() {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<Void> updateRecipe(String uuid, ImageInput imageInput) {
-        return null;
-    }
 }

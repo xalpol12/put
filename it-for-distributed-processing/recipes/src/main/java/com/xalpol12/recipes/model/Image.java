@@ -49,6 +49,6 @@ public class Image {
     @LastModifiedDate
     LocalDateTime modifiedAt;
 
-    @ManyToMany(mappedBy = "images") // "images" field in Recipe entity
+    @ManyToOne
     List<Recipe> recipes;
 }
