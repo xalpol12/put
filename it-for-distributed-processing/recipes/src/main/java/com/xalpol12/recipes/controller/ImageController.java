@@ -1,5 +1,6 @@
 package com.xalpol12.recipes.controller;
 
+import com.github.fge.jsonpatch.JsonPatch;
 import com.xalpol12.recipes.controller.iface.IImageController;
 import com.xalpol12.recipes.model.dto.image.ImageInput;
 import com.xalpol12.recipes.model.dto.image.ImageOutput;
@@ -20,4 +21,44 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ImageController implements IImageController {
     private final ImageService service;
+
+    @Override
+    public ResponseEntity<List<ImageOutput>> getAllImageInfos() {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<URI> uploadImage(ImageInput fileDetails, MultipartFile file) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ImageOutput> getImageInfo(String uuid) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteImage(String uuid) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ImageOutput> updateImageDetails(String uuid, ImageInput newDetails) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Void> patchImageDetails(String uuid, JsonPatch patch) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<byte[]> getFullImageData(String uuid) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Void> updateImageData(String uuid, MultipartFile file) {
+        return null;
+    }
 }

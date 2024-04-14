@@ -1,6 +1,8 @@
 package com.xalpol12.recipes.controller.iface;
 
+import com.github.fge.jsonpatch.JsonPatch;
 import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionInput;
+import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionMergeRequest;
 import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionOutput;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +33,11 @@ public interface IRecipeCollectionController {
             @PathVariable("id") Long id,
             RecipeCollectionInput recipeCollectionInput);
 
-    //TODO: add real true PATCH
+    @PatchMapping(RecipeCollectionPath.ROOT + "/{id}")
+    ResponseEntity<RecipeCollectionOutput> updateRecipeCollection(@PathVariable("id") Long id,
+                                                                  @RequestBody JsonPatch patch);
 
     @PostMapping(RecipeCollectionPath.ROOT + "-merges")
-    ResponseEntity<Void> mergeRecipeCollections(); //TODO: add Body and ResponseEntity
+    ResponseEntity<RecipeCollectionOutput> mergeRecipeCollections(
+            @RequestBody RecipeCollectionMergeRequest mergeRequest);
 }

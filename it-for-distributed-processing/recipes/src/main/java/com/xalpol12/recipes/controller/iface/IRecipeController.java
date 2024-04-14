@@ -1,5 +1,6 @@
 package com.xalpol12.recipes.controller.iface;
 
+import com.github.fge.jsonpatch.JsonPatch;
 import com.xalpol12.recipes.model.dto.image.ImageInput;
 import com.xalpol12.recipes.model.dto.recipe.RecipeInput;
 import com.xalpol12.recipes.model.dto.recipe.RecipeOutput;
@@ -30,5 +31,6 @@ public interface IRecipeController {
     @PutMapping(RecipePath.ROOT + "/{uuid}")
     ResponseEntity<Void> updateRecipe(@PathVariable("uuid") String uuid, ImageInput imageInput);
 
-    //TODO: add TRUE patch
+    @PatchMapping(RecipePath.ROOT +"/{uuid}")
+    ResponseEntity<RecipeOutput> patchRecipe(@PathVariable("uuid") String uuid, JsonPatch patch);
 }

@@ -1,5 +1,6 @@
 package com.xalpol12.recipes.controller;
 
+import com.github.fge.jsonpatch.JsonPatch;
 import com.xalpol12.recipes.controller.iface.IRecipeController;
 import com.xalpol12.recipes.model.dto.image.ImageInput;
 import com.xalpol12.recipes.model.dto.recipe.RecipeInput;
@@ -18,4 +19,34 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RecipeController implements IRecipeController {
     private final RecipeService service;
+
+    @Override
+    public ResponseEntity<List<RecipeOutput>> getAllRecipes() {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<URI> addRecipe(RecipeInput recipeInput) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<RecipeOutput> getRecipe(String uuid) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteRecipe(String uuid) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Void> updateRecipe(String uuid, ImageInput imageInput) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<RecipeOutput> patchRecipe(String uuid, JsonPatch patch) {
+        return null;
+    }
 }

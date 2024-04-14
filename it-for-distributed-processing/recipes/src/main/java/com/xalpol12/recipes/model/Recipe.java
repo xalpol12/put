@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import java.util.List;
 
@@ -20,7 +22,7 @@ public class Recipe {
     @Column(name = "recipe_id")
     private Long id;
 
-    private int executionTime; //TODO: Find better name
+    private int estimatedTime; // in minutes
 
     @ElementCollection
     private List<Ingredient> ingredients;
@@ -28,7 +30,8 @@ public class Recipe {
     @ElementCollection
     private List<TextParagraph> descriptions;
 
-    @OneToMany
+    @OneToMany(mappedBy = "recipes")
+    @Cascade({CascadeType.REMOVE})
     private List<Image> images;
 
     @ManyToMany(mappedBy = "recipes")

@@ -13,12 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Types;
 import java.time.LocalDateTime;
-import java.util.List;
 
-/**
- * Class representing "images" table structure
- * in the database.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -50,5 +45,6 @@ public class Image {
     LocalDateTime modifiedAt;
 
     @ManyToOne
-    List<Recipe> recipes;
+    @JoinColumn(name = "recipe_id")
+    Recipe recipes;
 }
