@@ -2,13 +2,10 @@ package com.xalpol12.recipes.service;
 
 import com.github.fge.jsonpatch.JsonPatch;
 import com.xalpol12.recipes.model.Recipe;
-import com.xalpol12.recipes.model.dto.image.ImageInput;
 import com.xalpol12.recipes.model.dto.recipe.RecipeInput;
 import com.xalpol12.recipes.model.dto.recipe.RecipeOutput;
 import com.xalpol12.recipes.model.mapper.RecipeMapper;
-import com.xalpol12.recipes.repository.RecipeCollectionRepository;
 import com.xalpol12.recipes.repository.RecipeRepository;
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +33,9 @@ public class RecipeService {
     }
 
     public URI addRecipe(RecipeInput recipeInput) {
-        return null;
+        Recipe recipe = mapper.mapToRecipe(recipeInput);
+        Recipe saved = repository.save(recipe);
+        return URI.create(String.valueOf(saved.getId()));
     }
 
     public RecipeOutput getRecipe(Long id) {
@@ -50,18 +49,19 @@ public class RecipeService {
         repository.deleteById(id);
     }
 
+    // TODO: implement
     @Transactional
     public RecipeOutput updateRecipe(Long id, RecipeInput recipeInput) {
-        repository.updateRecipe(
-                recipeInput.getEstimatedTime(),
-                recipeInput.getIngredients(),
-                recipeInput.getDescriptions(),
-                recipeInput.getImages(),
-                id);
+       // repository.updateRecipe(
+       //         recipeInput.getEstimatedTime(),
+       //         recipeInput.getIngredients(),
+       //         recipeInput.getDescriptions(),
+       //         recipeInput.getImages(),
+       //         id);
         return null;
     }
 
-    @Transactional
+    @Transactional //TODO: implement
     public RecipeOutput patchRecipe(Long id, JsonPatch patch) {
             return null;
     }

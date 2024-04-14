@@ -7,8 +7,6 @@ import com.xalpol12.recipes.model.dto.image.ImageOutput;
 import com.xalpol12.recipes.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.NotImplementedException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,41 +22,44 @@ public class ImageController implements IImageController {
 
     @Override
     public ResponseEntity<List<ImageOutput>> getAllImageInfos() {
-        return null;
+        return ResponseEntity.ok(service.getAllImageInfos());
     }
 
     @Override
     public ResponseEntity<URI> uploadImage(ImageInput fileDetails, MultipartFile file) {
-        return null;
+        return ResponseEntity.created(service.uploadImage(fileDetails, file)).build();
     }
 
     @Override
     public ResponseEntity<ImageOutput> getImageInfo(String uuid) {
-        return null;
+        return ResponseEntity.ok(service.getImageInfo(uuid));
     }
 
     @Override
     public ResponseEntity<Void> deleteImage(String uuid) {
-        return null;
+        service.deleteImage(uuid);
+        return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<ImageOutput> updateImageDetails(String uuid, ImageInput newDetails) {
-        return null;
+        return ResponseEntity.ok(service.updateImageDetails(uuid, newDetails));
+
     }
 
     @Override
-    public ResponseEntity<Void> patchImageDetails(String uuid, JsonPatch patch) {
-        return null;
+    public ResponseEntity<ImageOutput> patchImageDetails(String uuid, JsonPatch patch) {
+        return ResponseEntity.ok(service.patchImageDetails(uuid, patch));
     }
 
     @Override
     public ResponseEntity<byte[]> getFullImageData(String uuid) {
-        return null;
+        return ResponseEntity.ok(service.getImageData(uuid));
     }
 
     @Override
     public ResponseEntity<Void> updateImageData(String uuid, MultipartFile file) {
-        return null;
+        service.updateImage(uuid, file);
+        return ResponseEntity.ok().build();
     }
 }

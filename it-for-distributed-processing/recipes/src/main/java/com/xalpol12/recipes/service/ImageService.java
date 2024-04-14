@@ -1,5 +1,6 @@
 package com.xalpol12.recipes.service;
 
+import com.github.fge.jsonpatch.JsonPatch;
 import com.xalpol12.recipes.model.Image;
 import com.xalpol12.recipes.model.dto.image.ImageInput;
 import com.xalpol12.recipes.model.dto.image.ImageOutput;
@@ -20,7 +21,6 @@ import java.util.List;
 public class ImageService {
     private final ImageRepository repository;
     private final ImageMapper mapper;
-    private final ThumbnailService thumbnailService;
 
     public Image getImage(String uuid) {
         return repository
@@ -33,11 +33,6 @@ public class ImageService {
                 .findById(uuid)
                 .orElseThrow(() -> new EntityNotFoundException("Image with id: " + uuid + " not found."));
         return image.getData();
-    }
-
-    public byte[] getThumbnail(String uuid, String width, String height) {
-        byte[] imageData = getImageData(uuid);
-        return thumbnailService.generateThumbnail(imageData, width, height);
     }
 
     public ImageOutput getImageInfo(String uuid) {
@@ -64,13 +59,17 @@ public class ImageService {
         repository.deleteById(uuid);
     }
 
-    public void deleteAllImages() {
-        repository.deleteAll();
+    //TODO: implement
+    public ImageOutput updateImageDetails(String uuid, ImageInput newDetails) {
+        return null;
     }
 
     //TODO: implement
-    public void updateImage(String uuid, ImageInput fileDetails) {
+    public ImageOutput patchImageDetails(String uuid, JsonPatch patch) {
+        return null;
     }
 
-    //TODO: create true PUT, not a fake ass one
+    //TODO: implement
+    public void updateImage(String uuid, MultipartFile file)    {
+    }
 }

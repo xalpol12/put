@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 public class ImageMapper {
 
-
     public Image mapToImageEntity(ImageInput imageInput, MultipartFile file) {
         return new Image();
     }

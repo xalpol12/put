@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class RecipeCollectionMergeRequest {
-    private Long mergeToCollectionId;
-    private Long mergeFromCollectionId;
+    private Long mergeTo;
+    private Long mergeFrom;
 }

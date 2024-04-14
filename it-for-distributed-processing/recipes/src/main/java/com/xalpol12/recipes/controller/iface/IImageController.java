@@ -38,7 +38,7 @@ public interface IImageController {
                                                    @RequestBody ImageInput newDetails);
 
     @PatchMapping(ImagePath.ROOT + "/{uuid}")
-    ResponseEntity<Void> patchImageDetails(@PathVariable("uuid") String uuid,
+    ResponseEntity<ImageOutput> patchImageDetails(@PathVariable("uuid") String uuid,
                                            @RequestBody JsonPatch patch);
 
     @GetMapping(ImagePath.ROOT + "/{uuid}/raw")
