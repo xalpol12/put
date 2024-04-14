@@ -2,7 +2,6 @@ package com.xalpol12.recipes.controller;
 
 import com.github.fge.jsonpatch.JsonPatch;
 import com.xalpol12.recipes.controller.iface.IRecipeController;
-import com.xalpol12.recipes.model.dto.image.ImageInput;
 import com.xalpol12.recipes.model.dto.recipe.RecipeInput;
 import com.xalpol12.recipes.model.dto.recipe.RecipeOutput;
 import com.xalpol12.recipes.service.RecipeService;
@@ -22,31 +21,35 @@ public class RecipeController implements IRecipeController {
 
     @Override
     public ResponseEntity<List<RecipeOutput>> getAllRecipes() {
+        service.getAllRecipes();
         return null;
     }
 
     @Override
     public ResponseEntity<URI> addRecipe(RecipeInput recipeInput) {
-        return null;
+        URI uri = service.addRecipe(recipeInput);
+       return ResponseEntity.created(uri).build();
     }
 
     @Override
-    public ResponseEntity<RecipeOutput> getRecipe(String uuid) {
-        return null;
+    public ResponseEntity<RecipeOutput> getRecipe(Long id) {
+        return ResponseEntity.ok(service.getRecipe(id));
     }
 
     @Override
-    public ResponseEntity<Void> deleteRecipe(String uuid) {
-        return null;
+    public ResponseEntity<Void> deleteRecipe(Long id) {
+        service.deleteRecipe(id);
+        return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<Void> updateRecipe(String uuid, ImageInput imageInput) {
-        return null;
+    public ResponseEntity<RecipeOutput> updateRecipe(Long id, RecipeInput recipeInput) {
+        RecipeOutput output = service.updateRecipe(id, recipeInput);
+        return ResponseEntity.ok(output);
     }
 
     @Override
-    public ResponseEntity<RecipeOutput> patchRecipe(String uuid, JsonPatch patch) {
+    public ResponseEntity<RecipeOutput> patchRecipe(Long id, JsonPatch patch) {
         return null;
     }
 }

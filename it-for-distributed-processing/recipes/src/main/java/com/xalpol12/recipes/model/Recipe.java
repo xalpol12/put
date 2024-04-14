@@ -34,6 +34,7 @@ public class Recipe {
     @Cascade({CascadeType.REMOVE})
     private List<Image> images;
 
+    // define as
     @ManyToMany(mappedBy = "recipes")
     List<RecipeCollection> collections;
 }

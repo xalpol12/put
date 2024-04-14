@@ -1,7 +1,6 @@
 package com.xalpol12.recipes.controller.iface;
 
 import com.github.fge.jsonpatch.JsonPatch;
-import com.xalpol12.recipes.model.dto.image.ImageInput;
 import com.xalpol12.recipes.model.dto.recipe.RecipeInput;
 import com.xalpol12.recipes.model.dto.recipe.RecipeOutput;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +22,14 @@ public interface IRecipeController {
     ResponseEntity<URI> addRecipe(RecipeInput recipeInput);
 
     @GetMapping(RecipePath.ROOT + "/{uuid}")
-    ResponseEntity<RecipeOutput> getRecipe(@PathVariable("uuid") String uuid);
+    ResponseEntity<RecipeOutput> getRecipe(@PathVariable("uuid") Long id);
 
     @DeleteMapping(RecipePath.ROOT + "/{uuid}")
-    ResponseEntity<Void> deleteRecipe(@PathVariable("uuid") String uuid);
+    ResponseEntity<Void> deleteRecipe(@PathVariable("uuid") Long id);
 
     @PutMapping(RecipePath.ROOT + "/{uuid}")
-    ResponseEntity<Void> updateRecipe(@PathVariable("uuid") String uuid, ImageInput imageInput);
+    ResponseEntity<RecipeOutput> updateRecipe(@PathVariable("uuid") Long id, RecipeInput recipeInput);
 
     @PatchMapping(RecipePath.ROOT +"/{uuid}")
-    ResponseEntity<RecipeOutput> patchRecipe(@PathVariable("uuid") String uuid, JsonPatch patch);
+    ResponseEntity<RecipeOutput> patchRecipe(@PathVariable("uuid") Long id, JsonPatch patch);
 }
