@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -21,24 +22,6 @@ import java.util.List;
 public class ImageService {
     private final ImageRepository repository;
     private final ImageMapper mapper;
-
-    public Image getImage(String uuid) {
-        return repository
-                .findById(uuid)
-                .orElseThrow(() -> new EntityNotFoundException("Image with id: " + uuid + " not found."));
-    }
-
-    public byte[] getImageData(String uuid) {
-        Image image = repository
-                .findById(uuid)
-                .orElseThrow(() -> new EntityNotFoundException("Image with id: " + uuid + " not found."));
-        return image.getData();
-    }
-
-    public ImageOutput getImageInfo(String uuid) {
-        Image image = repository.getReferenceById(uuid);
-        return mapper.mapToImageOutput(image);
-    }
 
     //TODO: add pagination here
     public List<ImageOutput> getAllImageInfos() {
@@ -55,12 +38,19 @@ public class ImageService {
         return URI.create(savedImage.getId());
     }
 
+    public ImageOutput getImageInfo(String uuid) {
+        Image image = repository.findById(uuid)
+                .orElseThrow(() -> new EntityNotFoundException("Image with given id does not exist"));
+        return mapper.mapToImageOutput(image);
+    }
+
     public void deleteImage(String uuid) {
         repository.deleteById(uuid);
     }
 
     //TODO: implement
     public ImageOutput updateImageDetails(String uuid, ImageInput newDetails) {
+
         return null;
     }
 
@@ -69,7 +59,17 @@ public class ImageService {
         return null;
     }
 
+    public byte[] getImageData(String uuid) {
+        Image image = repository
+                .findById(uuid)
+                .orElseThrow(() -> new EntityNotFoundException("Image with id: " + uuid + " not found."));
+        return image.getData();
+    }
+
     //TODO: implement
-    public void updateImage(String uuid, MultipartFile file)    {
+    public void updateImage(String uuid, MultipartFile file) throws IOException {
+        Image image = repository.findById(uuid)
+                .orElseThrow(() -> new EntityNotFoundException("Could not find image with given id"));
+        image.setData(file.getBytes());
     }
 }

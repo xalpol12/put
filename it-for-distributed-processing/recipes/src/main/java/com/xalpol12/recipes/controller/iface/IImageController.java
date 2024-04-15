@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -46,5 +47,5 @@ public interface IImageController {
 
     @PutMapping(value = ImagePath.ROOT + "/{uuid}/raw", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<Void> updateImageData(@PathVariable("uuid") String uuid,
-                                         @RequestPart MultipartFile file);
+                                         @RequestPart MultipartFile file) throws IOException;
 }

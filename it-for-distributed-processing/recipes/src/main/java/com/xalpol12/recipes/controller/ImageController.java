@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class ImageController implements IImageController {
     }
 
     @Override
-    public ResponseEntity<Void> updateImageData(String uuid, MultipartFile file) {
+    public ResponseEntity<Void> updateImageData(String uuid, MultipartFile file) throws IOException {
         service.updateImage(uuid, file);
         return ResponseEntity.ok().build();
     }
