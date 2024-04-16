@@ -28,12 +28,12 @@ public class RecipeService {
         return repository
                 .findAll(Pageable.ofSize(10))
                 .stream()
-                .map(mapper::mapToRecipeOutput)
+                .map(mapper::recipeToOutput)
                 .toList();
     }
 
     public URI addRecipe(RecipeInput recipeInput) {
-        Recipe recipe = mapper.mapToRecipe(recipeInput);
+        Recipe recipe = mapper.inputToRecipe(recipeInput);
         Recipe saved = repository.save(recipe);
         return URI.create(String.valueOf(saved.getId()));
     }
@@ -42,7 +42,7 @@ public class RecipeService {
         Recipe recipe = repository
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Could not find entity with given id"));
-        return mapper.mapToRecipeOutput(recipe);
+        return mapper.recipeToOutput(recipe);
     }
 
     public void deleteRecipe(Long id) {

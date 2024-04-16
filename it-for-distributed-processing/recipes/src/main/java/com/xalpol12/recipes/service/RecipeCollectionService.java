@@ -24,19 +24,19 @@ public class RecipeCollectionService {
     public RecipeCollectionOutput getRecipeCollection(Long id) {
         RecipeCollection recipeCollection = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Recipe collection with id: " + id + "could not be found."));
-        return mapper.mapToRecipeCollectionOutput(recipeCollection);
+        return mapper.collectionToOutput(recipeCollection);
     }
 
     public List<RecipeCollectionOutput> getAllRecipeCollections() {
        return repository
                .findAll()
                .stream()
-               .map(mapper::mapToRecipeCollectionOutput)
+               .map(mapper::collectionToOutput)
                .toList();
     }
 
     public URI addRecipeCollection(RecipeCollectionInput input) {
-        RecipeCollection collection = mapper.mapToRecipeCollection(input);
+        RecipeCollection collection = mapper.inputToCollection(input);
         repository.save(collection);
         //TODO: Return URI
         return URI.create("not-implemented-yet");

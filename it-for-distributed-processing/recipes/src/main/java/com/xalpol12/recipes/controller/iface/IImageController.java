@@ -24,7 +24,7 @@ public interface IImageController {
     @GetMapping(ImagePath.ROOT)
     ResponseEntity<List<ImageOutput>> getAllImageInfos();
 
-    @PostMapping(path = "ImagePath.ROOT", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = ImagePath.ROOT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<URI> uploadImage(@RequestPart ImageInput fileDetails,
                                     @RequestPart MultipartFile file);
 

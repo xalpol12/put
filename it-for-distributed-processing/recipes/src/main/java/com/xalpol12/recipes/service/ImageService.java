@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -25,15 +26,13 @@ public class ImageService {
 
     //TODO: add pagination here
     public List<ImageOutput> getAllImageInfos() {
-        return repository
-                .findAll()
-                .stream()
-                .map(mapper::mapToImageOutput)
-                .toList();
+        return mapper.imageToOutput(repository.findAll());
     }
 
     public URI uploadImage(ImageInput fileDetails, MultipartFile file) {
-        Image image = mapper.mapToImageEntity(fileDetails, file);
+        Image image = mapper.inputToImage(fileDetails, file);
+        image.setCreatedAt(LocalDateTime.now());
+        image.setModifiedAt(LocalDateTime.now());
         Image savedImage = repository.save(image);
         return URI.create(savedImage.getId());
     }
@@ -41,7 +40,7 @@ public class ImageService {
     public ImageOutput getImageInfo(String uuid) {
         Image image = repository.findById(uuid)
                 .orElseThrow(() -> new EntityNotFoundException("Image with given id does not exist"));
-        return mapper.mapToImageOutput(image);
+        return mapper.imageToOutput(image);
     }
 
     public void deleteImage(String uuid) {
@@ -59,11 +58,10 @@ public class ImageService {
         return null;
     }
 
-    public byte[] getImageData(String uuid) {
-        Image image = repository
+    public Image getImageData(String uuid) {
+        return repository
                 .findById(uuid)
                 .orElseThrow(() -> new EntityNotFoundException("Image with id: " + uuid + " not found."));
-        return image.getData();
     }
 
     //TODO: implement

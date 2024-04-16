@@ -2,11 +2,14 @@ package com.xalpol12.recipes.controller;
 
 import com.github.fge.jsonpatch.JsonPatch;
 import com.xalpol12.recipes.controller.iface.IImageController;
+import com.xalpol12.recipes.model.Image;
 import com.xalpol12.recipes.model.dto.image.ImageInput;
 import com.xalpol12.recipes.model.dto.image.ImageOutput;
 import com.xalpol12.recipes.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,7 +58,15 @@ public class ImageController implements IImageController {
 
     @Override
     public ResponseEntity<byte[]> getFullImageData(String uuid) {
-        return ResponseEntity.ok(service.getImageData(uuid));
+        Image image = service.getImageData(uuid);
+
+        MediaType mediaType = MediaType.parseMediaType(image.getType());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(mediaType);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(image.getData());
     }
 
     @Override
