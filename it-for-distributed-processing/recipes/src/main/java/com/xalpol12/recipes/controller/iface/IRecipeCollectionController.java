@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface IRecipeCollectionController {
     class RecipeCollectionPath {
-        public static final String ROOT = "/api/recipe-lists";
+        public static final String ROOT = "/api/v1/recipe-lists";
         private RecipeCollectionPath() {}
     }
 

@@ -15,10 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
-import java.net.URI;
 import java.time.LocalDateTime;
 
 @Slf4j
@@ -32,15 +30,10 @@ public class ImageService {
         return repository.findAll(pageable).map(mapper::imageToOutput);
     }
 
-    public URI uploadImage(ImageInput fileDetails, MultipartFile file) {
+    public ImageOutput uploadImage(ImageInput fileDetails, MultipartFile file) {
         Image image = mapper.inputToImage(fileDetails, file);
         Image savedImage = repository.save(image);
-        String imageId = savedImage.getId();
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/images/")
-                .path(imageId)
-                .build()
-                .toUri();
+        return mapper.imageToOutput(savedImage);
     }
 
     public ImageOutput getImageInfo(String uuid) {
@@ -71,8 +64,8 @@ public class ImageService {
             if (patchedImage.getName() != null) {
                 image.setName(patchedImage.getName());
             }
-            if (patchedImage.getRecipes() != null) {
-                image.setRecipes(patchedImage.getRecipes());
+            if (patchedImage.getRecipe() != null) {
+                image.setRecipe(patchedImage.getRecipe());
             }
 
             image.setModifiedAt(LocalDateTime.now());
@@ -89,7 +82,6 @@ public class ImageService {
         return findImageOrThrow(uuid);
     }
 
-    //TODO: implement
     public void updateImage(String uuid, MultipartFile file) throws IOException {
         Image image = findImageOrThrow(uuid);
         image.setData(file.getBytes());

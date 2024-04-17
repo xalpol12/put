@@ -19,7 +19,7 @@ import java.util.List;
 public interface IImageController {
 
     class ImagePath {
-        public static final String ROOT = "/api/images";
+        public static final String ROOT = "/api/v1/images";
         private ImagePath() {}
     }
 
@@ -27,7 +27,7 @@ public interface IImageController {
     ResponseEntity<Page<ImageOutput>> getAllImageInfos(Pageable pageable);
 
     @PostMapping(path = ImagePath.ROOT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<URI> uploadImage(@RequestPart ImageInput fileDetails,
+    ResponseEntity<ImageOutput> uploadImage(@RequestPart ImageInput fileDetails,
                                     @RequestPart MultipartFile file);
 
     @GetMapping(ImagePath.ROOT + "/{uuid}")

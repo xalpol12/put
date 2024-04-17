@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class ImageOutput {
@@ -12,8 +13,6 @@ public class ImageOutput {
 
     private String name;
 
-    private String url;
-
     private String type;
 
     private long size;
@@ -21,4 +20,6 @@ public class ImageOutput {
     private LocalDateTime createdAt;
 
     private LocalDateTime lastModifiedAt;
+
+    private Long recipes;
 }

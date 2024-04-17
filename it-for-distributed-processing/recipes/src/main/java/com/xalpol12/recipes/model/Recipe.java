@@ -30,7 +30,7 @@ public class Recipe {
     @ElementCollection
     private List<TextParagraph> descriptions;
 
-    @OneToMany(mappedBy = "recipes")
+    @OneToMany(mappedBy = "recipe")
     @Cascade({CascadeType.REMOVE})
     private List<Image> images;
 

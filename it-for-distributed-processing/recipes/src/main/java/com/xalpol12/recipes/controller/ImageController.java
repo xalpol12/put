@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
@@ -33,8 +34,17 @@ public class ImageController implements IImageController {
     }
 
     @Override
-    public ResponseEntity<URI> uploadImage(ImageInput fileDetails, MultipartFile file) {
-        return ResponseEntity.created(service.uploadImage(fileDetails, file)).build();
+    public ResponseEntity<ImageOutput> uploadImage(ImageInput fileDetails, MultipartFile file) {
+        ImageOutput output = service.uploadImage(fileDetails, file);
+
+        URI uri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(ImagePath.ROOT)
+                .path(output.getImageId())
+                .build()
+                .toUri();
+
+        return ResponseEntity.created(uri)
+                .body(output);
     }
 
     @Override

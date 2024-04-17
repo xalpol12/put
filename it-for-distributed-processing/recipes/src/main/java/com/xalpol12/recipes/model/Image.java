@@ -46,5 +46,5 @@ public class Image {
 
     @ManyToOne
     @JoinColumn(name = "recipe_id")
-    Recipe recipes;
+    Recipe recipe;
 }

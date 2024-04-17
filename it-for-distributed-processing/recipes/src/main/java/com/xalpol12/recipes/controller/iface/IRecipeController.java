@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface IRecipeController {
     class RecipePath {
-        public static final String ROOT = "/api/recipes";
+        public static final String ROOT = "/api/v1/recipes";
         private RecipePath() {}
     }
 
