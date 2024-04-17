@@ -8,7 +8,6 @@ import java.util.List;
 
 @Data
 public class ImageOutput {
-
     private String imageId;
 
     private String name;

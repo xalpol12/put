@@ -7,8 +7,11 @@ import com.xalpol12.recipes.model.dto.recipe.RecipeOutput;
 import com.xalpol12.recipes.service.RecipeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -20,15 +23,22 @@ public class RecipeController implements IRecipeController {
     private final RecipeService service;
 
     @Override
-    public ResponseEntity<List<RecipeOutput>> getAllRecipes() {
-        service.getAllRecipes();
-        return null;
+    public ResponseEntity<Page<RecipeOutput>> getAllRecipes(Pageable pageable) {
+        return ResponseEntity.ok(service.getAllRecipes(pageable));
     }
 
     @Override
-    public ResponseEntity<URI> addRecipe(RecipeInput recipeInput) {
-        URI uri = service.addRecipe(recipeInput);
-       return ResponseEntity.created(uri).build();
+    public ResponseEntity<RecipeOutput> addRecipe(RecipeInput recipeInput) {
+        RecipeOutput output = service.addRecipe(recipeInput);
+
+        URI uri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(RecipePath.ROOT)
+                .path(String.valueOf(output.getRecipeId()))
+                .build()
+                .toUri();
+
+        return ResponseEntity.created(uri)
+                .body(output);
     }
 
     @Override

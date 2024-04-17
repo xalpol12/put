@@ -11,13 +11,13 @@ import com.xalpol12.recipes.repository.ImageRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 @Slf4j
 @Service
@@ -68,13 +68,13 @@ public class ImageService {
                 image.setRecipe(patchedImage.getRecipe());
             }
 
-            image.setModifiedAt(LocalDateTime.now());
+            //TODO: Check if it works without explcitily updating
+            //image.setModifiedAt(LocalDateTime.now());
             Image updatedImage = repository.save(image);
 
             return mapper.imageToOutput(updatedImage);
         } catch (Exception e) { //TODO: add exception handling
-            e.printStackTrace();
-            return null;
+            throw new NotImplementedException("Implement this exception! ImageService::patchImageDetails");
         }
     }
 

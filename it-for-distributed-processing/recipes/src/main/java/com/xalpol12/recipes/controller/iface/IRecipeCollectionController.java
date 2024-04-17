@@ -20,7 +20,7 @@ public interface IRecipeCollectionController {
     ResponseEntity<List<RecipeCollectionOutput>> getAllRecipeCollections();
 
     @PostMapping(RecipeCollectionPath.ROOT)
-    ResponseEntity<URI> addRecipeCollection(RecipeCollectionInput recipeCollectionInput);
+    ResponseEntity<RecipeCollectionOutput> addRecipeCollection(RecipeCollectionInput recipeCollectionInput);
 
     @GetMapping(RecipeCollectionPath.ROOT + "/{id}")
     ResponseEntity<RecipeCollectionOutput> getRecipeCollection(@PathVariable("id") Long id);
