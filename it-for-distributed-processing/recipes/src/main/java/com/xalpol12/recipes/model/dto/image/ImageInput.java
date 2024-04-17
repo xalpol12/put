@@ -7,7 +7,6 @@ import org.hibernate.validator.constraints.Length;
 
 @Data
 public class ImageInput {
-
     @Nullable
     @NotBlank
     @Length(max = 80)

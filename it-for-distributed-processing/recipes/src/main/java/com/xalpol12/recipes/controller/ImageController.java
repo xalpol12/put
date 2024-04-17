@@ -8,6 +8,9 @@ import com.xalpol12.recipes.model.dto.image.ImageOutput;
 import com.xalpol12.recipes.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +28,8 @@ public class ImageController implements IImageController {
     private final ImageService service;
 
     @Override
-    public ResponseEntity<List<ImageOutput>> getAllImageInfos() {
-        return ResponseEntity.ok(service.getAllImageInfos());
+    public ResponseEntity<Page<ImageOutput>> getAllImageInfos(Pageable pageable) {
+        return ResponseEntity.ok(service.getAllImageInfos(pageable));
     }
 
     @Override
