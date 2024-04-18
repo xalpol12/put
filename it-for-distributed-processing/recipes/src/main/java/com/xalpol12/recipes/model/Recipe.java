@@ -3,10 +3,12 @@ package com.xalpol12.recipes.model;
 import com.xalpol12.recipes.model.valueobject.Ingredient;
 import com.xalpol12.recipes.model.valueobject.TextParagraph;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
 import java.util.Objects;
@@ -22,6 +24,10 @@ public class Recipe {
     @Id
     @Column(name = "recipe_id")
     private Long id;
+
+    @NotEmpty
+    @Length(max = 80)
+    private String recipeName;
 
     private Integer estimatedTime; // in minutes
 

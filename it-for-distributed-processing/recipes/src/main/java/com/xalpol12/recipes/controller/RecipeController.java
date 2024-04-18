@@ -60,6 +60,6 @@ public class RecipeController implements IRecipeController {
 
     @Override
     public ResponseEntity<RecipeOutput> patchRecipe(Long id, JsonPatch patch) {
-        return null;
+        return ResponseEntity.ok(service.patchRecipe(id, patch));
     }
 }

@@ -17,6 +17,8 @@ import java.util.List;
 public class RecipeOutput {
     private Long recipeId;
 
+    private String recipeName;
+
     private int estimatedTime;
 
     @ElementCollection

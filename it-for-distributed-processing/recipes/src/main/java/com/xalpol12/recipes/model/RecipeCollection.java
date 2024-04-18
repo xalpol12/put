@@ -1,8 +1,10 @@
 package com.xalpol12.recipes.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
 import java.util.Objects;
@@ -11,11 +13,17 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
+@Builder
 @Entity(name = "recipe_collections")
+@AllArgsConstructor
 public class RecipeCollection {
     @Id
     @Column(name = "recipe_collection_id")
     private Long id;
+
+    @NotEmpty
+    @Length(max = 80)
+    private String collectionName;
 
     @ManyToMany
     @JoinTable(
@@ -24,7 +32,7 @@ public class RecipeCollection {
             inverseJoinColumns = @JoinColumn(name = "recipe_id")
     )
     @ToString.Exclude
-    List<Recipe> recipes;
+    private List<Recipe> recipes;
 
     @Override
     public final boolean equals(Object o) {

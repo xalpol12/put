@@ -4,6 +4,8 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionInput;
 import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionMergeRequest;
 import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionOutput;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +19,7 @@ public interface IRecipeCollectionController {
     }
 
     @GetMapping(RecipeCollectionPath.ROOT)
-    ResponseEntity<List<RecipeCollectionOutput>> getAllRecipeCollections();
+    ResponseEntity<Page<RecipeCollectionOutput>> getAllRecipeCollections(Pageable pageable);
 
     @PostMapping(RecipeCollectionPath.ROOT)
     ResponseEntity<RecipeCollectionOutput> addRecipeCollection(RecipeCollectionInput recipeCollectionInput);
@@ -29,13 +31,13 @@ public interface IRecipeCollectionController {
     ResponseEntity<Void> deleteRecipeCollection(@PathVariable("id") Long id);
 
     @PutMapping(RecipeCollectionPath.ROOT + "/{id}")
-    ResponseEntity<Void> updateRecipeCollection(
+    ResponseEntity<RecipeCollectionOutput> updateRecipeCollection(
             @PathVariable("id") Long id,
             RecipeCollectionInput recipeCollectionInput);
 
     @PatchMapping(RecipeCollectionPath.ROOT + "/{id}")
-    ResponseEntity<RecipeCollectionOutput> updateRecipeCollection(@PathVariable("id") Long id,
-                                                                  @RequestBody JsonPatch patch);
+    ResponseEntity<RecipeCollectionOutput> patchRecipeCollection(@PathVariable("id") Long id,
+                                                                 @RequestBody JsonPatch patch);
 
     @PostMapping(RecipeCollectionPath.ROOT + "-merges")
     ResponseEntity<RecipeCollectionOutput> mergeRecipeCollections(
