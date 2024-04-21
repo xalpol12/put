@@ -22,7 +22,8 @@ public interface IRecipeCollectionController {
     ResponseEntity<Page<RecipeCollectionOutput>> getAllRecipeCollections(Pageable pageable);
 
     @PostMapping(RecipeCollectionPath.ROOT)
-    ResponseEntity<RecipeCollectionOutput> addRecipeCollection(RecipeCollectionInput recipeCollectionInput);
+    ResponseEntity<RecipeCollectionOutput> addRecipeCollection(
+            @RequestBody RecipeCollectionInput recipeCollectionInput);
 
     @GetMapping(RecipeCollectionPath.ROOT + "/{id}")
     ResponseEntity<RecipeCollectionOutput> getRecipeCollection(@PathVariable("id") Long id);
@@ -33,7 +34,7 @@ public interface IRecipeCollectionController {
     @PutMapping(RecipeCollectionPath.ROOT + "/{id}")
     ResponseEntity<RecipeCollectionOutput> updateRecipeCollection(
             @PathVariable("id") Long id,
-            RecipeCollectionInput recipeCollectionInput);
+            @RequestBody RecipeCollectionInput recipeCollectionInput);
 
     @PatchMapping(RecipeCollectionPath.ROOT + "/{id}")
     ResponseEntity<RecipeCollectionOutput> patchRecipeCollection(@PathVariable("id") Long id,

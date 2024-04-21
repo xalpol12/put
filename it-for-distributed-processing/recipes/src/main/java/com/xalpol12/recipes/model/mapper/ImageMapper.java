@@ -15,8 +15,8 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = Image.class)
 public interface ImageMapper {
 
+    @Mapping(target = "name", source = "imageInput.name")
     @Mapping(target = "data", source = "file")
-    @Mapping(target = "name", source = "file", qualifiedByName = "mapName")
     @Mapping(target = "type", source = "file", qualifiedByName = "mapType")
     Image inputToImage(ImageInput imageInput, MultipartFile file);
 
@@ -26,11 +26,6 @@ public interface ImageMapper {
         } catch (IOException e) {
             return null;
         }
-    }
-
-    @Named("mapName")
-    default String mapOriginalFileName(MultipartFile file) {
-        return file.getOriginalFilename();
     }
 
     @Named("mapType")

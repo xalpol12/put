@@ -39,15 +39,15 @@ public class Image {
 
     @Column(nullable = false, updatable = false)
     @CreatedDate
-    LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
     @Column(nullable = false)
     @LastModifiedDate
-    LocalDateTime modifiedAt;
+    private LocalDateTime modifiedAt;
 
     @ManyToOne
     @JoinColumn(name = "recipe_id")
-    Recipe recipe;
+    private Recipe recipe;
 
     @Override
     public final boolean equals(Object o) {

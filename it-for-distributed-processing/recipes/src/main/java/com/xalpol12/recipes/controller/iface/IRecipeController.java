@@ -21,7 +21,7 @@ public interface IRecipeController {
     ResponseEntity<Page<RecipeOutput>> getAllRecipes(Pageable pageable);
 
     @PostMapping(RecipePath.ROOT)
-    ResponseEntity<RecipeOutput> addRecipe(RecipeInput recipeInput);
+    ResponseEntity<RecipeOutput> addRecipe(@RequestBody RecipeInput recipeInput);
 
     @GetMapping(RecipePath.ROOT + "/{uuid}")
     ResponseEntity<RecipeOutput> getRecipe(@PathVariable("uuid") Long id);
@@ -30,8 +30,10 @@ public interface IRecipeController {
     ResponseEntity<Void> deleteRecipe(@PathVariable("uuid") Long id);
 
     @PutMapping(RecipePath.ROOT + "/{uuid}")
-    ResponseEntity<RecipeOutput> updateRecipe(@PathVariable("uuid") Long id, RecipeInput recipeInput);
+    ResponseEntity<RecipeOutput> updateRecipe(@PathVariable("uuid") Long id,
+                                              @RequestBody RecipeInput recipeInput);
 
     @PatchMapping(RecipePath.ROOT +"/{uuid}")
-    ResponseEntity<RecipeOutput> patchRecipe(@PathVariable("uuid") Long id, JsonPatch patch);
+    ResponseEntity<RecipeOutput> patchRecipe(@PathVariable("uuid") Long id,
+                                             @RequestBody  JsonPatch patch);
 }

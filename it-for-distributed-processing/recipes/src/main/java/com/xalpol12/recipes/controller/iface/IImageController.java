@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.URI;
-import java.util.List;
 
 @Tag(name = "Images API", description = "API for managing images")
 public interface IImageController {
@@ -33,7 +31,7 @@ public interface IImageController {
     @GetMapping(ImagePath.ROOT + "/{uuid}")
     ResponseEntity<ImageOutput> getImageInfo(@PathVariable("uuid") String uuid);
 
-    @DeleteMapping("/{uuid}")
+    @DeleteMapping(ImagePath.ROOT + "/{uuid}")
     ResponseEntity<Void> deleteImage(@PathVariable("uuid") String uuid);
 
     @PutMapping(ImagePath.ROOT + "/{uuid}")
