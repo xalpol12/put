@@ -19,6 +19,7 @@ import java.util.Objects;
 public class RecipeCollection {
     @Id
     @Column(name = "recipe_collection_id")
+    @GeneratedValue
     private Long id;
 
     @NotEmpty

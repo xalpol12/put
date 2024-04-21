@@ -13,4 +13,5 @@ public class RecipeInput {
     private List<Ingredient> ingredients;
     private List<TextParagraph> descriptions;
     private List<String> images; // how to create association with Images?
+    private List<Long> recipeCollections;
 }

@@ -36,6 +36,7 @@ public class RecipeCollectionMapper {
     public RecipeCollectionOutput collectionToOutput(RecipeCollection collection) {
         List<RecipeOutputShort> recipes = recipeMapper.recipeToOutputShort(collection.getRecipes());
         return RecipeCollectionOutput.builder()
+                .id(collection.getId())
                 .collectionName(collection.getCollectionName())
                 .recipes(recipes)
                 .build();

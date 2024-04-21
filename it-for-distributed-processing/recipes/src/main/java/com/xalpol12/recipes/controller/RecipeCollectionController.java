@@ -33,7 +33,7 @@ public class RecipeCollectionController implements IRecipeCollectionController {
         RecipeCollectionOutput output = service.addRecipeCollection(recipeCollectionInput);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(RecipeCollectionPath.ROOT)
+                .path(RecipeCollectionPath.ROOT + "/")
                 .path(String.valueOf(output.getId()))
                 .build()
                 .toUri();

@@ -2,6 +2,7 @@ package com.xalpol12.recipes.model;
 
 import com.xalpol12.recipes.model.valueobject.Ingredient;
 import com.xalpol12.recipes.model.valueobject.TextParagraph;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
@@ -23,6 +24,7 @@ import java.util.Objects;
 public class Recipe {
     @Id
     @Column(name = "recipe_id")
+    @GeneratedValue
     private Long id;
 
     @NotEmpty

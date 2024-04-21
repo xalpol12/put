@@ -38,7 +38,7 @@ public class ImageController implements IImageController {
         ImageOutput output = service.uploadImage(fileDetails, file);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(ImagePath.ROOT)
+                .path(ImagePath.ROOT + "/")
                 .path(output.getImageId())
                 .build()
                 .toUri();

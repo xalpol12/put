@@ -15,10 +15,14 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = Image.class)
 public interface ImageMapper {
 
-    @Mapping(target = "name", source = "imageInput.name")
+    @Mapping(target = "name", source = "imageInput")
     @Mapping(target = "data", source = "file")
     @Mapping(target = "type", source = "file", qualifiedByName = "mapType")
     Image inputToImage(ImageInput imageInput, MultipartFile file);
+
+    default String mapImageInputToName(ImageInput imageInput) {
+        return imageInput.getName();
+    }
 
     default byte[] mapFileToBytes(MultipartFile file) {
         try {
