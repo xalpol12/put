@@ -36,6 +36,7 @@ public class RecipeService {
 
     public RecipeOutput addRecipe(RecipeInput recipeInput) {
         Recipe recipe = mapper.inputToRecipe(recipeInput);
+        recipe.setId(100L);
         Recipe saved = repository.save(recipe);
         return mapper.recipeToOutput(saved);
     }

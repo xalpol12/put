@@ -11,6 +11,7 @@ import org.hibernate.annotations.CascadeType;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,7 +25,7 @@ import java.util.Objects;
 public class Recipe {
     @Id
     @Column(name = "recipe_id")
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotEmpty
@@ -39,8 +40,7 @@ public class Recipe {
     @ElementCollection
     private List<TextParagraph> descriptions;
 
-    @OneToMany(mappedBy = "recipe")
-    @Cascade({CascadeType.REMOVE})
+    @OneToMany(mappedBy = "recipe", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<Image> images;
 

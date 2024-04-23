@@ -2,6 +2,8 @@ package com.xalpol12.recipes.model.dto.recipe;
 
 import com.xalpol12.recipes.model.Image;
 import com.xalpol12.recipes.model.RecipeCollection;
+import com.xalpol12.recipes.model.dto.image.ImageOutput;
+import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionOutput;
 import com.xalpol12.recipes.model.valueobject.Ingredient;
 import com.xalpol12.recipes.model.valueobject.TextParagraph;
 import jakarta.persistence.ElementCollection;
@@ -27,10 +29,7 @@ public class RecipeOutput {
     @ElementCollection
     private List<TextParagraph> descriptions;
 
-    @OneToMany(mappedBy = "recipe")
-    @Cascade({CascadeType.REMOVE})
-    private List<Image> images;
+    private List<ImageOutput> images;
 
-    @ManyToMany(mappedBy = "recipes")
-    List<RecipeCollection> collections;
+    private List<RecipeCollectionOutput> collections;
 }

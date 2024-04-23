@@ -3,7 +3,6 @@ package com.xalpol12.recipes.model.mapper;
 import com.xalpol12.recipes.model.Image;
 import com.xalpol12.recipes.model.dto.image.ImageInput;
 import com.xalpol12.recipes.model.dto.image.ImageOutput;
-import jdk.jfr.Name;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

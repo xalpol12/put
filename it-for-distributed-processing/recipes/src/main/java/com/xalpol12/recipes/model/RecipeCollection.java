@@ -19,7 +19,7 @@ import java.util.Objects;
 public class RecipeCollection {
     @Id
     @Column(name = "recipe_collection_id")
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotEmpty
@@ -28,7 +28,7 @@ public class RecipeCollection {
 
     @ManyToMany
     @JoinTable(
-            name = "recipes",
+            name = "recipe_collection_recipe",
             joinColumns = @JoinColumn(name = "recipe_collection_id"),
             inverseJoinColumns = @JoinColumn(name = "recipe_id")
     )
