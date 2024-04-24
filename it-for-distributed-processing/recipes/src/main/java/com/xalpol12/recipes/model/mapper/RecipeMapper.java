@@ -3,9 +3,11 @@ package com.xalpol12.recipes.model.mapper;
 import com.xalpol12.recipes.model.Image;
 import com.xalpol12.recipes.model.Recipe;
 import com.xalpol12.recipes.model.RecipeCollection;
+import com.xalpol12.recipes.model.dto.image.ImageOutputOnlyId;
 import com.xalpol12.recipes.model.dto.recipe.RecipeInput;
 import com.xalpol12.recipes.model.dto.recipe.RecipeOutput;
 import com.xalpol12.recipes.model.dto.recipe.RecipeOutputShort;
+import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionOutputOnlyId;
 import com.xalpol12.recipes.repository.ImageRepository;
 import com.xalpol12.recipes.repository.RecipeCollectionRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -49,7 +51,7 @@ public abstract class RecipeMapper {
         return recipe;
     };
 
-    public List<Image> stringToImage(RecipeInput value) {
+    protected List<Image> stringToImage(RecipeInput value) {
         List<Image> images = new ArrayList<>();
         for (String id: value.getImages()) {
             images.add(imageRepository.findById(id)
@@ -58,7 +60,7 @@ public abstract class RecipeMapper {
         return images;
     }
 
-    public List<RecipeCollection> longToRecipeCollection(RecipeInput value) {
+    protected List<RecipeCollection> longToRecipeCollection(RecipeInput value) {
         List<RecipeCollection> collections = new ArrayList<>();
         for (Long id: value.getRecipeCollections()) {
             collections.add(recipeCollectionRepository.findById(id)
@@ -68,8 +70,33 @@ public abstract class RecipeMapper {
     }
 
 
-    @Mapping(target = "recipeId", source = "recipe.id")
-    public abstract RecipeOutput recipeToOutput(Recipe recipe);
+    public RecipeOutput recipeToOutput(Recipe recipe) {
+        List<ImageOutputOnlyId> images = new ArrayList<>();
+        List<RecipeCollectionOutputOnlyId> collections = new ArrayList<>();
+        if (recipe.getImages() != null) {
+            images = recipe.getImages()
+                    .stream()
+                    .map(image -> new ImageOutputOnlyId(image.getId()))
+                    .toList();
+        }
+        if (recipe.getCollections() != null) {
+            collections = recipe.getCollections()
+                    .stream()
+                    .map(collection -> new RecipeCollectionOutputOnlyId(collection.getId()))
+                    .toList();
+        }
+
+        return RecipeOutput.builder()
+                .recipeId(recipe.getId())
+                .recipeName(recipe.getRecipeName())
+                .estimatedTime(recipe.getEstimatedTime())
+                .ingredients(recipe.getIngredients())
+                .descriptions(recipe.getDescriptions())
+                .images(images)
+                .collections(collections)
+                .build();
+    }
+
     public abstract List<RecipeOutput> recipeToOutput(List<Recipe> recipe);
 
     public abstract RecipeOutputShort recipeToOutputShort(Recipe recipe);

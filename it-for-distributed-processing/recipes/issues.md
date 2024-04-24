@@ -1,8 +1,9 @@
 ## Images
 - [x] LastModifiedAt field not propagating (null)
-- [ ] Patch not working? I dont know how it is supposed to work
+- [x] Patch not working? I dont know how it is supposed to work
 
 ## Recipe
-- [ ] POST acting up (mapper bullshit again)
+- [x] POST acting up (mapper bullshit again)
+- [ ] mapper for images does not show imageId, size and recipes
 
 ## Recipe collection
