@@ -43,7 +43,7 @@ public class Image {
 
     @Column(nullable = false)
     @LastModifiedDate
-    private LocalDateTime modifiedAt;
+    private LocalDateTime lastModifiedAt;
 
     @ManyToOne
     @JoinColumn(name = "recipe_id")

@@ -10,5 +10,9 @@ public class ImageInput {
     @Nullable
     @NotBlank
     @Length(max = 80)
-    String name;
+    private String name;
+
+    @Nullable
+    @NotBlank
+    private Long recipeId;
 }
