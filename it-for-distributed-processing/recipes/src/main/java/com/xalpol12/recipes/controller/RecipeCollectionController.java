@@ -1,6 +1,5 @@
 package com.xalpol12.recipes.controller;
 
-import com.github.fge.jsonpatch.JsonPatch;
 import com.xalpol12.recipes.controller.iface.IRecipeCollectionController;
 import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionInput;
 import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionMergeRequest;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -55,11 +53,6 @@ public class RecipeCollectionController implements IRecipeCollectionController {
 
     @Override
     public ResponseEntity<RecipeCollectionOutput> updateRecipeCollection(Long id, RecipeCollectionInput recipeCollectionInput) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<RecipeCollectionOutput> patchRecipeCollection(Long id, JsonPatch patch) {
         return null;
     }
 

@@ -1,6 +1,5 @@
 package com.xalpol12.recipes.controller;
 
-import com.github.fge.jsonpatch.JsonPatch;
 import com.xalpol12.recipes.controller.iface.IImageController;
 import com.xalpol12.recipes.model.Image;
 import com.xalpol12.recipes.model.dto.image.ImageInput;
@@ -60,11 +59,6 @@ public class ImageController implements IImageController {
     public ResponseEntity<ImageOutput> updateImageDetails(String uuid, ImageInput newDetails) {
         return ResponseEntity.ok(service.updateImageDetails(uuid, newDetails));
 
-    }
-
-    @Override
-    public ResponseEntity<ImageOutput> patchImageDetails(String uuid, JsonPatch patch) {
-        return ResponseEntity.ok(service.patchImageDetails(uuid, patch));
     }
 
     @Override

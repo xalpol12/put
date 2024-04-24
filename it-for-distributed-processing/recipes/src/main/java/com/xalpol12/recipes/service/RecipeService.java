@@ -1,8 +1,5 @@
 package com.xalpol12.recipes.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonpatch.JsonPatch;
 import com.xalpol12.recipes.model.Image;
 import com.xalpol12.recipes.model.Recipe;
 import com.xalpol12.recipes.model.dto.recipe.RecipeInput;
@@ -14,7 +11,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -68,36 +64,6 @@ public class RecipeService {
         repository.save(recipe);
 
         return mapper.recipeToOutput(recipe);
-    }
-
-    @Transactional
-    public RecipeOutput patchRecipe(Long id, JsonPatch patch) {
-        Recipe recipe = getRecipeOrThrow(id);
-
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode patched = patch.apply(objectMapper.convertValue(recipe, JsonNode.class));
-            Recipe patchedRecipe = objectMapper.treeToValue(patched, Recipe.class);
-
-            if (patchedRecipe.getEstimatedTime() != null) {
-                recipe.setEstimatedTime(patchedRecipe.getEstimatedTime());
-            }
-            if (patchedRecipe.getIngredients() != null) {
-                recipe.setIngredients(patchedRecipe.getIngredients());
-            }
-            if (patchedRecipe.getDescriptions() != null) {
-                recipe.setDescriptions(patchedRecipe.getDescriptions());
-            }
-            if (patchedRecipe.getImages() != null) {
-                recipe.setImages(patchedRecipe.getImages());
-            }
-
-            Recipe updatedRecipe = repository.save(recipe);
-
-            return mapper.recipeToOutput(updatedRecipe);
-        } catch (Exception e) { //TODO: add exception handling
-            throw new NotImplementedException("Implement this exception! RecipeService::patchRecipe");
-        }
     }
 
     private Recipe getRecipeOrThrow(Long id) {

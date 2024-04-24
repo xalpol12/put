@@ -1,6 +1,5 @@
 package com.xalpol12.recipes.controller;
 
-import com.github.fge.jsonpatch.JsonPatch;
 import com.xalpol12.recipes.controller.iface.IRecipeController;
 import com.xalpol12.recipes.model.dto.recipe.RecipeInput;
 import com.xalpol12.recipes.model.dto.recipe.RecipeOutput;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -56,10 +54,5 @@ public class RecipeController implements IRecipeController {
     public ResponseEntity<RecipeOutput> updateRecipe(Long id, RecipeInput recipeInput) {
         RecipeOutput output = service.updateRecipe(id, recipeInput);
         return ResponseEntity.ok(output);
-    }
-
-    @Override
-    public ResponseEntity<RecipeOutput> patchRecipe(Long id, JsonPatch patch) {
-        return ResponseEntity.ok(service.patchRecipe(id, patch));
     }
 }

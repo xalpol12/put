@@ -1,6 +1,5 @@
 package com.xalpol12.recipes.controller.iface;
 
-import com.github.fge.jsonpatch.JsonPatch;
 import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionInput;
 import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionMergeRequest;
 import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionOutput;
@@ -8,9 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
-import java.util.List;
 
 public interface IRecipeCollectionController {
     class RecipeCollectionPath {
@@ -35,10 +31,6 @@ public interface IRecipeCollectionController {
     ResponseEntity<RecipeCollectionOutput> updateRecipeCollection(
             @PathVariable("id") Long id,
             @RequestBody RecipeCollectionInput recipeCollectionInput);
-
-    @PatchMapping(RecipeCollectionPath.ROOT + "/{id}")
-    ResponseEntity<RecipeCollectionOutput> patchRecipeCollection(@PathVariable("id") Long id,
-                                                                 @RequestBody JsonPatch patch);
 
     @PostMapping(RecipeCollectionPath.ROOT + "-merges")
     ResponseEntity<RecipeCollectionOutput> mergeRecipeCollections(

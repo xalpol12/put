@@ -1,6 +1,5 @@
 package com.xalpol12.recipes.controller.iface;
 
-import com.github.fge.jsonpatch.JsonPatch;
 import com.xalpol12.recipes.model.dto.image.ImageInput;
 import com.xalpol12.recipes.model.dto.image.ImageOutput;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,10 +36,6 @@ public interface IImageController {
     @PutMapping(ImagePath.ROOT + "/{uuid}")
     ResponseEntity<ImageOutput> updateImageDetails(@PathVariable("uuid") String uuid,
                                                    @RequestBody ImageInput newDetails);
-
-    @PatchMapping(ImagePath.ROOT + "/{uuid}")
-    ResponseEntity<ImageOutput> patchImageDetails(@PathVariable("uuid") String uuid,
-                                           @RequestBody JsonPatch patch);
 
     @GetMapping(ImagePath.ROOT + "/{uuid}/raw")
     ResponseEntity<byte[]> getFullImageData(@PathVariable("uuid") String uuid);

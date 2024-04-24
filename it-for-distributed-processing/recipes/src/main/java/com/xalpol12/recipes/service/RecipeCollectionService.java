@@ -1,6 +1,5 @@
 package com.xalpol12.recipes.service;
 
-import com.github.fge.jsonpatch.JsonPatch;
 import com.xalpol12.recipes.model.RecipeCollection;
 import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionInput;
 import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionMergeRequest;
@@ -14,9 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -48,11 +44,6 @@ public class RecipeCollectionService {
     public RecipeCollectionOutput updateRecipeCollection(Long id, RecipeCollectionInput input) {
         //TODO: something something update
         RecipeCollection recipeCollection = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Recipe collection with id: " + id + "could not be found."));
-        return null;
-    }
-
-    public RecipeCollectionOutput patchRecipeCollection(Long id, JsonPatch patch) {
-        //TODO: implement
         return null;
     }
 
