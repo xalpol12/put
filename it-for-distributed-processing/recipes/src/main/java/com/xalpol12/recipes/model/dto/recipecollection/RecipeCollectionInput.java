@@ -7,5 +7,5 @@ import java.util.List;
 @Data
 public class RecipeCollectionInput {
     private String collectionName;
-    private List<String> recipeIds;
+    private List<Long> recipeIds;
 }

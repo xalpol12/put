@@ -1,6 +1,7 @@
 package com.xalpol12.recipes.controller;
 
 import com.xalpol12.recipes.controller.iface.IRecipeCollectionController;
+import com.xalpol12.recipes.model.RecipeCollection;
 import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionInput;
 import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionMergeRequest;
 import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionOutput;
@@ -53,11 +54,13 @@ public class RecipeCollectionController implements IRecipeCollectionController {
 
     @Override
     public ResponseEntity<RecipeCollectionOutput> updateRecipeCollection(Long id, RecipeCollectionInput recipeCollectionInput) {
-        return null;
+        RecipeCollectionOutput output = service.updateRecipeCollection(id, recipeCollectionInput);
+        return ResponseEntity.ok(output);
     }
 
     @Override
     public ResponseEntity<RecipeCollectionOutput> mergeRecipeCollections(RecipeCollectionMergeRequest mergeRequest) {
-        return null;
+        RecipeCollectionOutput output = service.mergeRecipeCollections(mergeRequest);
+        return ResponseEntity.ok(output);
     }
 }

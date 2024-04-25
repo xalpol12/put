@@ -2,10 +2,12 @@ package com.xalpol12.recipes.service;
 
 import com.xalpol12.recipes.model.Image;
 import com.xalpol12.recipes.model.Recipe;
+import com.xalpol12.recipes.model.RecipeCollection;
 import com.xalpol12.recipes.model.dto.recipe.RecipeInput;
 import com.xalpol12.recipes.model.dto.recipe.RecipeOutput;
 import com.xalpol12.recipes.model.mapper.RecipeMapper;
 import com.xalpol12.recipes.repository.ImageRepository;
+import com.xalpol12.recipes.repository.RecipeCollectionRepository;
 import com.xalpol12.recipes.repository.RecipeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -22,6 +24,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class RecipeService {
+    private final RecipeCollectionRepository recipeCollectionRepository;
     private final RecipeRepository repository;
     private final ImageRepository imageRepository;
     private final RecipeMapper mapper;
@@ -32,7 +35,6 @@ public class RecipeService {
 
     public RecipeOutput addRecipe(RecipeInput recipeInput) {
         Recipe recipe = mapper.inputToRecipe(recipeInput);
-        recipe.setId(100L);
         Recipe saved = repository.save(recipe);
         return mapper.recipeToOutput(saved);
     }
@@ -59,10 +61,16 @@ public class RecipeService {
             Image image = imageRepository.getReferenceById(imageId);
             images.add(image);
         }
-
         recipe.setImages(images);
-        repository.save(recipe);
 
+        List<RecipeCollection> collections = new ArrayList<>();
+        for (Long collectionId : recipeInput.getRecipeCollections()) {
+            RecipeCollection collection = recipeCollectionRepository.getReferenceById(collectionId);
+            collections.add(collection);
+        }
+        recipe.setCollections(collections);
+
+        repository.save(recipe);
         return mapper.recipeToOutput(recipe);
     }
 

@@ -99,6 +99,8 @@ public abstract class RecipeMapper {
 
     public abstract List<RecipeOutput> recipeToOutput(List<Recipe> recipe);
 
+    @Mapping(target = "recipeId", source = "recipe.id")
     public abstract RecipeOutputShort recipeToOutputShort(Recipe recipe);
+
     public abstract List<RecipeOutputShort> recipeToOutputShort(List<Recipe> recipes);
 }

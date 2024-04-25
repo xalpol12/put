@@ -7,6 +7,7 @@ import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionInput;
 import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionOutput;
 import com.xalpol12.recipes.repository.RecipeCollectionRepository;
 import com.xalpol12.recipes.repository.RecipeRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -22,15 +23,18 @@ public class RecipeCollectionMapper {
 
     public RecipeCollection inputToCollection(RecipeCollectionInput input) {
         List<Recipe> recipes = new ArrayList<>();
-        for (String id : input.getRecipeIds()) {
-            Recipe recipe = recipeRepository.getReferenceById(Long.parseLong(id));
-            recipes.add(recipe);
+        for (Long id : input.getRecipeIds()) {
+            if (recipeRepository.existsById(id)) {
+                Recipe recipe = recipeRepository.getReferenceById(id);
+                recipes.add(recipe);
+            } else {
+                throw new EntityNotFoundException("Recipe with id: " + id + " not found");
+            }
         }
-        RecipeCollection collection = RecipeCollection.builder()
+        return  RecipeCollection.builder()
                 .collectionName(input.getCollectionName())
                 .recipes(recipes)
                 .build();
-        return repository.save(collection);
     }
 
     public RecipeCollectionOutput collectionToOutput(RecipeCollection collection) {
