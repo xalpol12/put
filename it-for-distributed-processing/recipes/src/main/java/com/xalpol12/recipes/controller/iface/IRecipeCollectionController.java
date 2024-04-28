@@ -32,6 +32,11 @@ public interface IRecipeCollectionController {
             @PathVariable("id") Long id,
             @RequestBody RecipeCollectionInput recipeCollectionInput);
 
+    @PatchMapping(RecipeCollectionPath.ROOT + "/{id}")
+    ResponseEntity<RecipeCollectionOutput> patchRecipeCollection (
+            @PathVariable("id") Long id,
+            @RequestBody RecipeCollectionInput recipeCollectionInput);
+
     @PostMapping(RecipeCollectionPath.ROOT + "-merges")
     ResponseEntity<RecipeCollectionOutput> mergeRecipeCollections(
             @RequestBody RecipeCollectionMergeRequest mergeRequest);

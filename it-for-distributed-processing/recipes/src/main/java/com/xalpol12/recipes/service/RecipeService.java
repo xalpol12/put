@@ -1,5 +1,6 @@
 package com.xalpol12.recipes.service;
 
+import com.xalpol12.recipes.exception.custom.IncompleteUpdateFormException;
 import com.xalpol12.recipes.model.Image;
 import com.xalpol12.recipes.model.Recipe;
 import com.xalpol12.recipes.model.RecipeCollection;
@@ -52,26 +53,65 @@ public class RecipeService {
     public RecipeOutput updateRecipe(Long id, RecipeInput recipeInput) {
         Recipe recipe = getRecipeOrThrow(id);
 
-        recipe.setEstimatedTime(recipeInput.getEstimatedTime());
-        recipe.setIngredients(recipeInput.getIngredients());
-        recipe.setDescriptions(recipeInput.getDescriptions());
+        try {
+            recipe.setEstimatedTime(recipeInput.getEstimatedTime());
+            recipe.setIngredients(recipeInput.getIngredients());
+            recipe.setDescriptions(recipeInput.getDescriptions());
 
+            recipe.setImages(getAllImageReferences(recipeInput.getImages()));
+
+            recipe.setCollections(getAllRecipeCollectionReferences(recipeInput.getRecipeCollections()));
+
+            repository.save(recipe);
+            return mapper.recipeToOutput(recipe);
+
+        } catch (NullPointerException e) {
+            throw new IncompleteUpdateFormException("Update form does not include all the entity's fields");
+        }
+    }
+
+    private List<Image> getAllImageReferences(List<String> uuids) {
         List<Image> images = new ArrayList<>();
-        for (String imageId : recipeInput.getImages()) {
+        for (String imageId : uuids) {
             Image image = imageRepository.getReferenceById(imageId);
             images.add(image);
         }
-        recipe.setImages(images);
+        return images;
+    }
 
+    private List<RecipeCollection> getAllRecipeCollectionReferences(List<Long> ids) {
         List<RecipeCollection> collections = new ArrayList<>();
-        for (Long collectionId : recipeInput.getRecipeCollections()) {
+        for (Long collectionId : ids) {
             RecipeCollection collection = recipeCollectionRepository.getReferenceById(collectionId);
             collections.add(collection);
         }
-        recipe.setCollections(collections);
+        return collections;
+    }
 
-        repository.save(recipe);
-        return mapper.recipeToOutput(recipe);
+    @Transactional
+    public RecipeOutput patchRecipe(Long id, RecipeInput patch) {
+        Recipe recipe = getRecipeOrThrow(id);
+
+        if (patch.getRecipeName() != null) {
+            recipe.setRecipeName(patch.getRecipeName());
+        }
+        if (patch.getEstimatedTime() != null) {
+            recipe.setEstimatedTime(patch.getEstimatedTime());
+        }
+        if (patch.getIngredients() != null) {
+            recipe.setIngredients(patch.getIngredients());
+        }
+        if (patch.getDescriptions() != null) {
+            recipe.setDescriptions(patch.getDescriptions());
+        }
+        if (patch.getImages() != null) {
+            recipe.setImages(getAllImageReferences(patch.getImages()));
+        }
+        if (patch.getRecipeCollections() != null) {
+            recipe.setCollections(getAllRecipeCollectionReferences(patch.getRecipeCollections()));
+        }
+
+        return mapper.recipeToOutput(repository.save(recipe));
     }
 
     private Recipe getRecipeOrThrow(Long id) {

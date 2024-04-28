@@ -1,6 +1,8 @@
 package com.xalpol12.recipes.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xalpol12.recipes.exception.custom.IncompleteUpdateFormException;
+import com.xalpol12.recipes.exception.custom.RecipeNotIncludedException;
 import com.xalpol12.recipes.model.Image;
 import com.xalpol12.recipes.model.Recipe;
 import com.xalpol12.recipes.model.dto.image.ImageInput;
@@ -42,6 +44,8 @@ public class ImageService {
     private void setName(Image image, MultipartFile file) {
         if (image.getName() == null) {
             image.setName(file.getOriginalFilename());
+        } else {
+            throw new IncompleteUpdateFormException("Form does not include all the entity's fields");
         }
     }
 
@@ -50,7 +54,7 @@ public class ImageService {
             Recipe recipe = findRecipeOrThrow(fileDetails.getRecipeId());
             image.setRecipe(recipe);
         } else {
-            throw new EntityNotFoundException("Null recipe id field!"); // TODO: change to null recipe id exception
+            throw new RecipeNotIncludedException("Did not include any recipe id! Image must be associated with a single, existing recipe.");
         }
     }
 
@@ -64,23 +68,42 @@ public class ImageService {
 
     public ImageOutput updateImageDetails(String uuid, ImageInput newDetails) {
         Image image = findImageOrThrow(uuid);
+        try {
+            image.setName(newDetails.getName());
+            setRecipe(image, newDetails);
+            return mapper.imageToOutput(repository.save(image));
+        } catch (NullPointerException e) {
+            throw new IncompleteUpdateFormException("Update form does not include all the entity's fields");
+        }
+    }
+
+    public ImageOutput patchImageDetails(String uuid, ImageInput newDetails) {
+        Image image = findImageOrThrow(uuid);
+
         if (newDetails.getName() != null) {
             image.setName(newDetails.getName());
         }
-        setRecipe(image, newDetails);
-        Image updatedImage = repository.save(image);
-        return mapper.imageToOutput(updatedImage);
+        if (newDetails.getRecipeId() != null) {
+            Recipe recipe = findRecipeOrThrow(newDetails.getRecipeId());
+            image.setRecipe(recipe);
+        }
+
+        return mapper.imageToOutput(repository.save(image));
     }
 
     public Image getImageData(String uuid) {
         return findImageOrThrow(uuid);
     }
 
-    public void updateImage(String uuid, MultipartFile file) throws IOException {
+    public void updateImage(String uuid, MultipartFile file) {
         Image image = findImageOrThrow(uuid);
-        image.setData(file.getBytes());
-        image.setType(file.getContentType());
-        repository.save(image);
+        try {
+            image.setData(file.getBytes());
+            image.setType(file.getContentType());
+            repository.save(image);
+        } catch (Exception e) {
+            throw new IncompleteUpdateFormException("Update form does not include all the entity's fields");
+        }
     }
 
     private Image findImageOrThrow(String uuid) {

@@ -1,6 +1,7 @@
 package com.xalpol12.recipes.controller;
 
 import com.xalpol12.recipes.controller.iface.IRecipeController;
+import com.xalpol12.recipes.exception.custom.IncompleteUpdateFormException;
 import com.xalpol12.recipes.model.dto.recipe.RecipeInput;
 import com.xalpol12.recipes.model.dto.recipe.RecipeOutput;
 import com.xalpol12.recipes.service.RecipeService;
@@ -53,6 +54,12 @@ public class RecipeController implements IRecipeController {
     @Override
     public ResponseEntity<RecipeOutput> updateRecipe(Long id, RecipeInput recipeInput) {
         RecipeOutput output = service.updateRecipe(id, recipeInput);
+        return ResponseEntity.ok(output);
+    }
+
+    @Override
+    public ResponseEntity<RecipeOutput> patchRecipe(Long id, RecipeInput recipeInput) {
+        RecipeOutput output = service.patchRecipe(id, recipeInput);
         return ResponseEntity.ok(output);
     }
 }

@@ -37,6 +37,10 @@ public interface IImageController {
     ResponseEntity<ImageOutput> updateImageDetails(@PathVariable("uuid") String uuid,
                                                    @RequestBody ImageInput newDetails);
 
+    @PatchMapping(ImagePath.ROOT + "/{uuid}")
+    ResponseEntity<ImageOutput> patchImageDetails(@PathVariable("uuid") String uuid,
+                                                   @RequestBody ImageInput newDetails);
+
     @GetMapping(ImagePath.ROOT + "/{uuid}/raw")
     ResponseEntity<byte[]> getFullImageData(@PathVariable("uuid") String uuid);
 

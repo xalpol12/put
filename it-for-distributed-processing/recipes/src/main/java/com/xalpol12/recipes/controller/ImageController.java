@@ -58,7 +58,11 @@ public class ImageController implements IImageController {
     @Override
     public ResponseEntity<ImageOutput> updateImageDetails(String uuid, ImageInput newDetails) {
         return ResponseEntity.ok(service.updateImageDetails(uuid, newDetails));
+    }
 
+    @Override
+    public ResponseEntity<ImageOutput> patchImageDetails(String uuid, ImageInput newDetails) {
+        return ResponseEntity.ok(service.patchImageDetails(uuid, newDetails));
     }
 
     @Override

@@ -28,4 +28,8 @@ public interface IRecipeController {
     @PutMapping(RecipePath.ROOT + "/{uuid}")
     ResponseEntity<RecipeOutput> updateRecipe(@PathVariable("uuid") Long id,
                                               @RequestBody RecipeInput recipeInput);
+
+    @PatchMapping(RecipePath.ROOT + "/{uuid}")
+    ResponseEntity<RecipeOutput> patchRecipe(@PathVariable("uuid") Long id,
+                                              @RequestBody RecipeInput recipeInput);
 }

@@ -1,5 +1,6 @@
 package com.xalpol12.recipes.service;
 
+import com.xalpol12.recipes.exception.custom.IncompleteUpdateFormException;
 import com.xalpol12.recipes.model.Recipe;
 import com.xalpol12.recipes.model.RecipeCollection;
 import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionInput;
@@ -53,23 +54,49 @@ public class RecipeCollectionService {
         RecipeCollection original = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Recipe collection with id: " + id + "could not be found."));
 
+        try {
+            List<Recipe> recipes = getAllRecipeCollectionReferences(input.getRecipeIds());
+
+            RecipeCollection updated = RecipeCollection.builder()
+                    .id(original.getId())
+                    .collectionName(input.getCollectionName())
+                    .recipes(recipes)
+                    .build();
+
+            return mapper.collectionToOutput(repository.save(updated));
+
+        } catch (NullPointerException e) {
+            throw new IncompleteUpdateFormException("Update form does not include all the entity's fields");
+        }
+    }
+
+    private List<Recipe> getAllRecipeCollectionReferences(List<Long> ids) {
         List<Recipe> recipes = new ArrayList<>();
-        for (Long recipeId : input.getRecipeIds()) {
+        for (Long recipeId : ids) {
             if (repository.existsById(recipeId)) {
                 Recipe recipe = recipeRepository.getReferenceById(recipeId);
                 recipes.add(recipe);
             } else {
-                throw new EntityNotFoundException("Recipe with id: " + id + " does not exist");
+                throw new EntityNotFoundException("Recipe with id: " + recipeId + " does not exist");
             }
         }
+        return recipes;
+    }
 
-        RecipeCollection updated = RecipeCollection.builder()
-                .id(original.getId())
-                .collectionName(input.getCollectionName())
-                .recipes(recipes)
-                .build();
+    @Transactional
+    public RecipeCollectionOutput patchRecipeCollection(Long id, RecipeCollectionInput input) {
+        RecipeCollection original = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Recipe collection with id: " + id + "could not be found."));
 
-        return mapper.collectionToOutput(repository.save(updated));
+        if (input.getCollectionName() != null) {
+            original.setCollectionName(input.getCollectionName());
+        }
+        if (input.getRecipeIds() != null) {
+            List<Recipe> recipes = getAllRecipeCollectionReferences(input.getRecipeIds());
+            original.setRecipes(recipes);
+        }
+
+        return mapper.collectionToOutput(repository.save(original));
     }
 
     @Transactional

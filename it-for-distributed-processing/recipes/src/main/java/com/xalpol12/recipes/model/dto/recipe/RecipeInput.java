@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class RecipeInput {
     private String recipeName;
-    private int estimatedTime;
+    private Integer estimatedTime;
     private List<Ingredient> ingredients;
     private List<TextParagraph> descriptions;
     private List<String> images;
