@@ -49,6 +49,9 @@ public class Image {
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;
 
+    @Version
+    private Integer version;
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;

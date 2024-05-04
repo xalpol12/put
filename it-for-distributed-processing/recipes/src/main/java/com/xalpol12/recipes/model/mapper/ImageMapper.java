@@ -14,7 +14,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = Image.class)
 public interface ImageMapper {
 
-    @Mapping(target = "name", source = "imageInput")
+    @Mapping(target = "name", source = "imageInput.name")
     @Mapping(target = "data", source = "file")
     @Mapping(target = "type", source = "file", qualifiedByName = "mapType")
     Image inputToImage(ImageInput imageInput, MultipartFile file);

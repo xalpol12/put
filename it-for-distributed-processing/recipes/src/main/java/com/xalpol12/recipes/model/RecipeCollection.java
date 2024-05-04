@@ -38,6 +38,9 @@ public class RecipeCollection {
     @ToString.Exclude
     private List<Recipe> recipes;
 
+    @Version
+    private Integer version;
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;

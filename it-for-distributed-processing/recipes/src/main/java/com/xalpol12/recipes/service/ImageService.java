@@ -35,18 +35,12 @@ public class ImageService {
 
     public ImageOutput uploadImage(ImageInput fileDetails, MultipartFile file) {
         Image image = mapper.inputToImage(fileDetails, file);
-        setName(image, file);
+        if (image.getName() == null) {
+            image.setName(file.getOriginalFilename());
+        }
         setRecipe(image, fileDetails);
         Image savedImage = repository.save(image);
         return mapper.imageToOutput(savedImage);
-    }
-
-    private void setName(Image image, MultipartFile file) {
-        if (image.getName() == null) {
-            image.setName(file.getOriginalFilename());
-        } else {
-            throw new IncompleteUpdateFormException("Form does not include all the entity's fields");
-        }
     }
 
     private void setRecipe(Image image, ImageInput fileDetails) {
