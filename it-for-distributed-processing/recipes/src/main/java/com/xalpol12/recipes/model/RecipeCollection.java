@@ -3,8 +3,6 @@ package com.xalpol12.recipes.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.validator.constraints.Length;
 
@@ -29,7 +27,6 @@ public class RecipeCollection {
     private String collectionName;
 
     @ManyToMany
-    @Cascade(CascadeType.REMOVE)
     @JoinTable(
             name = "recipe_collection_recipe",
             joinColumns = @JoinColumn(name = "recipe_collection_id"),

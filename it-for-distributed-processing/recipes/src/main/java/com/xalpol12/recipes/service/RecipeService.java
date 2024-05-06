@@ -64,9 +64,7 @@ public class RecipeService {
             recipe.setEstimatedTime(recipeInput.getEstimatedTime());
             recipe.setIngredients(recipeInput.getIngredients());
             recipe.setDescriptions(recipeInput.getDescriptions());
-
             recipe.setImages(getAllImageReferences(recipeInput.getImages()));
-
             recipe.setCollections(getAllRecipeCollectionReferences(recipeInput.getRecipeCollections()));
 
             repository.save(recipe);

@@ -9,10 +9,12 @@ import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionOutput;
 import com.xalpol12.recipes.model.mapper.RecipeCollectionMapper;
 import com.xalpol12.recipes.repository.RecipeCollectionRepository;
 import com.xalpol12.recipes.repository.RecipeRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -49,7 +51,8 @@ public class RecipeCollectionService {
     public void deleteRecipeCollection(Long id) {
             RecipeCollection collection = repository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException("Recipe collection with id: " + id + "does not exist"));
-            repository.deleteById(id);
+            collection.getRecipes().clear();
+            repository.delete(collection);
     }
 
     @Transactional
