@@ -5,7 +5,6 @@ import com.xalpol12.recipes.model.RecipeCollection;
 import com.xalpol12.recipes.model.dto.recipe.RecipeOutputShort;
 import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionInput;
 import com.xalpol12.recipes.model.dto.recipecollection.RecipeCollectionOutput;
-import com.xalpol12.recipes.repository.RecipeCollectionRepository;
 import com.xalpol12.recipes.repository.RecipeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

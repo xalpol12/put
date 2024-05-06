@@ -2,15 +2,12 @@ package com.xalpol12.recipes.model;
 
 import com.xalpol12.recipes.model.valueobject.Ingredient;
 import com.xalpol12.recipes.model.valueobject.TextParagraph;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 

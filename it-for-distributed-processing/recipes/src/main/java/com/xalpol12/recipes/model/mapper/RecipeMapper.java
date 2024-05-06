@@ -49,7 +49,7 @@ public abstract class RecipeMapper {
             }
         }
         return recipe;
-    };
+    }
 
     protected List<Image> stringToImage(RecipeInput value) {
         List<Image> images = new ArrayList<>();

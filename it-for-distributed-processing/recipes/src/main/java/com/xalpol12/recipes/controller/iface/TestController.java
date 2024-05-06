@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
     public static class TestPath {
         public static final String ROOT = "/api/test";
-        private TestPath() {};
+        private TestPath() {}
     }
 
     @GetMapping(TestPath.ROOT)
