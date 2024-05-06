@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.validator.constraints.Length;
 
@@ -40,7 +39,7 @@ public class Recipe {
     @ElementCollection
     private List<TextParagraph> descriptions;
 
-    @OneToMany(mappedBy = "recipe", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.REMOVE)
     @ToString.Exclude
     private List<Image> images;
 

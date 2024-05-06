@@ -54,6 +54,7 @@ public class RecipeService {
         Recipe recipe = getRecipeOrThrow(id);
 
         try {
+            recipe.setRecipeName(recipeInput.getRecipeName());
             recipe.setEstimatedTime(recipeInput.getEstimatedTime());
             recipe.setIngredients(recipeInput.getIngredients());
             recipe.setDescriptions(recipeInput.getDescriptions());
@@ -73,7 +74,9 @@ public class RecipeService {
     private List<Image> getAllImageReferences(List<String> uuids) {
         List<Image> images = new ArrayList<>();
         for (String imageId : uuids) {
-            Image image = imageRepository.getReferenceById(imageId);
+            Image image = imageRepository
+                    .findById(imageId)
+                    .orElseThrow(() -> new EntityNotFoundException("Could not find image with id: " + imageId));
             images.add(image);
         }
         return images;
@@ -82,7 +85,9 @@ public class RecipeService {
     private List<RecipeCollection> getAllRecipeCollectionReferences(List<Long> ids) {
         List<RecipeCollection> collections = new ArrayList<>();
         for (Long collectionId : ids) {
-            RecipeCollection collection = recipeCollectionRepository.getReferenceById(collectionId);
+            RecipeCollection collection = recipeCollectionRepository
+                    .findById(collectionId)
+                    .orElseThrow(() -> new EntityNotFoundException("Could not find collection with id: " + collectionId));
             collections.add(collection);
         }
         return collections;

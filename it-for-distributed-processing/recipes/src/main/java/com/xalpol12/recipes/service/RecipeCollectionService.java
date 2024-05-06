@@ -55,7 +55,7 @@ public class RecipeCollectionService {
                 .orElseThrow(() -> new EntityNotFoundException("Recipe collection with id: " + id + "could not be found."));
 
         try {
-            List<Recipe> recipes = getAllRecipeCollectionReferences(input.getRecipeIds());
+            List<Recipe> recipes = getAllRecipes(input.getRecipeIds());
 
             RecipeCollection updated = RecipeCollection.builder()
                     .id(original.getId())
@@ -70,15 +70,13 @@ public class RecipeCollectionService {
         }
     }
 
-    private List<Recipe> getAllRecipeCollectionReferences(List<Long> ids) {
+    private List<Recipe> getAllRecipes(List<Long> ids) {
         List<Recipe> recipes = new ArrayList<>();
         for (Long recipeId : ids) {
-            if (repository.existsById(recipeId)) {
-                Recipe recipe = recipeRepository.getReferenceById(recipeId);
-                recipes.add(recipe);
-            } else {
-                throw new EntityNotFoundException("Recipe with id: " + recipeId + " does not exist");
-            }
+            Recipe recipe = recipeRepository
+                    .findById(recipeId)
+                    .orElseThrow(() -> new EntityNotFoundException("Recipe with id: " + recipeId + " does not exist"));
+            recipes.add(recipe);
         }
         return recipes;
     }
@@ -92,7 +90,7 @@ public class RecipeCollectionService {
             original.setCollectionName(input.getCollectionName());
         }
         if (input.getRecipeIds() != null) {
-            List<Recipe> recipes = getAllRecipeCollectionReferences(input.getRecipeIds());
+            List<Recipe> recipes = getAllRecipes(input.getRecipeIds());
             original.setRecipes(recipes);
         }
 

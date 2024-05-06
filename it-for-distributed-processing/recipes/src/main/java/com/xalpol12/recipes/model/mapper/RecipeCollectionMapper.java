@@ -17,19 +17,16 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class RecipeCollectionMapper {
-    private final RecipeCollectionRepository repository;
     private final RecipeRepository recipeRepository;
     private final RecipeMapper recipeMapper;
 
     public RecipeCollection inputToCollection(RecipeCollectionInput input) {
         List<Recipe> recipes = new ArrayList<>();
         for (Long id : input.getRecipeIds()) {
-            if (recipeRepository.existsById(id)) {
-                Recipe recipe = recipeRepository.getReferenceById(id);
-                recipes.add(recipe);
-            } else {
-                throw new EntityNotFoundException("Recipe with id: " + id + " not found");
-            }
+            Recipe recipe = recipeRepository
+                    .findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Recipe with id: " + id + " not found"));
+            recipes.add(recipe);
         }
         return  RecipeCollection.builder()
                 .collectionName(input.getCollectionName())
