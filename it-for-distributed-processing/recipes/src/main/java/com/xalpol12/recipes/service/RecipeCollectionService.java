@@ -57,19 +57,17 @@ public class RecipeCollectionService {
 
     @Transactional
     public RecipeCollectionOutput updateRecipeCollection(Long id, RecipeCollectionInput input) {
-        RecipeCollection original = repository.findById(id)
+        RecipeCollection collection = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Recipe collection with id: " + id + "could not be found."));
 
         try {
             List<Recipe> recipes = getAllRecipes(input.getRecipeIds());
 
-            RecipeCollection updated = RecipeCollection.builder()
-                    .id(original.getId())
-                    .collectionName(input.getCollectionName())
-                    .recipes(recipes)
-                    .build();
+            collection.setCollectionName(input.getCollectionName());
+            collection.setRecipes(recipes);
 
-            return mapper.collectionToOutput(repository.save(updated));
+            repository.save(collection);
+            return mapper.collectionToOutput(collection);
 
         } catch (NullPointerException e) {
             throw new IncompleteUpdateFormException("Update form does not include all the entity's fields");
