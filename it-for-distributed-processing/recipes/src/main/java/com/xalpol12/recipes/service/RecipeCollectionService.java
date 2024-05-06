@@ -45,8 +45,11 @@ public class RecipeCollectionService {
         return mapper.collectionToOutput(repository.save(collection));
     }
 
+    @Transactional
     public void deleteRecipeCollection(Long id) {
-        repository.deleteById(id);
+            RecipeCollection collection = repository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Recipe collection with id: " + id + "does not exist"));
+            repository.deleteById(id);
     }
 
     @Transactional

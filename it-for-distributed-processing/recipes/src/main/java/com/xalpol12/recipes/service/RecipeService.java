@@ -46,7 +46,13 @@ public class RecipeService {
     }
 
     public void deleteRecipe(Long id) {
-        repository.deleteById(id);
+        Recipe recipe = repository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Recipe with id: " + id + " does not exist"));
+        for (RecipeCollection collection : recipe.getCollections()) {
+            collection.getRecipes().remove(recipe);
+        }
+        repository.delete(recipe);
     }
 
     @Transactional

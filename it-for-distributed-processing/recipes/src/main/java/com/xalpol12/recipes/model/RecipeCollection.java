@@ -29,7 +29,7 @@ public class RecipeCollection {
     private String collectionName;
 
     @ManyToMany
-    @Cascade(CascadeType.REFRESH)
+    @Cascade(CascadeType.REMOVE)
     @JoinTable(
             name = "recipe_collection_recipe",
             joinColumns = @JoinColumn(name = "recipe_collection_id"),
