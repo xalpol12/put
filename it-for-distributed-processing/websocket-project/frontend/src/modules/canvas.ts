@@ -1,3 +1,15 @@
+export type StrokeStyle =
+    | string
+    | CanvasGradient
+    | CanvasPattern;
+
+export interface Point {
+    x: number;
+    y: number;
+}
+
+let frameCounter = 0;
+
 export function createCanvas(): void {
     window.addEventListener('DOMContentLoaded', () => {
         const parent = document.getElementById('canvas-flexbox');
@@ -52,11 +64,29 @@ export function createCanvas(): void {
             ctx.lineCap = 'round';
             ctx.strokeStyle = '#c0392b';
 
-            ctx.moveTo(pos.x, pos.y) // from
+            const from = {
+                x: pos.x,
+                y: pos.y
+            };
+            ctx.moveTo(from.x, from.y) // from
             setPosition(e);
-            ctx.lineTo(pos.x, pos.y) // to
 
+            const to = {
+                x: pos.x,
+                y: pos.y
+            };
+            ctx.lineTo(to.x, to.y)
+            logFrame(ctx.lineWidth, ctx.lineCap, ctx.strokeStyle, from, to);
             ctx.stroke(); // draw
+        }
+
+        function logFrame(lineWidth: number, lineCap: CanvasLineCap,
+            strokeStyle: StrokeStyle,
+            from: Point, to: Point) {
+            frameCounter++;
+            console.log(`Frame #${frameCounter}, lineWidth: ${lineWidth}, lineCap: ${lineCap}, strokeStyle: ${strokeStyle}, 
+                            from: (${from.x}, ${from.y}); to: (${to.x}, ${to.y})`)
+
         }
     });
 }

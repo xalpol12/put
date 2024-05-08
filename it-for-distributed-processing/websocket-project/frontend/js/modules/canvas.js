@@ -1,3 +1,4 @@
+let frameCounter = 0;
 export function createCanvas() {
     window.addEventListener('DOMContentLoaded', () => {
         const parent = document.getElementById('canvas-flexbox');
@@ -43,10 +44,24 @@ export function createCanvas() {
             ctx.lineWidth = 5;
             ctx.lineCap = 'round';
             ctx.strokeStyle = '#c0392b';
-            ctx.moveTo(pos.x, pos.y); // from
+            const from = {
+                x: pos.x,
+                y: pos.y
+            };
+            ctx.moveTo(from.x, from.y); // from
             setPosition(e);
-            ctx.lineTo(pos.x, pos.y); // to
+            const to = {
+                x: pos.x,
+                y: pos.y
+            };
+            ctx.lineTo(to.x, to.y);
+            logFrame(ctx.lineWidth, ctx.lineCap, ctx.strokeStyle, from, to);
             ctx.stroke(); // draw
+        }
+        function logFrame(lineWidth, lineCap, strokeStyle, from, to) {
+            frameCounter++;
+            console.log(`Frame #${frameCounter}, lineWidth: ${lineWidth}, lineCap: ${lineCap}, strokeStyle: ${strokeStyle}, 
+                            from: (${from.x}, ${from.y}); to: (${to.x}, ${to.y})`);
         }
     });
 }
