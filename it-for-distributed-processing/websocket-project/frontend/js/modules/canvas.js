@@ -1,3 +1,4 @@
+import { sendStringMessage } from "./ws-client.js";
 let frameCounter = 0;
 export function createCanvas() {
     window.addEventListener('DOMContentLoaded', () => {
@@ -40,6 +41,7 @@ export function createCanvas() {
                 console.warn("ctx null in canvas.js draw() func");
                 return;
             }
+            frameCounter++;
             ctx.beginPath();
             ctx.lineWidth = 5;
             ctx.lineCap = 'round';
@@ -55,13 +57,21 @@ export function createCanvas() {
                 y: pos.y
             };
             ctx.lineTo(to.x, to.y);
-            logFrame(ctx.lineWidth, ctx.lineCap, ctx.strokeStyle, from, to);
+            const frame = {
+                frameId: frameCounter,
+                lineWidth: ctx.lineWidth,
+                lineCap: ctx.lineCap,
+                strokeStyle: ctx.strokeStyle,
+                from: from,
+                to: to
+            };
+            logFrame(frame);
+            sendStringMessage(JSON.stringify(frame));
             ctx.stroke(); // draw
         }
-        function logFrame(lineWidth, lineCap, strokeStyle, from, to) {
-            frameCounter++;
-            console.log(`Frame #${frameCounter}, lineWidth: ${lineWidth}, lineCap: ${lineCap}, strokeStyle: ${strokeStyle}, 
-                            from: (${from.x}, ${from.y}); to: (${to.x}, ${to.y})`);
+        function logFrame(frame) {
+            console.log(`Frame #${frame.frameId}, lineWidth: ${frame.lineWidth}, lineCap: ${frame.lineCap}, strokeStyle: ${frame.strokeStyle}, 
+                            from: (${frame.from.x}, ${frame.from.y}); to: (${frame.to.x}, ${frame.to.y})`);
         }
     });
 }

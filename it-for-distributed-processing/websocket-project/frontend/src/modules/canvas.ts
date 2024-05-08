@@ -1,12 +1,5 @@
-export type StrokeStyle =
-    | string
-    | CanvasGradient
-    | CanvasPattern;
-
-export interface Point {
-    x: number;
-    y: number;
-}
+import { PointFrame } from "./model/point-frame.js";
+import { sendStringMessage } from "./ws-client.js";
 
 let frameCounter = 0;
 
@@ -58,6 +51,7 @@ export function createCanvas(): void {
                 return;
             }
 
+            frameCounter++;
             ctx.beginPath();
 
             ctx.lineWidth = 5;
@@ -76,16 +70,23 @@ export function createCanvas(): void {
                 y: pos.y
             };
             ctx.lineTo(to.x, to.y)
-            logFrame(ctx.lineWidth, ctx.lineCap, ctx.strokeStyle, from, to);
+
+            const frame = {
+                frameId: frameCounter,
+                lineWidth: ctx.lineWidth,
+                lineCap: ctx.lineCap,
+                strokeStyle: ctx.strokeStyle,
+                from: from,
+                to: to
+            }
+            logFrame(frame);
+            sendStringMessage(JSON.stringify(frame));
             ctx.stroke(); // draw
         }
 
-        function logFrame(lineWidth: number, lineCap: CanvasLineCap,
-            strokeStyle: StrokeStyle,
-            from: Point, to: Point) {
-            frameCounter++;
-            console.log(`Frame #${frameCounter}, lineWidth: ${lineWidth}, lineCap: ${lineCap}, strokeStyle: ${strokeStyle}, 
-                            from: (${from.x}, ${from.y}); to: (${to.x}, ${to.y})`)
+        function logFrame(frame: PointFrame) {
+            console.log(`Frame #${frame.frameId}, lineWidth: ${frame.lineWidth}, lineCap: ${frame.lineCap}, strokeStyle: ${frame.strokeStyle}, 
+                            from: (${frame.from.x}, ${frame.from.y}); to: (${frame.to.x}, ${frame.to.y})`)
 
         }
     });
