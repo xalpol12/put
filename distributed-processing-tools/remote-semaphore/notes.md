@@ -4,3 +4,5 @@ Usługę należy zaimplementować w oparciu o jedno z podejść:
 - ONC RPC (czyli Sun RPC),
 - gRPC,
 - Java RMI,
+
+[SO thread](https://stackoverflow.com/questions/33766797/how-to-implement-a-semaphore)
