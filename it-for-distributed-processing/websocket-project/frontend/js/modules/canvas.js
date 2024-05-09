@@ -1,4 +1,4 @@
-import { sendStringMessage } from "./ws-client.js";
+import { sendStringMessage, getClientId } from "./ws-client.js";
 let frameCounter = 0;
 let strokeFrame;
 let isDrawing = false;
@@ -75,7 +75,13 @@ export function createCanvas() {
             ctx.stroke(); // draw
         }
         function initializeStrokeFrame(lineWidth, lineCap, strokeStyle) {
+            let id = getClientId();
+            if (id === undefined) {
+                console.error("Client id:", id);
+                return;
+            }
             strokeFrame = {
+                senderId: id,
                 lineWidth: lineWidth,
                 lineCap: lineCap,
                 strokeStyle: strokeStyle,

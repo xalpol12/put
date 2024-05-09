@@ -1,5 +1,5 @@
 import { PointFrame, StrokeFrame, StrokeStyle } from "./model/point-frame.js";
-import { sendStringMessage } from "./ws-client.js";
+import { sendStringMessage, getClientId } from "./ws-client.js";
 
 let frameCounter = 0;
 let strokeFrame: StrokeFrame;
@@ -90,7 +90,13 @@ export function createCanvas(): void {
         }
 
         function initializeStrokeFrame(lineWidth: number, lineCap: CanvasLineCap, strokeStyle: StrokeStyle) {
+            let id = getClientId();
+            if (id === undefined) {
+                console.error("Client id:", id);
+                return;
+            }
             strokeFrame = {
+                senderId: id,
                 lineWidth: lineWidth,
                 lineCap: lineCap,
                 strokeStyle: strokeStyle,

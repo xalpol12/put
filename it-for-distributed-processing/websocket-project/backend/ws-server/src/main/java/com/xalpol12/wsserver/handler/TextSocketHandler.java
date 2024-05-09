@@ -29,9 +29,14 @@ public class TextSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        String id = session.getId();
+        log.info(id + " joined");
+
         sessions.add(session);
-        log.info(session.getId() + " joined");
         log.info("Currently users: {}", sessions.size());
+
+        TextMessage ack = new TextMessage(id);
+        session.sendMessage(ack);
         super.afterConnectionEstablished(session);
     }
 

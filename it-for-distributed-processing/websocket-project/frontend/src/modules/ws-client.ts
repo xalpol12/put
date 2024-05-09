@@ -1,4 +1,5 @@
 let ws: WebSocket;
+let clientId: string;
 
 export function initWS() {
     ws = new WebSocket('ws://localhost:8081/name');
@@ -10,11 +11,17 @@ export function initWS() {
 
     function onConnect(e: Event) {
         console.log(e.type);
-        ws.send("Hello");
     }
 
     function onMessage(e: MessageEvent) {
-        console.log(`${e.type} ${e.data}`);
+        if (clientId === null || clientId === undefined) {
+            clientId = e.data;
+            console.log(`clientId = ${clientId}`);
+        } else {
+            if (e.data.senderId != clientId) { //assuming frame is StrokeFrame type
+                console.log(`${e.type} ${e.data}`);
+            }
+        }
     }
 
     function onError(e: Event) {
@@ -35,4 +42,10 @@ export function sendStringMessage(m: string) {
     } else {
         console.error('WebSocket connection not open.');
     }
+}
+
+export function getClientId(): string | undefined {
+    if (clientId === null || clientId === undefined) {
+        return undefined;
+    } else return clientId;
 }

@@ -1,4 +1,5 @@
 export interface StrokeFrame {
+    senderId: string,
     lineWidth: number,
     lineCap: CanvasLineCap,
     strokeStyle: StrokeStyle,
