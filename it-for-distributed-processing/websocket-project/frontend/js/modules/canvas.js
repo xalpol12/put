@@ -1,6 +1,6 @@
 import { sendStringMessage } from "./ws-client.js";
 let frameCounter = 0;
-let frameBuffer = [];
+let strokeFrame;
 let isDrawing = false;
 export function createCanvas() {
     window.addEventListener('DOMContentLoaded', () => {
@@ -46,18 +46,19 @@ export function createCanvas() {
             }
             if (!isDrawing) {
                 isDrawing = true;
+                ctx.lineWidth = 5;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = '#c0392b';
                 console.log("isDrawing = true");
+                initializeStrokeFrame(ctx.lineWidth, ctx.lineCap, ctx.strokeStyle);
             }
             frameCounter++;
             ctx.beginPath();
-            ctx.lineWidth = 5;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = '#c0392b';
             const from = {
                 x: pos.x,
                 y: pos.y
             };
-            ctx.moveTo(from.x, from.y); // from
+            ctx.moveTo(from.x, from.y);
             setPosition(e);
             const to = {
                 x: pos.x,
@@ -66,28 +67,28 @@ export function createCanvas() {
             ctx.lineTo(to.x, to.y);
             const frame = {
                 frameId: frameCounter,
-                lineWidth: ctx.lineWidth,
-                lineCap: ctx.lineCap,
-                strokeStyle: ctx.strokeStyle,
                 from: from,
                 to: to
             };
-            frameBuffer.push(frame);
+            strokeFrame.points.push(frame);
             //logFrame(frame);
             ctx.stroke(); // draw
         }
-        function logFrame(frame) {
-            console.log(`Frame #${frame.frameId}, lineWidth: ${frame.lineWidth}, lineCap: ${frame.lineCap}, strokeStyle: ${frame.strokeStyle}, 
-                            from: (${frame.from.x}, ${frame.from.y}); to: (${frame.to.x}, ${frame.to.y})`);
+        function initializeStrokeFrame(lineWidth, lineCap, strokeStyle) {
+            strokeFrame = {
+                lineWidth: lineWidth,
+                lineCap: lineCap,
+                strokeStyle: strokeStyle,
+                points: []
+            };
         }
         function sendFrames() {
             if (!isDrawing)
                 return;
             console.log("isDrawing = false");
-            sendStringMessage(JSON.stringify(frameBuffer));
+            sendStringMessage(JSON.stringify(strokeFrame));
             isDrawing = false;
-            console.log(`Sent ${frameBuffer.length} frames`);
-            frameBuffer = [];
+            console.log(`Sent ${strokeFrame.points.length} frames`);
         }
     });
 }

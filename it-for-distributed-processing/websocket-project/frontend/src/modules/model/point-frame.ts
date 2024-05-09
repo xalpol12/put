@@ -1,8 +1,12 @@
-export interface PointFrame {
-    frameId: number,
+export interface StrokeFrame {
     lineWidth: number,
     lineCap: CanvasLineCap,
     strokeStyle: StrokeStyle,
+    points: PointFrame[]
+}
+
+export interface PointFrame {
+    frameId: number,
     from: Point,
     to: Point
 };
