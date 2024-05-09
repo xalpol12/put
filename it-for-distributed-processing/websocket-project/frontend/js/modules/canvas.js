@@ -1,5 +1,7 @@
 import { sendStringMessage } from "./ws-client.js";
 let frameCounter = 0;
+let frameBuffer = [];
+let isDrawing = false;
 export function createCanvas() {
     window.addEventListener('DOMContentLoaded', () => {
         const parent = document.getElementById('canvas-flexbox');
@@ -18,6 +20,7 @@ export function createCanvas() {
         window.addEventListener('resize', resize);
         document.addEventListener('mousemove', draw);
         document.addEventListener('mousedown', setPosition);
+        document.addEventListener('mouseup', sendFrames);
         document.addEventListener('mouseenter', setPosition);
         function resize() {
             if (!parent) {
@@ -40,6 +43,10 @@ export function createCanvas() {
             if (ctx === null) {
                 console.warn("ctx null in canvas.js draw() func");
                 return;
+            }
+            if (!isDrawing) {
+                isDrawing = true;
+                console.log("isDrawing = true");
             }
             frameCounter++;
             ctx.beginPath();
@@ -65,13 +72,22 @@ export function createCanvas() {
                 from: from,
                 to: to
             };
-            logFrame(frame);
-            sendStringMessage(JSON.stringify(frame));
+            frameBuffer.push(frame);
+            //logFrame(frame);
             ctx.stroke(); // draw
         }
         function logFrame(frame) {
             console.log(`Frame #${frame.frameId}, lineWidth: ${frame.lineWidth}, lineCap: ${frame.lineCap}, strokeStyle: ${frame.strokeStyle}, 
                             from: (${frame.from.x}, ${frame.from.y}); to: (${frame.to.x}, ${frame.to.y})`);
+        }
+        function sendFrames() {
+            if (!isDrawing)
+                return;
+            console.log("isDrawing = false");
+            sendStringMessage(JSON.stringify(frameBuffer));
+            isDrawing = false;
+            console.log(`Sent ${frameBuffer.length} frames`);
+            frameBuffer = [];
         }
     });
 }
