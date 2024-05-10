@@ -44,14 +44,6 @@ export function createCanvas() {
                 console.warn("ctx null in canvas.js draw() func");
                 return;
             }
-            if (!isDrawing) {
-                isDrawing = true;
-                ctx.lineWidth = 5;
-                ctx.lineCap = 'round';
-                ctx.strokeStyle = '#c0392b';
-                console.log("isDrawing = true");
-                initializeStrokeFrame(ctx.lineWidth, ctx.lineCap, ctx.strokeStyle);
-            }
             frameCounter++;
             ctx.beginPath();
             const from = {
@@ -67,14 +59,20 @@ export function createCanvas() {
             ctx.lineTo(to.x, to.y);
             const frame = {
                 frameId: frameCounter,
-                from: from,
                 to: to
             };
+            if (!isDrawing) { // init new frame when drawing started
+                isDrawing = true;
+                ctx.lineWidth = 5;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = '#c0392b';
+                initializeStrokeFrame(ctx.lineWidth, ctx.lineCap, ctx.strokeStyle, from);
+                console.log("isDrawing = true");
+            }
             strokeFrame.points.push(frame);
-            //logFrame(frame);
-            ctx.stroke(); // draw
+            ctx.stroke();
         }
-        function initializeStrokeFrame(lineWidth, lineCap, strokeStyle) {
+        function initializeStrokeFrame(lineWidth, lineCap, strokeStyle, from) {
             let id = getClientId();
             if (id === undefined) {
                 console.error("Client id:", id);
@@ -85,6 +83,7 @@ export function createCanvas() {
                 lineWidth: lineWidth,
                 lineCap: lineCap,
                 strokeStyle: strokeStyle,
+                from: from,
                 points: []
             };
         }
@@ -97,4 +96,28 @@ export function createCanvas() {
             console.log(`Sent ${strokeFrame.points.length} frames`);
         }
     });
+}
+export function drawFromFrame(strokeFrame) {
+    const canvas = document.getElementById('drawing-canvas');
+    if (!canvas) {
+        console.warn("Canvas element 'drawing-canvas' is null");
+        return;
+    }
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+        console.warn("Canvas context not supported");
+        return;
+    }
+    ctx.lineWidth = strokeFrame.lineWidth;
+    ctx.lineCap = strokeFrame.lineCap;
+    ctx.strokeStyle = strokeFrame.strokeStyle;
+    const points = strokeFrame.points;
+    if (points.length > 0) {
+        ctx.beginPath();
+        ctx.moveTo(strokeFrame.from.x, strokeFrame.from.y);
+        for (let i = 1; i < points.length; i++) {
+            ctx.lineTo(points[i].to.x, points[i].to.y);
+        }
+        ctx.stroke();
+    }
 }

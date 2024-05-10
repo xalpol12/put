@@ -1,3 +1,6 @@
+import { drawFromFrame } from "./canvas.js";
+import { StrokeFrame } from "./model/point-frame.js";
+
 let ws: WebSocket;
 let clientId: string;
 
@@ -18,10 +21,24 @@ export function initWS() {
             clientId = e.data;
             console.log(`clientId = ${clientId}`);
         } else {
-            if (e.data.senderId != clientId) { //assuming frame is StrokeFrame type
-                console.log(`${e.type} ${e.data}`);
+            const strokeFrame: StrokeFrame = JSON.parse(e.data);
+            if (strokeFrame.senderId !== clientId) {
+                drawFromFrame(strokeFrame);
+                //logFrame(strokeFrame);
             }
         }
+    }
+
+    function logFrame(strokeFrame: StrokeFrame) {
+        console.log(`Sender ID: ${strokeFrame.senderId}`);
+        console.log(`Line Width: ${strokeFrame.lineWidth}`);
+        console.log(`Line Cap: ${strokeFrame.lineCap}`);
+        console.log(`Stroke Style: ${strokeFrame.strokeStyle}`);
+        strokeFrame.points.forEach((pointFrame) => {
+            console.log(`Frame ID: ${pointFrame.frameId}`);
+            console.log(`From: (${pointFrame.from.x}, ${pointFrame.from.y})`);
+            console.log(`To: (${pointFrame.to.x}, ${pointFrame.to.y})`);
+        });
     }
 
     function onError(e: Event) {

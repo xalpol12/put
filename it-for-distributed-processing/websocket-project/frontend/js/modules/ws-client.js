@@ -1,3 +1,4 @@
+import { drawFromFrame } from "./canvas.js";
 let ws;
 let clientId;
 export function initWS() {
@@ -15,10 +16,23 @@ export function initWS() {
             console.log(`clientId = ${clientId}`);
         }
         else {
-            if (e.data.senderId != clientId) { //assuming frame is StrokeFrame type
-                console.log(`${e.type} ${e.data}`);
+            const strokeFrame = JSON.parse(e.data);
+            if (strokeFrame.senderId !== clientId) {
+                drawFromFrame(strokeFrame);
+                //logFrame(strokeFrame);
             }
         }
+    }
+    function logFrame(strokeFrame) {
+        console.log(`Sender ID: ${strokeFrame.senderId}`);
+        console.log(`Line Width: ${strokeFrame.lineWidth}`);
+        console.log(`Line Cap: ${strokeFrame.lineCap}`);
+        console.log(`Stroke Style: ${strokeFrame.strokeStyle}`);
+        strokeFrame.points.forEach((pointFrame) => {
+            console.log(`Frame ID: ${pointFrame.frameId}`);
+            console.log(`From: (${pointFrame.from.x}, ${pointFrame.from.y})`);
+            console.log(`To: (${pointFrame.to.x}, ${pointFrame.to.y})`);
+        });
     }
     function onError(e) {
         console.log(e.type);

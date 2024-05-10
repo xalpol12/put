@@ -1,4 +1,4 @@
-import { PointFrame, StrokeFrame, StrokeStyle } from "./model/point-frame.js";
+import { Point, PointFrame, StrokeFrame, StrokeStyle } from "./model/point-frame.js";
 import { sendStringMessage, getClientId } from "./ws-client.js";
 
 let frameCounter = 0;
@@ -53,19 +53,9 @@ export function createCanvas(): void {
                 console.warn("ctx null in canvas.js draw() func")
                 return;
             }
-            if (!isDrawing) {
-                isDrawing = true;
-                ctx.lineWidth = 5;
-                ctx.lineCap = 'round';
-                ctx.strokeStyle = '#c0392b';
-                console.log("isDrawing = true");
-                initializeStrokeFrame(ctx.lineWidth, ctx.lineCap, ctx.strokeStyle);
-            }
 
             frameCounter++;
             ctx.beginPath();
-
-
             const from = {
                 x: pos.x,
                 y: pos.y
@@ -81,15 +71,22 @@ export function createCanvas(): void {
 
             const frame: PointFrame = {
                 frameId: frameCounter,
-                from: from,
                 to: to
             }
+
+            if (!isDrawing) { // init new frame when drawing started
+                isDrawing = true;
+                ctx.lineWidth = 5;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = '#c0392b';
+                initializeStrokeFrame(ctx.lineWidth, ctx.lineCap, ctx.strokeStyle, from);
+                console.log("isDrawing = true");
+            }
             strokeFrame.points.push(frame);
-            //logFrame(frame);
-            ctx.stroke(); // draw
+            ctx.stroke();
         }
 
-        function initializeStrokeFrame(lineWidth: number, lineCap: CanvasLineCap, strokeStyle: StrokeStyle) {
+        function initializeStrokeFrame(lineWidth: number, lineCap: CanvasLineCap, strokeStyle: StrokeStyle, from: Point) {
             let id = getClientId();
             if (id === undefined) {
                 console.error("Client id:", id);
@@ -100,6 +97,7 @@ export function createCanvas(): void {
                 lineWidth: lineWidth,
                 lineCap: lineCap,
                 strokeStyle: strokeStyle,
+                from: from,
                 points: []
             }
         }
@@ -114,3 +112,30 @@ export function createCanvas(): void {
     });
 }
 
+export function drawFromFrame(strokeFrame: StrokeFrame) {
+    const canvas = document.getElementById('drawing-canvas') as HTMLCanvasElement;
+    if (!canvas) {
+        console.warn("Canvas element 'drawing-canvas' is null");
+        return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+        console.warn("Canvas context not supported");
+        return;
+    }
+
+    ctx.lineWidth = strokeFrame.lineWidth;
+    ctx.lineCap = strokeFrame.lineCap;
+    ctx.strokeStyle = strokeFrame.strokeStyle;
+
+    const points = strokeFrame.points;
+    if (points.length > 0) {
+        ctx.beginPath();
+        ctx.moveTo(strokeFrame.from.x, strokeFrame.from.y);
+        for (let i = 1; i < points.length; i++) {
+            ctx.lineTo(points[i].to.x, points[i].to.y);
+        }
+        ctx.stroke();
+    }
+}
