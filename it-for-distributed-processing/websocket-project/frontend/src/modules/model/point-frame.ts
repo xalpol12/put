@@ -3,12 +3,12 @@ export interface StrokeFrame {
     lineWidth: number,
     lineCap: CanvasLineCap,
     strokeStyle: StrokeStyle,
+    from: Point,
     points: PointFrame[]
 }
 
 export interface PointFrame {
     frameId: number,
-    from: Point,
     to: Point
 };
 

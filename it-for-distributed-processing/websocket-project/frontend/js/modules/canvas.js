@@ -1,8 +1,33 @@
-import { sendStringMessage, getClientId } from "./ws-client.js";
+import { sendStringMessage } from "./ws-service.js";
+let ws;
 let frameCounter = 0;
 let strokeFrame;
 let isDrawing = false;
-export function createCanvas() {
+export function createCanvas(clientId) {
+    function initDrawConnection() {
+        ws = new WebSocket('ws://localhost:8081/draw');
+        ws.onopen = (e) => { console.log(e.type); };
+        ws.onmessage = (e) => {
+            const strokeFrame = JSON.parse(e.data);
+            logFrame(strokeFrame);
+            drawFromFrame(strokeFrame);
+        };
+        ws.onerror = (e) => { console.log(e.type); };
+        ws.onclose = (e) => {
+            console.log(`Code: ${e.code}, reason: ${e.reason}`);
+            ws.close();
+        };
+        function logFrame(strokeFrame) {
+            console.log(`Sender ID: ${strokeFrame.senderId}`);
+            console.log(`Line Width: ${strokeFrame.lineWidth}`);
+            console.log(`Line Cap: ${strokeFrame.lineCap}`);
+            console.log(`Stroke Style: ${strokeFrame.strokeStyle}`);
+            strokeFrame.points.forEach((pointFrame) => {
+                console.log(`Frame ID: ${pointFrame.frameId}`);
+                console.log(`To: (${pointFrame.to.x}, ${pointFrame.to.y})`);
+            });
+        }
+    }
     window.addEventListener('DOMContentLoaded', () => {
         const parent = document.getElementById('canvas-flexbox');
         const canvas = document.getElementById('drawing-canvas');
@@ -22,6 +47,7 @@ export function createCanvas() {
         document.addEventListener('mousedown', setPosition);
         document.addEventListener('mouseup', sendFrames);
         document.addEventListener('mouseenter', setPosition);
+        initDrawConnection();
         function resize() {
             if (!parent) {
                 console.warn("canvas-container is null");
@@ -73,13 +99,12 @@ export function createCanvas() {
             ctx.stroke();
         }
         function initializeStrokeFrame(lineWidth, lineCap, strokeStyle, from) {
-            let id = getClientId();
-            if (id === undefined) {
-                console.error("Client id:", id);
+            if (clientId === undefined) {
+                console.error("Client id:", clientId);
                 return;
             }
             strokeFrame = {
-                senderId: id,
+                senderId: clientId,
                 lineWidth: lineWidth,
                 lineCap: lineCap,
                 strokeStyle: strokeStyle,
@@ -91,7 +116,7 @@ export function createCanvas() {
             if (!isDrawing)
                 return;
             console.log("isDrawing = false");
-            sendStringMessage(JSON.stringify(strokeFrame));
+            sendStringMessage(ws, JSON.stringify(strokeFrame));
             isDrawing = false;
             console.log(`Sent ${strokeFrame.points.length} frames`);
         }
