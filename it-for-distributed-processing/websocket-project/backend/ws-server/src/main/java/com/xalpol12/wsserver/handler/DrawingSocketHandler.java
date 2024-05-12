@@ -8,7 +8,9 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -20,7 +22,7 @@ public class DrawingSocketHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         sessionService.addToDrawnFrames(message); // save frame in history
-        List<WebSocketSession> sessions = sessionService.getSessions();
+        Collection<WebSocketSession> sessions = sessionService.getSessions();
         for (WebSocketSession s: sessions) {
             if (!session.getId().equals(s.getId())) { // do not transmit to the one that sent a frame
                 s.sendMessage(message);
@@ -28,13 +30,4 @@ public class DrawingSocketHandler extends TextWebSocketHandler {
         }
         log.info("Message {} sent to {} clients", message, sessions.size());
     }
-
-   // @Override
-   // public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-   //     // TODO: change to store session here
-   //     sessions.remove(session);
-   //     log.info(session.getId() + " disconnected");
-   //     log.info("Currently users: {}", sessions.size());
-   //     super.afterConnectionClosed(session, status);
-   // }
 }
