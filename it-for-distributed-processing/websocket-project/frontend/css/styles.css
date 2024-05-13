@@ -5,9 +5,17 @@
     overflow: hidden;
 }
 
-.page-container {
+.container {
     display: flex;
     flex-direction: column;
+}
+
+.page {
+    display: none;
+}
+
+.active {
+    display: block;
 }
 
 .title {

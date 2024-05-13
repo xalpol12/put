@@ -11,34 +11,26 @@
 </head>
 
 <body>
-    <div class="page-container">
+    <div id="container" class="container">
 
-        <div class="title">
+        <div id="home" class="title page">
             <h1>Kalambury</h1>
+            <button id="joinButton">Join</button>
+            <button id="hostButton">Host</button>
         </div>
 
-        <div class="main-flexbox">
-
-            <div id="lobby-container" class="lobby-container">
-                <h2>Join a Room</h2>
-                <input type="text" id="clientIdInput" placeholder="Your Client ID">
-                <input type="text" id="sessionIdInput" placeholder="Session ID">
-                <button id="joinRoom">Enter</button>
+        <div id="cavas-chat" class="main-flexbox page">
+            <div id="canvas-flexbox" class="canvas-container ">
+                <canvas id="drawing-canvas"></canvas>
             </div>
-
-
-            <div id="canvas-flexbox" class="canvas-container">
-                <canvas id="drawing-canvas" />
-            </div>
-
             <div class="chat-container">
                 <div class="input-container">
                     <input type="text">
                     <button type="button">Send</button>
                 </div>
             </div>
-
         </div>
+
     </div>
     <script type="module" src="js/script.js"></script>
 </body>

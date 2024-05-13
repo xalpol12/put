@@ -11,4 +11,13 @@ export function joinSession(clientId: string) {
     ws.onmessage = (e: MessageEvent) => {
         drawFromFrame(JSON.parse(e.data));
     }
+
+    ws.onerror = (e: Event) => {
+        console.log(e);
+    }
+}
+
+export function createSession(sessionId: string) {
+    console.log("Create session hit");
+
 }

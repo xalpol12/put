@@ -8,4 +8,10 @@ export function joinSession(clientId) {
     ws.onmessage = (e) => {
         drawFromFrame(JSON.parse(e.data));
     };
+    ws.onerror = (e) => {
+        console.log(e);
+    };
+}
+export function createSession(sessionId) {
+    console.log("Create session hit");
 }
