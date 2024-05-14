@@ -4,18 +4,18 @@ import { joinSession, createSession } from "./modules/join-ws-client.js";
 window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('joinButton')?.addEventListener('click', showJoinPrompt);
     document.getElementById('hostButton')?.addEventListener('click', showHostPrompt);
-})
 
-window.onload = () => {
     const clientId = sessionStorage.getItem('sessionId');
     const sessionId = sessionStorage.getItem('sessionId');
 
     if (clientId && sessionId) {
+        console.log(`Found clientId and sessionId in sessionStorage`);
         joinRoom(clientId, sessionId);
     } else {
-        showPage('home');
+        console.log(`ClientId and SessionId not found`);
+        showPage('home-page');
     }
-}
+})
 
 function joinRoom(clientId: string, sessionId: string) {
     if (!clientId || !sessionId) {
@@ -26,7 +26,7 @@ function joinRoom(clientId: string, sessionId: string) {
     joinSession(clientId);
     createCanvas(clientId);
     initDrawConnection();
-    showPage('canvas-chat');
+    showPage('game-page');
 }
 
 function showPage(pageId: string) {
@@ -37,6 +37,7 @@ function showPage(pageId: string) {
     const selectedPage = document.getElementById(pageId);
     if (selectedPage) {
         selectedPage.classList.add('active');
+        console.log(`${pageId} activated`);
     }
 }
 

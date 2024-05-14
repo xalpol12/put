@@ -13,20 +13,26 @@
 <body>
     <div id="container" class="container">
 
-        <div id="home" class="title page">
-            <h1>Kalambury</h1>
-            <button id="joinButton">Join</button>
-            <button id="hostButton">Host</button>
+        <div id="home-page" class="page">
+            <div id="title-header" class="title">
+                <h1>Kalambury</h1>
+            </div>
+            <div id="start-buttons" class="buttons">
+                <button id="joinButton">Join</button>
+                <button id="hostButton">Host</button>
+            </div>
         </div>
 
-        <div id="cavas-chat" class="main-flexbox page">
-            <div id="canvas-flexbox" class="canvas-container ">
-                <canvas id="drawing-canvas"></canvas>
-            </div>
-            <div class="chat-container">
-                <div class="input-container">
-                    <input type="text">
-                    <button type="button">Send</button>
+        <div id="game-page" class="page">
+            <div class="main-flexbox">
+                <div id="canvas-flexbox" class="canvas-container ">
+                    <canvas id="drawing-canvas"></canvas>
+                </div>
+                <div class="chat-container">
+                    <div class="input-container">
+                        <input type="text">
+                        <button type="button">Send</button>
+                    </div>
                 </div>
             </div>
         </div>
