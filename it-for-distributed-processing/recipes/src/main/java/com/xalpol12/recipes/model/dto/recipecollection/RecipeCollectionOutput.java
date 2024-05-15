@@ -22,4 +22,7 @@ public class RecipeCollectionOutput {
     private List<RecipeOutputShort> recipes;
 
     private Integer version;
+
+    private Integer page;
+    private Integer pageSize;
 }

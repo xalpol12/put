@@ -22,7 +22,9 @@ public interface IRecipeCollectionController {
             @RequestBody RecipeCollectionInput recipeCollectionInput);
 
     @GetMapping(RecipeCollectionPath.ROOT + "/{id}")
-    ResponseEntity<RecipeCollectionOutput> getRecipeCollection(@PathVariable("id") Long id);
+    ResponseEntity<RecipeCollectionOutput> getRecipeCollection(@PathVariable("id") Long id,
+                                                               @RequestParam(defaultValue = "1") int page,
+                                                               @RequestParam(defaultValue = "10") int size);
 
     @DeleteMapping(RecipeCollectionPath.ROOT + "/{id}")
     ResponseEntity<Void> deleteRecipeCollection(@PathVariable("id") Long id);

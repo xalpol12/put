@@ -28,20 +28,20 @@ public class RecipeCollectionService {
     private final RecipeCollectionRepository repository;
     private final RecipeCollectionMapper mapper;
 
-    public RecipeCollectionOutput getRecipeCollection(Long id) {
+    public RecipeCollectionOutput getRecipeCollection(Long id, int page, int size) {
         RecipeCollection recipeCollection = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Recipe collection with id: " + id + " could not be found."));
-        return mapper.collectionToOutput(recipeCollection);
+        return mapper.collectionToOutput(recipeCollection, page, size);
     }
 
     public Page<RecipeCollectionOutput> getAllRecipeCollections(Pageable pageable) {
-       return repository.findAll(pageable).map(mapper::collectionToOutput);
+       return repository.findAll(pageable).map((collection) -> mapper.collectionToOutput(collection, 0, 10));
     }
 
     public RecipeCollectionOutput addRecipeCollection(RecipeCollectionInput input) {
         RecipeCollection collection = mapper.inputToCollection(input);
         collection.setVersion(0);
-        return mapper.collectionToOutput(repository.save(collection));
+        return mapper.collectionToOutput(repository.save(collection), 0, 10);
     }
 
     @Transactional
@@ -70,7 +70,7 @@ public class RecipeCollectionService {
             collection.setVersion(collection.getVersion() + 1);
 
             repository.save(collection);
-            return mapper.collectionToOutput(collection);
+            return mapper.collectionToOutput(collection, 0, 10);
 
         } catch (NullPointerException e) {
             throw new IncompleteUpdateFormException("Update form does not include all the entity's fields");
@@ -101,7 +101,7 @@ public class RecipeCollectionService {
             original.setRecipes(recipes);
         }
 
-        return mapper.collectionToOutput(repository.save(original));
+        return mapper.collectionToOutput(repository.save(original), 0 ,10);
     }
 
     @Transactional
@@ -120,6 +120,6 @@ public class RecipeCollectionService {
 
         repository.delete(from);
 
-        return mapper.collectionToOutput(repository.save(to));
+        return mapper.collectionToOutput(repository.save(to), 0, 10);
     }
 }

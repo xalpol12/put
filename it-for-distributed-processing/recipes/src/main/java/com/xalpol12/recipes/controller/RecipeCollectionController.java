@@ -41,8 +41,8 @@ public class RecipeCollectionController implements IRecipeCollectionController {
     }
 
     @Override
-    public ResponseEntity<RecipeCollectionOutput> getRecipeCollection(Long id) {
-        return ResponseEntity.ok(service.getRecipeCollection(id));
+    public ResponseEntity<RecipeCollectionOutput> getRecipeCollection(Long id, int page, int size) {
+        return ResponseEntity.ok(service.getRecipeCollection(id, page, size));
     }
 
     @Override

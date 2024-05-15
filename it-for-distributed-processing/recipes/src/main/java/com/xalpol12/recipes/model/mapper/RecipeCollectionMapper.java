@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -33,13 +34,26 @@ public class RecipeCollectionMapper {
                 .build();
     }
 
-    public RecipeCollectionOutput collectionToOutput(RecipeCollection collection) {
+    public RecipeCollectionOutput collectionToOutput(RecipeCollection collection, int page, int size) {
         List<RecipeOutputShort> recipes = recipeMapper.recipeToOutputShort(collection.getRecipes());
         return RecipeCollectionOutput.builder()
                 .id(collection.getId())
                 .collectionName(collection.getCollectionName())
-                .recipes(recipes)
+                .recipes(getPaginatedRecipes(recipes, page, size))
                 .version(collection.getVersion())
+                .page(page)
+                .pageSize(size)
                 .build();
     }
+    private List<RecipeOutputShort> getPaginatedRecipes(List<RecipeOutputShort> recipeOutputShorts, int page, int size) {
+        int totalRecipes = recipeOutputShorts.size();
+        int totalPages = (int) Math.ceil((double) totalRecipes / size);
+
+        if (page < 0 || page >= totalPages) {
+            return Collections.emptyList();
+        }
+
+        int startIndex = page * size;
+        int endIndex = Math.min(startIndex + size, totalRecipes);
+        return recipeOutputShorts.subList(startIndex, endIndex);    }
 }
