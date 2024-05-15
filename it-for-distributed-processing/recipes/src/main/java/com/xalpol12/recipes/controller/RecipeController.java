@@ -26,17 +26,16 @@ public class RecipeController implements IRecipeController {
     }
 
     @Override
-    public ResponseEntity<RecipeOutput> addRecipe(RecipeInput recipeInput) {
-        RecipeOutput output = service.addRecipe(recipeInput);
+    public ResponseEntity<Void> addRecipeExactlyOnce() {
+        Long recipeId = service.createRecipeToken();
 
-        URI uri = ServletUriComponentsBuilder.fromCurrentContextPath()
+        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(RecipePath.ROOT + "/")
-                .path(String.valueOf(output.getRecipeId()))
+                .path(String.valueOf(recipeId))
                 .build()
                 .toUri();
 
-        return ResponseEntity.created(uri)
-                .body(output);
+        return ResponseEntity.created(location).build();
     }
 
     @Override

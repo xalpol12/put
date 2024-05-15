@@ -40,6 +40,13 @@ public class RecipeService {
         return mapper.recipeToOutput(saved);
     }
 
+    public Long createRecipeToken() {
+        Recipe defaultRecipe = new Recipe();
+        defaultRecipe.setRecipeName("default");
+        Recipe saved = repository.save(defaultRecipe);
+        return saved.getId();
+    }
+
     public RecipeOutput getRecipe(Long id) {
         Recipe recipe = getRecipeOrThrow(id);
         return mapper.recipeToOutput(recipe);

@@ -17,7 +17,7 @@ public interface IRecipeController {
     ResponseEntity<Page<RecipeOutput>> getAllRecipes(Pageable pageable);
 
     @PostMapping(RecipePath.ROOT)
-    ResponseEntity<RecipeOutput> addRecipe(@RequestBody RecipeInput recipeInput);
+    ResponseEntity<Void> addRecipeExactlyOnce();
 
     @GetMapping(RecipePath.ROOT + "/{uuid}")
     ResponseEntity<RecipeOutput> getRecipe(@PathVariable("uuid") Long id);
