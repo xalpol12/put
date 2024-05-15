@@ -52,8 +52,9 @@ public class RecipeCollectionController implements IRecipeCollectionController {
     }
 
     @Override
-    public ResponseEntity<RecipeCollectionOutput> updateRecipeCollection(Long id, RecipeCollectionInput recipeCollectionInput) {
-        RecipeCollectionOutput output = service.updateRecipeCollection(id, recipeCollectionInput);
+    public ResponseEntity<RecipeCollectionOutput> updateRecipeCollection(Long id, RecipeCollectionInput recipeCollectionInput, String ifMatchHeader) {
+        Integer version = Integer.parseInt(ifMatchHeader);
+        RecipeCollectionOutput output = service.updateRecipeCollection(id, recipeCollectionInput, version);
         return ResponseEntity.ok(output);
     }
 

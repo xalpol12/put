@@ -40,6 +40,7 @@ public interface ImageMapper {
     @Mapping(target = "lastModifiedAt", source = "imageEntity.lastModifiedAt")
     @Mapping(target = "size", source = "imageEntity", qualifiedByName = "mapDataLength")
     @Mapping(target = "recipes", source = "imageEntity.recipe.id")
+    @Mapping(target = "version", source = "imageEntity.version")
     ImageOutput imageToOutput(Image imageEntity);
 
     @Named("mapDataLength")

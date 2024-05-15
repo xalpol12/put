@@ -30,7 +30,8 @@ public interface IRecipeCollectionController {
     @PutMapping(RecipeCollectionPath.ROOT + "/{id}")
     ResponseEntity<RecipeCollectionOutput> updateRecipeCollection(
             @PathVariable("id") Long id,
-            @RequestBody RecipeCollectionInput recipeCollectionInput);
+            @RequestBody RecipeCollectionInput recipeCollectionInput,
+            @RequestHeader("If-Match") String ifMatchHeader);
 
     @PatchMapping(RecipeCollectionPath.ROOT + "/{id}")
     ResponseEntity<RecipeCollectionOutput> patchRecipeCollection (

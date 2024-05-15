@@ -10,12 +10,15 @@ import com.xalpol12.recipes.model.mapper.ImageMapper;
 import com.xalpol12.recipes.repository.ImageRepository;
 import com.xalpol12.recipes.repository.RecipeRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -36,6 +39,7 @@ public class ImageService {
             image.setName(file.getOriginalFilename());
         }
         setRecipe(image, fileDetails);
+        image.setVersion(0);
         Image savedImage = repository.save(image);
         return mapper.imageToOutput(savedImage);
     }
@@ -57,10 +61,16 @@ public class ImageService {
         repository.deleteById(uuid);
     }
 
-    public ImageOutput updateImageDetails(String uuid, ImageInput newDetails) {
+    public ImageOutput updateImageDetails(String uuid, ImageInput newDetails, Integer version) {
         Image image = findImageOrThrow(uuid);
+
+        if (!Objects.equals(version, image.getVersion())) {
+            throw new OptimisticLockException();
+        }
+
         try {
             image.setName(newDetails.getName());
+            image.setVersion(image.getVersion() + 1);
             setRecipe(image, newDetails);
             return mapper.imageToOutput(repository.save(image));
         } catch (NullPointerException e) {
@@ -86,11 +96,17 @@ public class ImageService {
         return findImageOrThrow(uuid);
     }
 
-    public void updateImage(String uuid, MultipartFile file) {
+    public void updateImage(String uuid, MultipartFile file, Integer version) {
         Image image = findImageOrThrow(uuid);
+
+        if (!Objects.equals(version, image.getVersion())) {
+            throw new OptimisticLockException();
+        }
+
         try {
             image.setData(file.getBytes());
             image.setType(file.getContentType());
+            image.setVersion(image.getVersion() + 1);
             repository.save(image);
         } catch (Exception e) {
             throw new IncompleteUpdateFormException("Update form does not include all the entity's fields");

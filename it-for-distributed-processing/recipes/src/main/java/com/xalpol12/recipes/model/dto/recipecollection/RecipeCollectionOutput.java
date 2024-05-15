@@ -20,4 +20,6 @@ public class RecipeCollectionOutput {
 
     @ElementCollection
     private List<RecipeOutputShort> recipes;
+
+    private Integer version;
 }

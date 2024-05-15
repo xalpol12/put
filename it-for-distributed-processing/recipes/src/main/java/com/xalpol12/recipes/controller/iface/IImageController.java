@@ -35,7 +35,8 @@ public interface IImageController {
 
     @PutMapping(ImagePath.ROOT + "/{uuid}")
     ResponseEntity<ImageOutput> updateImageDetails(@PathVariable("uuid") String uuid,
-                                                   @RequestBody ImageInput newDetails);
+                                                   @RequestBody ImageInput newDetails,
+                                                   @RequestHeader("If-Match") String ifMatchHeader);
 
     @PatchMapping(ImagePath.ROOT + "/{uuid}")
     ResponseEntity<ImageOutput> patchImageDetails(@PathVariable("uuid") String uuid,
@@ -46,5 +47,6 @@ public interface IImageController {
 
     @PutMapping(value = ImagePath.ROOT + "/{uuid}/raw", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<Void> updateImageData(@PathVariable("uuid") String uuid,
-                                         @RequestPart MultipartFile file) throws IOException;
+                                         @RequestPart MultipartFile file,
+                                         @RequestHeader("If-Match") String ifMatchHeader) throws IOException;
 }

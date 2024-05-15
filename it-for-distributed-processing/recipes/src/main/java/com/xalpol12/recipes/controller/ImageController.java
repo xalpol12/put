@@ -56,8 +56,10 @@ public class ImageController implements IImageController {
     }
 
     @Override
-    public ResponseEntity<ImageOutput> updateImageDetails(String uuid, ImageInput newDetails) {
-        return ResponseEntity.ok(service.updateImageDetails(uuid, newDetails));
+    public ResponseEntity<ImageOutput> updateImageDetails(String uuid, ImageInput newDetails, String ifMatchHeader) {
+        Integer version = Integer.parseInt(ifMatchHeader);
+        ImageOutput output = service.updateImageDetails(uuid, newDetails, version);
+        return ResponseEntity.ok(output);
     }
 
     @Override
@@ -79,8 +81,9 @@ public class ImageController implements IImageController {
     }
 
     @Override
-    public ResponseEntity<Void> updateImageData(String uuid, MultipartFile file) throws IOException {
-        service.updateImage(uuid, file);
+    public ResponseEntity<Void> updateImageData(String uuid, MultipartFile file, String ifMatchHeader) {
+        Integer version = Integer.parseInt(ifMatchHeader);
+        service.updateImage(uuid, file, version);
         return ResponseEntity.ok().build();
     }
 }

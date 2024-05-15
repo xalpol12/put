@@ -39,6 +39,7 @@ public class RecipeCollectionMapper {
                 .id(collection.getId())
                 .collectionName(collection.getCollectionName())
                 .recipes(recipes)
+                .version(collection.getVersion())
                 .build();
     }
 }

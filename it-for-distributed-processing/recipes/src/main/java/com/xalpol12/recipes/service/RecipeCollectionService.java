@@ -10,6 +10,7 @@ import com.xalpol12.recipes.model.mapper.RecipeCollectionMapper;
 import com.xalpol12.recipes.repository.RecipeCollectionRepository;
 import com.xalpol12.recipes.repository.RecipeRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -42,6 +40,7 @@ public class RecipeCollectionService {
 
     public RecipeCollectionOutput addRecipeCollection(RecipeCollectionInput input) {
         RecipeCollection collection = mapper.inputToCollection(input);
+        collection.setVersion(0);
         return mapper.collectionToOutput(repository.save(collection));
     }
 
@@ -54,15 +53,21 @@ public class RecipeCollectionService {
     }
 
     @Transactional
-    public RecipeCollectionOutput updateRecipeCollection(Long id, RecipeCollectionInput input) {
+    public RecipeCollectionOutput updateRecipeCollection(Long id, RecipeCollectionInput input, Integer version) {
         RecipeCollection collection = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Recipe collection with id: " + id + "could not be found."));
+
+        if (!Objects.equals(version, collection.getVersion())) {
+            throw new OptimisticLockException();
+        }
 
         try {
             List<Recipe> recipes = getAllRecipes(input.getRecipeIds());
 
             collection.setCollectionName(input.getCollectionName());
             collection.setRecipes(recipes);
+
+            collection.setVersion(collection.getVersion() + 1);
 
             repository.save(collection);
             return mapper.collectionToOutput(collection);

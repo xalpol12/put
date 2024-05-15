@@ -21,4 +21,6 @@ public class ImageOutput {
     private LocalDateTime lastModifiedAt;
 
     private Long recipes;
+
+    private Integer version;
 }
