@@ -44,7 +44,6 @@ public class Recipe {
     @ToString.Exclude
     List<RecipeCollection> collections;
 
-    @Version
     private Integer version;
 
     @Override

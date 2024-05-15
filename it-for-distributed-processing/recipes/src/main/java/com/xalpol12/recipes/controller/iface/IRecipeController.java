@@ -27,7 +27,8 @@ public interface IRecipeController {
 
     @PutMapping(RecipePath.ROOT + "/{uuid}")
     ResponseEntity<RecipeOutput> updateRecipe(@PathVariable("uuid") Long id,
-                                              @RequestBody RecipeInput recipeInput);
+                                              @RequestBody RecipeInput recipeInput,
+                                              @RequestHeader("If-Match") String ifMatchHeader);
 
     @PatchMapping(RecipePath.ROOT + "/{uuid}")
     ResponseEntity<RecipeOutput> patchRecipe(@PathVariable("uuid") Long id,

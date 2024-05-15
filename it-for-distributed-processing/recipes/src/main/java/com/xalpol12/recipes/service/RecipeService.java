@@ -11,6 +11,7 @@ import com.xalpol12.recipes.repository.ImageRepository;
 import com.xalpol12.recipes.repository.RecipeCollectionRepository;
 import com.xalpol12.recipes.repository.RecipeRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -43,6 +45,8 @@ public class RecipeService {
     public Long createRecipeToken() {
         Recipe defaultRecipe = new Recipe();
         defaultRecipe.setRecipeName("default");
+        defaultRecipe.setVersion(0);
+        defaultRecipe.setEstimatedTime(0);
         Recipe saved = repository.save(defaultRecipe);
         return saved.getId();
     }
@@ -63,8 +67,12 @@ public class RecipeService {
     }
 
     @Transactional
-    public RecipeOutput updateRecipe(Long id, RecipeInput recipeInput) {
+    public RecipeOutput updateRecipe(Long id, RecipeInput recipeInput, Integer version) {
         Recipe recipe = getRecipeOrThrow(id);
+
+        if (!Objects.equals(version, recipe.getVersion())) {
+            throw new OptimisticLockException();
+        }
 
         try {
             recipe.setRecipeName(recipeInput.getRecipeName());
@@ -73,6 +81,8 @@ public class RecipeService {
             recipe.setDescriptions(recipeInput.getDescriptions());
             recipe.setImages(getAllImageReferences(recipeInput.getImages()));
             recipe.setCollections(getAllRecipeCollectionReferences(recipeInput.getRecipeCollections()));
+
+            recipe.setVersion(recipe.getVersion() + 1);
 
             repository.save(recipe);
             return mapper.recipeToOutput(recipe);

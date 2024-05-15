@@ -50,8 +50,9 @@ public class RecipeController implements IRecipeController {
     }
 
     @Override
-    public ResponseEntity<RecipeOutput> updateRecipe(Long id, RecipeInput recipeInput) {
-        RecipeOutput output = service.updateRecipe(id, recipeInput);
+    public ResponseEntity<RecipeOutput> updateRecipe(Long id, RecipeInput recipeInput, String ifMatchHeader) {
+        Integer version = Integer.parseInt(ifMatchHeader);
+        RecipeOutput output = service.updateRecipe(id, recipeInput, version);
         return ResponseEntity.ok(output);
     }
 

@@ -26,7 +26,6 @@ public abstract class RecipeMapper {
     @Autowired
     protected RecipeCollectionRepository recipeCollectionRepository;
 
-
     public Recipe inputToRecipe(RecipeInput input) {
         Recipe recipe = Recipe.builder()
                 .recipeName(input.getRecipeName())
@@ -69,7 +68,6 @@ public abstract class RecipeMapper {
         return collections;
     }
 
-
     public RecipeOutput recipeToOutput(Recipe recipe) {
         List<ImageOutputOnlyId> images = new ArrayList<>();
         List<RecipeCollectionOutputOnlyId> collections = new ArrayList<>();
@@ -94,6 +92,7 @@ public abstract class RecipeMapper {
                 .descriptions(recipe.getDescriptions())
                 .images(images)
                 .collections(collections)
+                .version(recipe.getVersion())
                 .build();
     }
 

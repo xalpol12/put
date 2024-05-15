@@ -36,4 +36,6 @@ public class RecipeOutput {
     private List<ImageOutputOnlyId> images;
 
     private List<RecipeCollectionOutputOnlyId> collections;
+
+    private Integer version;
 }
