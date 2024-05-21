@@ -15,7 +15,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Service
 public class SessionService {
 
-    private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
+    private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>(); // game sessions (chat, scores, etc.)
+    // do not track /join and /draw sessions as the
 
     private final List<TextMessage> drawnFrames = new CopyOnWriteArrayList<>();
 
@@ -41,6 +42,10 @@ public class SessionService {
 
     public void addToDrawnFrames(TextMessage message) {
         drawnFrames.add(message);
+    }
+
+    public boolean isDrawnFramesEmpty() {
+        return drawnFrames.isEmpty();
     }
 
 }

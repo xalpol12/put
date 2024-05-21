@@ -11,6 +11,11 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.io.IOException;
 import java.util.List;
 
+// handle joining scenarios, only way to get into game session
+// Scenarios:
+// 1. Join new session - no frames retransmitted, clientId saved to map of players
+// 2. Join already played session - frames retransmitted, clientId saved to map of players
+// 3. Rejoin already played session - frames retransmitted, no clientId saved as it's already in the map
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -18,23 +23,18 @@ public class JoinSocketHandler extends TextWebSocketHandler {
 
     private final SessionService sessionService;
 
-    // clients sends clientId, server adds session if new and retransmits frames (in both cases)
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        String clientId = message.getPayload();
-        if (!sessionService.existsById(clientId)) {
-            sessionService.addToSessions(clientId, session);
-            log.info(clientId + " joined");
-            log.info("Currently users: {}", sessionService.getSavedSessionsCount());
+        if (!sessionService.isDrawnFramesEmpty()) {
+            retransmitFrames(session);
         }
-        retransmitFrames(session, clientId);
     }
 
-    private void retransmitFrames(WebSocketSession session, String clientId) throws IOException {
+    private void retransmitFrames(WebSocketSession session) throws IOException {
         List<TextMessage> drawnFrames = sessionService.getDrawnFrames();
         for (TextMessage t : drawnFrames) {
             session.sendMessage(t);
-            log.info("{} requested frame retransmission, sent {} frames", clientId, drawnFrames.size());
+            log.info("Requested frame retransmission, sent {} frames", drawnFrames.size());
         }
     }
 }

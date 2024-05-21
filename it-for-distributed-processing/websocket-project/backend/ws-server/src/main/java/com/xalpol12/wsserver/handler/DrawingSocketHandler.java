@@ -9,8 +9,6 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Component

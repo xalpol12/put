@@ -24,8 +24,8 @@ function joinRoom(clientId: string, sessionId: string) {
     }
 
     joinSession(clientId);
-    createCanvas(clientId);
     initDrawConnection();
+    createCanvas(clientId);
     showPage('game-page');
 }
 
