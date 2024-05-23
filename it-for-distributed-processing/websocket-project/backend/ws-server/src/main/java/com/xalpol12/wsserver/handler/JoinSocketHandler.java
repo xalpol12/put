@@ -1,9 +1,11 @@
 package com.xalpol12.wsserver.handler;
 
-import com.xalpol12.wsserver.service.SessionService;
+import com.xalpol12.wsserver.service.GameSessionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
@@ -21,10 +23,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JoinSocketHandler extends TextWebSocketHandler {
 
-    private final SessionService sessionService;
+    private final GameSessionService sessionService;
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+    protected void handleTextMessage(@NotNull WebSocketSession session,
+                                     @NotNull TextMessage message) throws Exception {
         if (!sessionService.isDrawnFramesEmpty()) {
             retransmitFrames(session);
         }
@@ -36,5 +39,11 @@ public class JoinSocketHandler extends TextWebSocketHandler {
             session.sendMessage(t);
             log.info("Requested frame retransmission, sent {} frames", drawnFrames.size());
         }
+    }
+
+    @Override
+    public void afterConnectionClosed(@NotNull WebSocketSession session,
+                                      @NotNull CloseStatus status) throws Exception {
+        super.afterConnectionClosed(session, status);
     }
 }
