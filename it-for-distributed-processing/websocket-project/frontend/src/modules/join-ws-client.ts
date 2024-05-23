@@ -19,5 +19,4 @@ export function joinSession(clientId: string) {
 
 export function createSession(sessionId: string) {
     console.log("Create session hit");
-
 }
