@@ -6,6 +6,7 @@ export function joinSession(clientId: string) {
 
     ws.onopen = () => {
         sendStringMessage(ws, clientId);
+        console.log("Opened /join session");
     }
 
     ws.onmessage = (e: MessageEvent) => {

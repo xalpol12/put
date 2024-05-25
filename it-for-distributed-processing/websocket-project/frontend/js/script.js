@@ -1,10 +1,11 @@
-import { createCanvas, initDrawConnection } from "./modules/canvas.js";
+import { createCanvas } from "./modules/canvas.js";
+import { initDrawConnection } from "./modules/draw-ws-client.js";
 import { joinSession, createSession } from "./modules/join-ws-client.js";
 window.addEventListener('DOMContentLoaded', () => {
     var _a, _b;
     (_a = document.getElementById('joinButton')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', showJoinPrompt);
     (_b = document.getElementById('hostButton')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', showHostPrompt);
-    const clientId = sessionStorage.getItem('sessionId');
+    const clientId = sessionStorage.getItem('clientId');
     const sessionId = sessionStorage.getItem('sessionId');
     if (clientId && sessionId) {
         console.log(`Found clientId and sessionId in sessionStorage`);
@@ -20,9 +21,9 @@ function joinRoom(clientId, sessionId) {
         alert("Client ID or Session ID not found.");
         return;
     }
+    createCanvas(clientId);
     joinSession(clientId);
     initDrawConnection();
-    createCanvas(clientId);
     showPage('game-page');
 }
 function showPage(pageId) {
