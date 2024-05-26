@@ -1,5 +1,4 @@
-import { initDrawConnection, sendStrokeFrame } from "./draw-ws-client.js";
-import { joinSession } from "./join-ws-client.js";
+import { sendStrokeFrame } from "./draw-ws-client.js";
 import { Point, PointFrame, StrokeFrame, StrokeStyle } from "./model/point-frame.js";
 
 let parent: HTMLElement;
@@ -41,12 +40,10 @@ export function createCanvas(clientId: string): void {
     document.addEventListener('mouseenter', setPosition);
 
     isCanvasReady = true;
+    clear();
     processFrameQueue();
 
     console.log("Initialized canvas successfully!");
-    joinSession(clientId);
-    initDrawConnection();
-
 }
 
 function resize() {

@@ -1,5 +1,4 @@
-- /join (first join, no sessionId yet) - first join onConnect send sessionId and add to List<WebSocketSession>
-- /rejoin (sessionId stored in client's localstorage) - onConnect nothing, onMessage client sends request with sessionId, server returns all image frames
-- /drawing (no sessionId stored in client's localstorage) - on message sends new drawing frame to all sessions and saves in history
+- /join - add clientId to session memory, send all drawn frames in order to recreate the image history
+- /drawing - on message sends new drawing frame to all sessions and saves in history
+- /game-logic - send time frame each second, game logic implementation; after each rund send clientId that has a drawing permissions; block drawing on frontend
 - /chat - users send guesses, server checks for the correct ones and adds points to sessionId that guessed in given time
-- /game-logic - send time frame each second, game logic implementation

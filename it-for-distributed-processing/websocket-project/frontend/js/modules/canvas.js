@@ -1,5 +1,4 @@
-import { initDrawConnection, sendStrokeFrame } from "./draw-ws-client.js";
-import { joinSession } from "./join-ws-client.js";
+import { sendStrokeFrame } from "./draw-ws-client.js";
 let parent;
 let canvas;
 let ctx;
@@ -35,10 +34,9 @@ export function createCanvas(clientId) {
     document.addEventListener('mouseup', sendFrame);
     document.addEventListener('mouseenter', setPosition);
     isCanvasReady = true;
+    clear();
     processFrameQueue();
     console.log("Initialized canvas successfully!");
-    joinSession(clientId);
-    initDrawConnection();
 }
 function resize() {
     if (!parent || !canvas) {
