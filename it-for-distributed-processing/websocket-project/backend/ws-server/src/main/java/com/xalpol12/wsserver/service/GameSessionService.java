@@ -1,39 +1,56 @@
 package com.xalpol12.wsserver.service;
 
-import com.xalpol12.wsserver.model.UserData;
+import com.xalpol12.wsserver.exception.SessionAlreadyExistsException;
+import com.xalpol12.wsserver.exception.SessionDoesNotExistException;
+import com.xalpol12.wsserver.model.GameSession;
+import com.xalpol12.wsserver.model.dto.SessionDTO;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @Getter
 @Service
 public class GameSessionService {
 
-    private final Map<String, UserData> usersData = new ConcurrentHashMap<>(); // do not track /join and /draw sessions as the
+    private final Map<String, GameSession> keysSessions = new ConcurrentHashMap<>();
 
-    private final List<TextMessage> drawnFrames = new CopyOnWriteArrayList<>();
-
-    public void addUser(String clientId) {
-        usersData.put(clientId, new UserData());
+    public String addNewSession(SessionDTO sessionDTO) {
+        String sessionId = sessionDTO.sessionId();
+        if (!keysSessions.containsKey(sessionId)) {
+            keysSessions.put(sessionId, new GameSession());
+            return sessionId;
+        } else {
+            throw new SessionAlreadyExistsException("Session with id: " + sessionId + " already exists");
+        }
     }
 
-    public UserData getUserData(String clientId) {
-        return usersData.get(clientId);
+    public void addUserToSession(String clientId, String sessionId) {
+        GameSession gs = getSessionById(sessionId);
+        gs.addUserToSession(clientId);
     }
 
-    public void addToDrawnFrames(TextMessage message) {
-        drawnFrames.add(message);
+    private GameSession getSessionById(String sessionId) {
+        if (keysSessions.containsKey(sessionId)) {
+            return keysSessions.get(sessionId);
+        } else {
+            throw new SessionDoesNotExistException("Session with id: " + sessionId + " does not exist");
+        }
     }
 
-    public boolean isDrawnFramesEmpty() {
-        return drawnFrames.isEmpty();
+//    public UserData getUserData(String clientId) {
+//        return usersData.get(clientId);
+//    }
+
+    public void addToDrawnFrames(String sessionId, TextMessage message) {
+        GameSession gs = getSessionById(sessionId);
+        gs.addToDrawnFrames(message);
     }
 
-
-
+    public boolean isDrawnFramesEmpty(String sessionId) {
+        GameSession gs = getSessionById(sessionId);
+        return gs.isDrawnFramesEmpty();
+    }
 }
