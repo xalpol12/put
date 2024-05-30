@@ -20,4 +20,9 @@ import lombok.Data;
 public class CustomMessage {
     private MessageType messageType;
     private Object payload;
+
+    public CustomMessage(MessageType type, Object payload) {
+        messageType = type;
+        this.payload = payload;
+    }
 }

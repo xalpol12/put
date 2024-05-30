@@ -18,7 +18,7 @@ Lobby:
 
 TODO:
 
-- [ ] Log things diagnostic
+- [x] Log things diagnostic
 - [ ] Fix websocket endpoints to handle multiple sessions
 - [ ] Delete /join and let /draw send all the previous frames
 

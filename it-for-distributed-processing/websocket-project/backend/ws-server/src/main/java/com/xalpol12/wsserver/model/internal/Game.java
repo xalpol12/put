@@ -6,6 +6,7 @@ public class Game {
     private final int ROUNDS_IN_GAME;
     private int roundCounter;
     private String currentWord;
+    private String userWithDrawingPermissions; // TODO: implement changing drawing fellas
 
     public Game(int numberOfRounds, int roundLength) {
         ROUNDS_IN_GAME = numberOfRounds;
@@ -15,8 +16,7 @@ public class Game {
     public void startGame() {
         roundCounter = ROUNDS_IN_GAME;
         assignNewWord();
-    };
-
+    }
 
     public void tick() {
         int currentRoundTime = gameTimer.decreaseTime();
