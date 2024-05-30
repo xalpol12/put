@@ -1,7 +1,6 @@
 package com.xalpol12.wsserver.config;
 
-import com.xalpol12.wsserver.handler.DrawingSocketHandler;
-import com.xalpol12.wsserver.handler.JoinSocketHandler;
+import com.xalpol12.wsserver.handler.GameSocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -13,13 +12,11 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketConfigurer {
 
-    private final DrawingSocketHandler drawingSocketHandler;
-    private final JoinSocketHandler joinSocketHandler;
+    private final GameSocketHandler drawingSocketHandler;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(joinSocketHandler, "/join").setAllowedOrigins("*");
-        registry.addHandler(drawingSocketHandler, "/draw").setAllowedOrigins("*");
+        registry.addHandler(drawingSocketHandler, "/game").setAllowedOrigins("*");
     }
 
 }

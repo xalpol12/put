@@ -17,4 +17,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleSessionAlreadyExistsException(SessionAlreadyExistsException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(ClientNotFoundException.class)
+    public ResponseEntity<String> handleClientNotFoundException(ClientNotFoundException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }

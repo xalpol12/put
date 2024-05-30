@@ -29,7 +29,7 @@ public class JoinSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(@NotNull WebSocketSession session,
                                      @NotNull TextMessage message) throws Exception {
         log.info("Received new session connection with message: {}", message.getPayload());
-        if (!sessionService.isDrawnFramesEmpty()) {
+        if (!sessionService.isDrawnFramesEmpty()) { // TODO: Fix
             retransmitFrames(session);
         }
     }

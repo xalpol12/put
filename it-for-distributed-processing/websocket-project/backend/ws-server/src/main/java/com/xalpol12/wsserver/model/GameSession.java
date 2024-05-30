@@ -1,5 +1,6 @@
 package com.xalpol12.wsserver.model;
 
+import com.xalpol12.wsserver.exception.ClientNotFoundException;
 import lombok.Data;
 import org.springframework.web.socket.TextMessage;
 
@@ -19,7 +20,11 @@ public class GameSession {
     }
 
     public UserData getUserData(String clientId) {
-        return usersData.get(clientId);
+        if (usersData.containsKey(clientId)) {
+            return usersData.get(clientId);
+        } else {
+            throw new ClientNotFoundException("Client with id: " + clientId + " not found");
+        }
     }
 
     public void addToDrawnFrames(TextMessage message) {
