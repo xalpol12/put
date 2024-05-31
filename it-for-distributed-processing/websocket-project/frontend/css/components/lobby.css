@@ -1,6 +1,16 @@
+#home-page {
+    border: 2px solid black;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+}
+
 .title {
     color: red;
     text-align: center;
+    margin-bottom: 10px;
 }
 
 .buttons {
@@ -12,4 +22,19 @@
 .buttons button {
     padding: 10px 20px;
     font-size: 16px;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-container input {
+    margin-bottom: 10px;
+    padding: 4px;
+    font-size: 16px;
+    width: 200px;
+
 }

@@ -7,19 +7,58 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+document.addEventListener('DOMContentLoaded', () => {
+    loadPage('homepage.html');
+});
 function loadPage(page) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield fetch(`./html/${page}`);
         const content = yield response.text();
         document.getElementById('container').innerHTML = content;
-        if (page === 'homepage.html') {
-            (_a = document.getElementById('joinButton')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => loadPage('gamepage.html'));
-            (_b = document.getElementById('hostButton')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', () => loadPage('gamepage.html'));
+        if (page === "homepage.html") {
+            (_a = document.getElementById('joinButton')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', onJoinButtonClick);
+            (_b = document.getElementById('hostButton')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', onHostButtonClick);
         }
+        console.log(`${page} loaded`);
     });
 }
-loadPage('gamepage.html');
+function getInputValues() {
+    const clientIdInput = document.getElementById('clientIdInput');
+    const sessionIdInput = document.getElementById('sessionIdInput');
+    const clientId = clientIdInput.value;
+    const sessionId = sessionIdInput.value;
+    const inputValues = {
+        cId: clientId,
+        sId: sessionId
+    };
+    return inputValues;
+}
+function validateForms() {
+    const inputValues = getInputValues();
+    if (!inputValues.cId || !inputValues.sId) {
+        alert("Empty fields are not acceptable!");
+        return null;
+    }
+    console.log(`Client id: ${inputValues.cId}, session id: ${inputValues.sId}`);
+    return inputValues;
+}
+function onJoinButtonClick() {
+    console.log("Join button clicked");
+    const inputValues = validateForms();
+    if (!inputValues)
+        return;
+    // send POST here and wait for response and then load page
+    loadPage('gamepage.html');
+}
+function onHostButtonClick() {
+    console.log("Host button clicked");
+    const inputValues = validateForms();
+    if (!inputValues)
+        return;
+    // send POST here
+    loadPage('gamepage.html');
+}
 export {};
 // window.addEventListener('DOMContentLoaded', () => {
 //     document.getElementById('joinButton')?.addEventListener('click', showJoinPrompt);
