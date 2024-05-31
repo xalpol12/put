@@ -6,6 +6,7 @@ import com.xalpol12.wsserver.exception.SessionDoesNotExistException;
 import com.xalpol12.wsserver.model.GameSession;
 import com.xalpol12.wsserver.model.UserData;
 import com.xalpol12.wsserver.model.dto.SessionDTO;
+import com.xalpol12.wsserver.model.dto.SessionResponse;
 import com.xalpol12.wsserver.model.message.payload.HandshakePayload;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,22 +25,23 @@ public class GameSessionService {
     private final Map<WebSocketSession, HandshakePayload> webSocketSessionsIds = new ConcurrentHashMap<>(); // TODO: Possibly change wssession to string key?
 
     // GameSessions : Users access methods
-    public String addNewSession(SessionDTO sessionDTO) {
+    public SessionResponse addNewSession(SessionDTO sessionDTO) {
         String sessionId = sessionDTO.sessionId();
         if (!keysSessions.containsKey(sessionId)) {
             log.info("Created new session with id: {}", sessionId);
             keysSessions.put(sessionId, new GameSession());
-            return sessionId;
+            return new SessionResponse(sessionDTO.userId(), sessionDTO.sessionId());
         } else {
             log.error("Session with id: {} already exists!", sessionId);
             throw new SessionAlreadyExistsException("Session with id: " + sessionId + " already exists");
         }
     }
 
-    public void addUserToSession(String clientId, String sessionId) {
+    public SessionResponse addUserToSession(String userId, String sessionId) {
         GameSession gs = getGameSessionById(sessionId);
-        gs.addUserToSession(clientId);
-        log.info("Added user: {} to session: {}", clientId, sessionId);
+        gs.addUserToSession(userId);
+        log.info("Added user: {} to session: {}", userId, sessionId);
+        return new SessionResponse(userId, sessionId);
     }
 
     private GameSession getGameSessionById(String sessionId) {

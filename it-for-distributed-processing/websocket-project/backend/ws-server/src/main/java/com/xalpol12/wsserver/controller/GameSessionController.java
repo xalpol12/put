@@ -1,6 +1,7 @@
 package com.xalpol12.wsserver.controller;
 
 import com.xalpol12.wsserver.model.dto.SessionDTO;
+import com.xalpol12.wsserver.model.dto.SessionResponse;
 import com.xalpol12.wsserver.model.dto.UserDTO;
 import com.xalpol12.wsserver.service.GameSessionService;
 import lombok.RequiredArgsConstructor;
@@ -18,16 +19,14 @@ public class GameSessionController {
     private final GameSessionService gameSessionService;
 
     @PostMapping
-    public ResponseEntity<String> addNewSession(@RequestBody SessionDTO sessionDTO) {
-        String sessionId = gameSessionService.addNewSession(sessionDTO);
-        // TODO: return sessionId and clientId
-        return new ResponseEntity<>(sessionId, HttpStatus.OK);
+    public ResponseEntity<SessionResponse> addNewSession(@RequestBody SessionDTO sessionDTO) {
+        SessionResponse response = gameSessionService.addNewSession(sessionDTO);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/{sid}")
-    public ResponseEntity<Void> addUserToSession(@PathVariable("sid") String sessionId, @RequestBody UserDTO userDTO) {
-        gameSessionService.addUserToSession(userDTO.userId(), sessionId);
-        // TODO: return sessionId and clientId
-        return ResponseEntity.ok().build();
+    public ResponseEntity<SessionResponse> addUserToSession(@PathVariable("sid") String sessionId, @RequestBody UserDTO userDTO) {
+        SessionResponse response = gameSessionService.addUserToSession(userDTO.userId(), sessionId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
