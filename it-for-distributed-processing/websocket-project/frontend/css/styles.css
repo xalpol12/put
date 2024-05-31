@@ -10,15 +10,6 @@
     flex-direction: column;
 }
 
-.page {
-    display: none;
-    overflow: visible;
-}
-
-.active {
-    display: block;
-}
-
 .main-flexbox {
     display: flex;
     flex-wrap: wrap;
