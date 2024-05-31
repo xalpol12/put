@@ -14,13 +14,14 @@ import org.springframework.web.socket.WebSocketSession;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
 public class GameSessionService {
     private final Map<String, GameSession> keysSessions = new ConcurrentHashMap<>();
-    private final Map<WebSocketSession, HandshakePayload> webSocketSessionsIds = new ConcurrentHashMap<>();
+    private final Map<WebSocketSession, HandshakePayload> webSocketSessionsIds = new ConcurrentHashMap<>(); // TODO: Possibly change wssession to string key?
 
     // GameSessions : Users access methods
     public String addNewSession(SessionDTO sessionDTO) {
@@ -36,12 +37,12 @@ public class GameSessionService {
     }
 
     public void addUserToSession(String clientId, String sessionId) {
-        GameSession gs = getSessionById(sessionId);
+        GameSession gs = getGameSessionById(sessionId);
         gs.addUserToSession(clientId);
         log.info("Added user: {} to session: {}", clientId, sessionId);
     }
 
-    private GameSession getSessionById(String sessionId) {
+    private GameSession getGameSessionById(String sessionId) {
         if (keysSessions.containsKey(sessionId)) {
             return keysSessions.get(sessionId);
         } else {
@@ -51,19 +52,21 @@ public class GameSessionService {
     }
 
     public UserData getUserData(String sessionId, String clientId) {
-        GameSession gs = getSessionById(sessionId);
+        GameSession gs = getGameSessionById(sessionId);
         return gs.getUserData(clientId);
     }
 
     public boolean hasDrawingPermission(WebSocketSession session) {
         HandshakePayload ids = getIdsByWebSocketSession(session);
-        GameSession gs = getSessionById(ids.getSessionId());
+        GameSession gs = getGameSessionById(ids.getSessionId());
         return gs.hasDrawingPermission(ids.getClientId());
     }
 
     // WebSocketSessions : Ids access methods
     public void mapWebSocketSession(WebSocketSession session, HandshakePayload payload) {
         webSocketSessionsIds.put(session, payload);
+        GameSession gs = getGameSessionById(payload.getSessionId());
+        gs.addWebSocketSessionToSession(session);
         log.info("Mapped session: {} to clientId: {} and sessionId: {}",
                 session.getId(), payload.getClientId(), payload.getSessionId());
     }
@@ -71,6 +74,8 @@ public class GameSessionService {
     public void removeWebSocketSessionFromMap(WebSocketSession session) {
         HandshakePayload ids = webSocketSessionsIds.remove(session);
         if (ids != null) {
+            GameSession gs = getGameSessionById(ids.getSessionId());
+            gs.removeWebSocketSessionFromSession(session);
             log.info("Removed session: {} from mapping, previously associated with session: {} and key: {}",
                     session.getId(), ids.getSessionId(), ids.getClientId());
         }
@@ -84,16 +89,22 @@ public class GameSessionService {
         }
     }
 
+    public Set<WebSocketSession> getAllWSSessionsFromGameSessionByWSSession(WebSocketSession session) {
+        HandshakePayload ids = getIdsByWebSocketSession(session);
+        GameSession gs = getGameSessionById(ids.getSessionId());
+        return gs.getWebSocketSessions();
+    }
+
     // Frames access methods
     public void addToDrawnFrames(WebSocketSession session, TextMessage message) {
         HandshakePayload ids = getIdsByWebSocketSession(session);
-        GameSession gs = getSessionById(ids.getSessionId());
+        GameSession gs = getGameSessionById(ids.getSessionId());
         log.info("Added new frame to session: {}", ids.getSessionId());
         gs.addToDrawnFrames(message);
     }
 
     public List<TextMessage> getDrawnFrames(String sessionId) {
-        GameSession gs = getSessionById(sessionId);
+        GameSession gs = getGameSessionById(sessionId);
         return gs.getDrawnFrames();
     }
 }

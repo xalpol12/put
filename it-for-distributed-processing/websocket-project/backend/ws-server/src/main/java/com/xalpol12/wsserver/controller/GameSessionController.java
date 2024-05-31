@@ -20,12 +20,14 @@ public class GameSessionController {
     @PostMapping
     public ResponseEntity<String> addNewSession(@RequestBody SessionDTO sessionDTO) {
         String sessionId = gameSessionService.addNewSession(sessionDTO);
+        // TODO: return sessionId and clientId
         return new ResponseEntity<>(sessionId, HttpStatus.OK);
     }
 
     @PostMapping("/{sid}")
     public ResponseEntity<Void> addUserToSession(@PathVariable("sid") String sessionId, @RequestBody UserDTO userDTO) {
         gameSessionService.addUserToSession(userDTO.userId(), sessionId);
+        // TODO: return sessionId and clientId
         return ResponseEntity.ok().build();
     }
 }

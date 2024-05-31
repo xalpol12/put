@@ -25,3 +25,11 @@ TODO:
 Message:
 
 - Type
+
+Flow:
+Create (POST message to `/` creates )
+
+Join (POST message to `/` adds )
+
+- Client connects to ws endpoint -> nothing happens yet
+- Client send handshake message -> gets added to a session
