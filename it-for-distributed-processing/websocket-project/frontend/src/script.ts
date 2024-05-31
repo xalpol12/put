@@ -1,6 +1,5 @@
-import { createCanvas } from "./modules/canvas.js"
-import { initDrawConnection } from "./modules/draw-ws-client.js";
-import { joinSession, createSession } from "./modules/join-ws-client.js";
+import { postClient, postSession } from "./modules/fetch.js";
+import { CredentialsResponse } from "./modules/model/credentials-response.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     loadPage('homepage.html');
@@ -21,12 +20,12 @@ async function loadPage(page: any) {
 
 
 function getInputValues() {
-    const clientIdInput = document.getElementById('clientIdInput') as HTMLInputElement;
+    const userIdInput = document.getElementById('userIdInput') as HTMLInputElement;
     const sessionIdInput = document.getElementById('sessionIdInput') as HTMLInputElement;
-    const clientId = clientIdInput.value;
+    const userId = userIdInput.value;
     const sessionId = sessionIdInput.value;
     const inputValues = {
-        cId: clientId,
+        uId: userId,
         sId: sessionId
     }
     return inputValues;
@@ -34,28 +33,42 @@ function getInputValues() {
 
 function validateForms() {
     const inputValues = getInputValues();
-    if (!inputValues.cId || !inputValues.sId) {
+    if (!inputValues.uId || !inputValues.sId) {
         alert("Empty fields are not acceptable!")
         return null;
     }
-    console.log(`Client id: ${inputValues.cId}, session id: ${inputValues.sId}`);
+    console.log(`User id: ${inputValues.uId}, session id: ${inputValues.sId}`);
     return inputValues
+}
+
+function saveInSessionStorage(credentials: CredentialsResponse) {
+    sessionStorage.setItem('userId', credentials.userId);
+    sessionStorage.setItem('sessionId', credentials.sessionId);
+    console.log(`Saved user id: ${credentials.userId} and session id: ${credentials.sessionId} in session storage`);
 }
 
 function onJoinButtonClick() {
     console.log("Join button clicked");
     const inputValues = validateForms();
     if (!inputValues) return;
-    // send POST here and wait for response and then load page
-    loadPage('gamepage.html')
+    postClient(inputValues.uId, inputValues.sId)
+        .then((credentials) => {
+            saveInSessionStorage(credentials)
+            loadPage('gamepage.html')
+        })
+        .catch((e) => { console.error(e) });
 }
 
 function onHostButtonClick() {
     console.log("Host button clicked");
     const inputValues = validateForms();
     if (!inputValues) return;
-    // send POST here
-    loadPage('gamepage.html')
+    postSession(inputValues.uId, inputValues.sId)
+        .then((credentials) => {
+            saveInSessionStorage(credentials)
+            loadPage('gamepage.html')
+        })
+        .catch((e) => { console.error(e) });
 }
 
 
