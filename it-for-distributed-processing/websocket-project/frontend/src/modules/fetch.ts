@@ -1,12 +1,14 @@
 import { CredentialsResponse } from "./model/credentials-response.js";
 
 export async function postSession(userId: string, sessionId: string): Promise<CredentialsResponse> {
-    const response = await fetch('http://localhost:8080/api/v1/sessions', {
+    const b = { userId: userId, sessionId: sessionId };
+    const response = await fetch('http://localhost:8081/api/v1/sessions', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
         },
-        body: JSON.stringify({ userId, sessionId }),
+        body: JSON.stringify(b),
     });
 
     if (!response.ok) {
@@ -17,12 +19,14 @@ export async function postSession(userId: string, sessionId: string): Promise<Cr
 }
 
 export async function postClient(userId: string, sessionId: string): Promise<CredentialsResponse> {
-    const response = await fetch(`http://localhost:8080/api/v1/sessions/${sessionId}`, {
+    const b = { userId: userId }
+    const response = await fetch(`http://localhost:8081/api/v1/sessions/${sessionId}`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
         },
-        body: JSON.stringify({ userId }),
+        body: JSON.stringify(b),
     });
 
     if (!response.ok) {

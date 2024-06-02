@@ -1,6 +1,5 @@
 package com.xalpol12.wsserver.handler;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xalpol12.wsserver.model.message.CustomMessage;
 import com.xalpol12.wsserver.model.message.payload.*;
@@ -14,6 +13,8 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(@NotNull WebSocketSession session,
-                                     @NotNull TextMessage message) throws JsonProcessingException {
+                                     @NotNull TextMessage message) throws IOException {
         String payload = message.getPayload();
         CustomMessage customMessage = objectMapper.readValue(payload, CustomMessage.class);
 
