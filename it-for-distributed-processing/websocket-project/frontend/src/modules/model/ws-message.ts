@@ -1,9 +1,9 @@
 export enum MessageType {
-    HANDSHAKE, // to server
-    DRAWING, // bidirectional
-    CHAT_MESSAGE, // bidirectional
-    GAME_DATA, // from server
-    GAME_TIMER, // from server
+    HANDSHAKE = "HANDSHAKE", // to server
+    DRAWING = "DRAWING", // bidirectional
+    CHAT_MESSAGE = "CHAT_MESSAGE", // bidirectional
+    GAME_DATA = "GAME_DATA", // from server
+    GAME_TIMER = "GAME_TIMER", // from server
 }
 
 export interface HandshakePayload {

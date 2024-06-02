@@ -17,9 +17,10 @@ public class CustomMessageDeserializer extends JsonDeserializer<CustomMessage> {
         ObjectMapper mapper = (ObjectMapper) p.getCodec();
         JsonNode messageNode = mapper.readTree(p);
 
-        int messageTypeValue = messageNode.get("messageType").asInt();
-        MessageType messageType = MessageType.fromValue(messageTypeValue);
+        MessageType messageType = MessageType.valueOf(messageNode.get("messageType").asText());
         JsonNode payloadNode = messageNode.get("payload");
+
+        log.info("Deserializer found type: {}", messageType.name());
 
         Payload payload;
         switch (messageType) {

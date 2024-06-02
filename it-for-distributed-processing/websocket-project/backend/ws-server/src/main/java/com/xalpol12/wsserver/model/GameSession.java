@@ -4,7 +4,6 @@ import com.xalpol12.wsserver.exception.ClientNotFoundException;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.List;
@@ -19,7 +18,7 @@ public class GameSession {
     private final Set<WebSocketSession> sessions = ConcurrentHashMap.newKeySet();
     private final Map<String, UserData> usersData = new ConcurrentHashMap<>();
     @Getter
-    private final List<TextMessage> drawnFrames = new CopyOnWriteArrayList<>();
+    private final List<String> drawnFrames = new CopyOnWriteArrayList<>();
 
     public void addWebSocketSessionToSession(WebSocketSession session) {
         log.info("WebSocketSession {} added to a set", session.getId());
@@ -47,7 +46,7 @@ public class GameSession {
         }
     }
 
-    public void addToDrawnFrames(TextMessage message) {
+    public void addToDrawnFrames(String message) {
         drawnFrames.add(message);
         log.info("Currently frames: {}", drawnFrames.size());
     }

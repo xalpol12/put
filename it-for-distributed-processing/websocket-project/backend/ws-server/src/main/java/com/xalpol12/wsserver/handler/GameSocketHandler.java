@@ -39,6 +39,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
         try {
             CustomMessage customMessage = objectMapper.readValue(payload, CustomMessage.class);
             log.info(customMessage.toString());
+            log.info("Message type {}", customMessage.getMessageType());
             switch (customMessage.getMessageType()) {
                 case HANDSHAKE -> {
                     HandshakePayload handshakePayload = (HandshakePayload) customMessage.getPayload();
@@ -69,16 +70,12 @@ public class GameSocketHandler extends TextWebSocketHandler {
             }
         } catch (JsonMappingException e) {
             log.error("JsonMappingException: " + e.getMessage());
-            e.printStackTrace();
         } catch (JsonProcessingException e) {
             log.error("JsonProcessingException: " + e.getMessage());
-            e.printStackTrace();
         } catch (IOException e) {
             log.error("IOException: " + e.getMessage());
-            e.printStackTrace();
         } catch (Exception e) {
             log.error("Unexpected exception: ", e);
-            e.printStackTrace();
         }
     }
 

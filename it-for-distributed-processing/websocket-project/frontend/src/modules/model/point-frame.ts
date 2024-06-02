@@ -1,5 +1,4 @@
 export interface StrokeFrame {
-    //TODO: add strokeFrameId and caching drawings
     senderId: string,
     lineWidth: number,
     lineCap: CanvasLineCap,

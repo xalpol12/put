@@ -1,9 +1,14 @@
 package com.xalpol12.wsserver.model.message.payload;
 
 import lombok.Data;
-import org.springframework.web.socket.TextMessage;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class DrawingPayload implements Payload {
-    TextMessage drawingFrame;
+    String drawingFrame;
+
+    public DrawingPayload(String msg) {
+        drawingFrame = msg;
+    }
 }

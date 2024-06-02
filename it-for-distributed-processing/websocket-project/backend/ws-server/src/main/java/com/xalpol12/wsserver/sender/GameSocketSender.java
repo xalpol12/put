@@ -1,5 +1,7 @@
 package com.xalpol12.wsserver.sender;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xalpol12.wsserver.model.message.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,9 +16,16 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class GameSocketSender {
+    private static final ObjectMapper mapper = new ObjectMapper();
 
-    public TextMessage wrapCustomMessage(CustomMessage message) {
-        return new TextMessage(message.toString());
+    public static TextMessage wrapCustomMessage(CustomMessage message) {
+        try {
+            String string = mapper.writeValueAsString(message);
+            return new TextMessage(string);
+        } catch (JsonProcessingException e) {
+            log.info("Exception while serializing CustomMessage " + message.getMessageType());
+        }
+        return new TextMessage("Server failed");
     }
 
     public void sendMessage(WebSocketSession session, TextMessage message) throws IOException {

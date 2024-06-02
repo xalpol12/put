@@ -10,11 +10,8 @@ public class CustomMessage {
     private MessageType messageType;
     private Payload payload;
 
-    public CustomMessage() {
-    }
-
     public CustomMessage(MessageType type, Payload payload) {
-        this.messageType = type;
+        messageType = type;
         this.payload = payload;
     }
 }

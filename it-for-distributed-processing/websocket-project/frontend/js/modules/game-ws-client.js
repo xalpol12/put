@@ -22,6 +22,7 @@ export function initWebsocket() {
         };
     });
     function processMessage(e) {
+        console.log(e.data);
         const message = JSON.parse(e.data);
         switch (message.messageType) {
             case MessageType.DRAWING:

@@ -10,7 +10,6 @@ import com.xalpol12.wsserver.model.dto.SessionResponse;
 import com.xalpol12.wsserver.model.message.payload.HandshakePayload;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.List;
@@ -98,14 +97,14 @@ public class GameSessionService {
     }
 
     // Frames access methods
-    public void addToDrawnFrames(WebSocketSession session, TextMessage message) {
+    public void addToDrawnFrames(WebSocketSession session, String message) {
         HandshakePayload ids = getIdsByWebSocketSession(session);
         GameSession gs = getGameSessionById(ids.getSessionId());
         log.info("Added new frame to session: {}", ids.getSessionId());
         gs.addToDrawnFrames(message);
     }
 
-    public List<TextMessage> getDrawnFrames(String sessionId) {
+    public List<String> getDrawnFrames(String sessionId) {
         GameSession gs = getGameSessionById(sessionId);
         return gs.getDrawnFrames();
     }

@@ -27,6 +27,7 @@ export function initWebsocket() {
     });
 
     function processMessage(e: MessageEvent) {
+        console.log(e.data);
         const message: CustomMessage = JSON.parse(e.data);
         switch (message.messageType) {
             case MessageType.DRAWING:
