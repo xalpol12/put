@@ -15,12 +15,12 @@ public class CustomMessageDeserializer extends JsonDeserializer<CustomMessage> {
     @Override
     public CustomMessage deserialize(JsonParser p, DeserializationContext cxt) throws IOException {
         ObjectMapper mapper = (ObjectMapper) p.getCodec();
-        JsonNode node = mapper.readTree(p);
+        JsonNode messageNode = mapper.readTree(p);
 
-        MessageType messageType = MessageType.valueOf(node.get("messageType").asText());
-        JsonNode payloadNode = node.get("payload");
+        int messageTypeValue = messageNode.get("messageType").asInt();
+        MessageType messageType = MessageType.fromValue(messageTypeValue);
+        JsonNode payloadNode = messageNode.get("payload");
 
-        log.info("Invoked CustomMessageDeserializer");
         Payload payload;
         switch (messageType) {
             case HANDSHAKE -> payload = mapper.treeToValue(payloadNode, HandshakePayload.class);

@@ -3,14 +3,12 @@ package com.xalpol12.wsserver.handler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.xalpol12.wsserver.model.message.CustomMessage;
-import com.xalpol12.wsserver.model.message.CustomMessageDeserializer;
 import com.xalpol12.wsserver.model.message.payload.*;
 import com.xalpol12.wsserver.service.GameSocketService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -21,19 +19,11 @@ import java.io.IOException;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class GameSocketHandler extends TextWebSocketHandler {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final GameSocketService gameSocketService;
-
-    @Autowired
-    public GameSocketHandler(GameSocketService gameSocketService) {
-        this.gameSocketService = gameSocketService;
-
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(CustomMessage.class, new CustomMessageDeserializer());
-        objectMapper.registerModule(module);
-    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -45,11 +35,10 @@ public class GameSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(@NotNull WebSocketSession session,
                                      @NotNull TextMessage message) {
         String payload = message.getPayload();
-        log.info(message.toString());
+        log.info(payload);
         try {
-            log.info("Before objectmapper");
             CustomMessage customMessage = objectMapper.readValue(payload, CustomMessage.class);
-            // log.info(customMessage.toString());
+            log.info(customMessage.toString());
             switch (customMessage.getMessageType()) {
                 case HANDSHAKE -> {
                     HandshakePayload handshakePayload = (HandshakePayload) customMessage.getPayload();
