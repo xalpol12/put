@@ -25,11 +25,8 @@ async function loadPage(page: any) {
     }
     else if (page === "gamepage.html") {
         const userId = sessionStorage.getItem('userId');
-        if (userId) {
-            createCanvas(userId);
-        } else {
-            console.log("userId is null!");
-        }
+        const sessionId = sessionStorage.getItem('sessionId');
+        createCanvas(userId!, sessionId!);
     }
 
     console.log(`${page} loaded`);

@@ -1,18 +1,17 @@
-import { sendDrawing } from "./draw-ws-client.js";
+import { sendDrawing, sendHandshake } from "./game-ws-client.js";
 import { Point, PointFrame, StrokeFrame, StrokeStyle } from "./model/point-frame.js";
 
 let parent: HTMLElement;
 let canvas: HTMLCanvasElement | null;
 let ctx: CanvasRenderingContext2D | null;
-let id: string;
+let uId: string;
+let sId: string;
 let pos: Point;
 let frameCounter = 0;
 let strokeFrame: StrokeFrame;
 let isDrawing = false;
-let isCanvasReady = false;
-let frameQueue: StrokeFrame[] = [];
 
-export function createCanvas(clientId: string): void {
+export function createCanvas(userId: string, sessionId: string): void {
     parent = document.getElementById('canvas-flexbox')!;
     canvas = document.getElementById('drawing-canvas') as HTMLCanvasElement;
     if (!canvas) {
@@ -28,7 +27,8 @@ export function createCanvas(clientId: string): void {
         return;
     }
 
-    id = clientId;
+    uId = userId;
+    sId = sessionId;
     pos = { x: 0, y: 0 }
     resize();
 
@@ -39,9 +39,7 @@ export function createCanvas(clientId: string): void {
     document.addEventListener('mouseup', sendFrame);
     document.addEventListener('mouseenter', setPosition);
 
-    isCanvasReady = true;
-    clear();
-    processFrameQueue();
+    sendHandshake(uId, sId);
 
     console.log("Initialized canvas successfully!");
 }
@@ -106,12 +104,12 @@ function draw(e: MouseEvent) {
 }
 
 function initializeStrokeFrame(lineWidth: number, lineCap: CanvasLineCap, strokeStyle: StrokeStyle, from: Point) {
-    if (id === undefined) {
-        console.error("Client id:", id);
+    if (uId === undefined) {
+        console.error("Client id:", uId);
         return;
     }
     strokeFrame = {
-        senderId: id,
+        senderId: uId,
         lineWidth: lineWidth,
         lineCap: lineCap,
         strokeStyle: strokeStyle,
@@ -129,12 +127,6 @@ function sendFrame() {
 }
 
 export function drawFromFrame(strokeFrame: StrokeFrame) {
-    if (!isCanvasReady) {
-        console.log("Canvas not ready, queueing frame");
-        frameQueue.push(strokeFrame);
-        return;
-    }
-
     if (!canvas) {
         console.warn("Canvas element 'drawing-canvas' is null");
         return;
@@ -160,13 +152,4 @@ export function drawFromFrame(strokeFrame: StrokeFrame) {
     }
 
     console.log(`Drawn from frame: ${strokeFrame}`);
-}
-
-function processFrameQueue() {
-    while (frameQueue.length > 0) {
-        const frame = frameQueue.shift();
-        if (frame) {
-            drawFromFrame(frame);
-        }
-    }
 }

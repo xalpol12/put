@@ -7,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { createCanvas } from "./modules/canvas.js";
 import { postClient, postSession } from "./modules/fetch.js";
 document.addEventListener('DOMContentLoaded', () => {
     if (isSessionStorageEmpty()) {
@@ -16,6 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
         loadPage('gamepage.html');
     }
 });
+function isSessionStorageEmpty() {
+    return !sessionStorage.getItem('userId') || !sessionStorage.getItem('sessionId');
+}
 function loadPage(page) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
@@ -26,11 +30,13 @@ function loadPage(page) {
             (_a = document.getElementById('joinButton')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', onJoinButtonClick);
             (_b = document.getElementById('hostButton')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', onHostButtonClick);
         }
+        else if (page === "gamepage.html") {
+            const userId = sessionStorage.getItem('userId');
+            const sessionId = sessionStorage.getItem('sessionId');
+            createCanvas(userId, sessionId);
+        }
         console.log(`${page} loaded`);
     });
-}
-function isSessionStorageEmpty() {
-    return !sessionStorage.getItem('userId') || !sessionStorage.getItem('sessionId');
 }
 function getInputValues() {
     const userIdInput = document.getElementById('userIdInput');

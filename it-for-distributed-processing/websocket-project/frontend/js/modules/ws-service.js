@@ -1,6 +1,6 @@
-export function sendStringMessage(ws, m) {
+export function sendMessageAsString(ws, m) {
     if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(m);
+        ws.send(JSON.stringify(m));
         console.log(`message: ${m} sent!`);
     }
     else {
