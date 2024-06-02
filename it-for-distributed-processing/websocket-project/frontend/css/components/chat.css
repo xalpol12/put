@@ -5,7 +5,42 @@
     margin: 5px;
     flex: 1;
     max-width: calc(33% - 10px);
+    overflow: hidden;
+    position: relative;
+}
+
+.chat-history {
+    flex: 1;
     overflow-y: auto;
+}
+
+.input-container {
+    display: flex;
+    border-top: 1px solid #ccc;
+    padding: 10px;
+    background: #f9f9f9;
+}
+
+.input-container input {
+    flex: 1;
+    padding: 10px;
+    margin-right: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.input-container button {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+
+.input-container button:hover {
+    background: #0056b3;
 }
 
 @media screen and (max-width: 660px) {

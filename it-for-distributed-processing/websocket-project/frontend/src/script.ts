@@ -28,6 +28,7 @@ async function loadPage(page: any) {
         const sessionId = sessionStorage.getItem('sessionId');
         console.log("Invoked createCanvas");
         createCanvas(userId!, sessionId!);
+        document.getElementById('sendButton')?.addEventListener('click', onChatButtonClick);
     }
 
     console.log(`${page} loaded`);
@@ -84,4 +85,10 @@ function onHostButtonClick() {
             loadPage('gamepage.html')
         })
         .catch((e) => { console.error(e) });
+}
+
+function onChatButtonClick() {
+    const chatInput = document.getElementById('chatInput') as HTMLInputElement;
+    const message = chatInput.value;
+    console.log(message);
 }

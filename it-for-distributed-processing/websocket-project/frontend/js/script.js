@@ -21,7 +21,7 @@ function isSessionStorageEmpty() {
     return !sessionStorage.getItem('userId') || !sessionStorage.getItem('sessionId');
 }
 function loadPage(page) {
-    var _a, _b;
+    var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield fetch(`./html/${page}`);
         const content = yield response.text();
@@ -35,6 +35,7 @@ function loadPage(page) {
             const sessionId = sessionStorage.getItem('sessionId');
             console.log("Invoked createCanvas");
             createCanvas(userId, sessionId);
+            (_c = document.getElementById('sendButton')) === null || _c === void 0 ? void 0 : _c.addEventListener('click', onChatButtonClick);
         }
         console.log(`${page} loaded`);
     });
@@ -87,4 +88,9 @@ function onHostButtonClick() {
         loadPage('gamepage.html');
     })
         .catch((e) => { console.error(e); });
+}
+function onChatButtonClick() {
+    const chatInput = document.getElementById('chatInput');
+    const message = chatInput.value;
+    console.log(message);
 }
