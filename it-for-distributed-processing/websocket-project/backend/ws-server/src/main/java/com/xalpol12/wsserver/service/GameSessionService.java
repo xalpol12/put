@@ -61,7 +61,7 @@ public class GameSessionService {
     public boolean hasDrawingPermission(WebSocketSession session) {
         HandshakePayload ids = getIdsByWebSocketSession(session);
         GameSession gs = getGameSessionById(ids.getSessionId());
-        return gs.hasDrawingPermission(ids.getClientId());
+        return gs.hasDrawingPermission(ids.getUserId());
     }
 
     // WebSocketSessions : Ids access methods
@@ -70,7 +70,7 @@ public class GameSessionService {
         GameSession gs = getGameSessionById(payload.getSessionId());
         gs.addWebSocketSessionToSession(session);
         log.info("Mapped session: {} to clientId: {} and sessionId: {}",
-                session.getId(), payload.getClientId(), payload.getSessionId());
+                session.getId(), payload.getUserId(), payload.getSessionId());
     }
 
     public void removeWebSocketSessionFromMap(WebSocketSession session) {
@@ -79,7 +79,7 @@ public class GameSessionService {
             GameSession gs = getGameSessionById(ids.getSessionId());
             gs.removeWebSocketSessionFromSession(session);
             log.info("Removed session: {} from mapping, previously associated with session: {} and key: {}",
-                    session.getId(), ids.getSessionId(), ids.getClientId());
+                    session.getId(), ids.getSessionId(), ids.getUserId());
         }
     }
 

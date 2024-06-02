@@ -1,3 +1,4 @@
+import { createCanvas } from "./modules/canvas.js";
 import { postClient, postSession } from "./modules/fetch.js";
 import { CredentialsResponse } from "./modules/model/credentials-response.js";
 
@@ -9,6 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 })
 
+function isSessionStorageEmpty(): boolean {
+    return !sessionStorage.getItem('userId') || !sessionStorage.getItem('sessionId');
+}
+
 async function loadPage(page: any) {
     const response = await fetch(`./html/${page}`);
     const content = await response.text();
@@ -18,13 +23,18 @@ async function loadPage(page: any) {
         document.getElementById('joinButton')?.addEventListener('click', onJoinButtonClick);
         document.getElementById('hostButton')?.addEventListener('click', onHostButtonClick);
     }
+    else if (page === "gamepage.html") {
+        const userId = sessionStorage.getItem('userId');
+        if (userId) {
+            createCanvas(userId);
+        } else {
+            console.log("userId is null!");
+        }
+    }
+
     console.log(`${page} loaded`);
 }
 
-
-function isSessionStorageEmpty(): boolean {
-    return !sessionStorage.getItem('userId') || !sessionStorage.getItem('sessionId');
-}
 
 function getInputValues() {
     const userIdInput = document.getElementById('userIdInput') as HTMLInputElement;

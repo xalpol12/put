@@ -1,4 +1,4 @@
-import { sendStrokeFrame } from "./draw-ws-client.js";
+import { sendDrawing } from "./draw-ws-client.js";
 import { Point, PointFrame, StrokeFrame, StrokeStyle } from "./model/point-frame.js";
 
 let parent: HTMLElement;
@@ -124,7 +124,7 @@ function sendFrame() {
     if (!isDrawing) return;
     isDrawing = false;
     console.log("isDrawing = false");
-    sendStrokeFrame(strokeFrame);
+    sendDrawing(strokeFrame);
     console.log(`Sent ${strokeFrame.points.length} frames`);
 }
 

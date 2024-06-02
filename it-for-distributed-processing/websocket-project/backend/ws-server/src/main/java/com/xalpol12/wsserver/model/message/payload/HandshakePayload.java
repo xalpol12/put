@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class HandshakePayload {
-    private String clientId;
+    private String userId;
     private String sessionId;
 }
