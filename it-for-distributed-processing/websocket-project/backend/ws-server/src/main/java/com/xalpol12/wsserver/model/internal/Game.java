@@ -1,20 +1,20 @@
 package com.xalpol12.wsserver.model.internal;
 
+import lombok.Getter;
+
 public class Game {
     private final GameTimer gameTimer;
 
-    private final int ROUNDS_IN_GAME;
     private int roundCounter;
-    private String currentWord;
+    @Getter
+    private String currentWord = "TEST";
     private String userWithDrawingPermissions; // TODO: implement changing drawing fellas
 
-    public Game(int numberOfRounds, int roundLength) {
-        ROUNDS_IN_GAME = numberOfRounds;
+    public Game(int roundLength) {
         gameTimer = new GameTimer(roundLength);
     }
 
     public void startGame() {
-        roundCounter = ROUNDS_IN_GAME;
         assignNewWord();
     }
 

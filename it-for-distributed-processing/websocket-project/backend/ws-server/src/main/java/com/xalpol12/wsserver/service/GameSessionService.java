@@ -7,6 +7,8 @@ import com.xalpol12.wsserver.model.GameSession;
 import com.xalpol12.wsserver.model.UserData;
 import com.xalpol12.wsserver.model.dto.SessionDTO;
 import com.xalpol12.wsserver.model.dto.SessionResponse;
+import com.xalpol12.wsserver.model.internal.Game;
+import com.xalpol12.wsserver.model.message.payload.ChatMessagePayload;
 import com.xalpol12.wsserver.model.message.payload.HandshakePayload;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,7 +30,7 @@ public class GameSessionService {
         String sessionId = sessionDTO.sessionId();
         if (!keysSessions.containsKey(sessionId)) {
             log.info("Created new session with id: {}", sessionId);
-            keysSessions.put(sessionId, new GameSession());
+            keysSessions.put(sessionId, new GameSession(new Game(30)));
             return new SessionResponse(sessionDTO.userId(), sessionDTO.sessionId());
         } else {
             log.error("Session with id: {} already exists!", sessionId);
@@ -107,5 +109,11 @@ public class GameSessionService {
     public List<String> getDrawnFrames(String sessionId) {
         GameSession gs = getGameSessionById(sessionId);
         return gs.getDrawnFrames();
+    }
+
+    public ChatMessagePayload processMessage(WebSocketSession session, ChatMessagePayload message) {
+        HandshakePayload ids = getIdsByWebSocketSession(session);
+        GameSession gs = getGameSessionById(ids.getSessionId());
+        return gs.processMessage(message);
     }
 }

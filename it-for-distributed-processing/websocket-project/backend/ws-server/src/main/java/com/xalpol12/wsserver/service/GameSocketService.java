@@ -44,6 +44,7 @@ public class GameSocketService {
         return new CustomMessage(MessageType.DRAWING, d);
     }
 
+
     public void handleDrawingMessage(WebSocketSession session, DrawingPayload payload) throws IOException {
         if (!gameSessionService.hasDrawingPermission(session)) return;
         gameSessionService.addToDrawnFrames(session, payload.getDrawingFrame());
@@ -53,15 +54,29 @@ public class GameSocketService {
         for (WebSocketSession s : sessions) {
             String sessionId = s.getId();
             if (!sessionId.equals(senderId)) { // do not transmit to the one that sent a frame
-
                 s.sendMessage(GameSocketSender.wrapCustomMessage(m));
             }
         }
         log.info("Transmitted frame to {} clients", sessions.size() - 1);
     }
 
-    public void handleChatMessage(WebSocketSession session, ChatMessagePayload payload) {
+    public void handleChatMessage(WebSocketSession session, ChatMessagePayload payload) throws IOException {
+        log.info("Received chat message {}", payload.getContent());
+        ChatMessagePayload serverResponse = gameSessionService.processMessage(session, payload);
+        CustomMessage message = createChatMessage(serverResponse);
+        TextMessage tMessage = GameSocketSender.wrapCustomMessage(message);
+        if (serverResponse.getSender().equals("SERVER")) { // send server message only to user that sent the message
+            session.sendMessage(tMessage);
+        } else {
+            Set<WebSocketSession> sessions = gameSessionService.getAllWSSessionsFromGameSessionByWSSession(session);
+            for (WebSocketSession s : sessions) {
+                s.sendMessage(tMessage);
+            }
+        }
+    }
 
+    private CustomMessage createChatMessage(ChatMessagePayload c) {
+        return new CustomMessage(MessageType.CHAT_MESSAGE, c);
     }
 
     public void handleGameDataMessage(WebSocketSession session, GameDataPayload payload) {

@@ -43,6 +43,35 @@
     background: #0056b3;
 }
 
+.chat-message {
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 60%;
+}
+
+.chat-message.user {
+    background-color: #d1e7dd;
+    align-self: flex-end;
+    text-align: right;
+    max-width: 100%;
+}
+
+.chat-message.other {
+    background-color: #f8d7da;
+    align-self: flex-start;
+    text-align: left;
+    max-width: 100%;
+}
+
+.chat-message.server {
+    background-color: #7ee063;
+    text-align: center;
+    color: green;
+    max-width: 100%;
+    margin: 10px 0;
+}
+
 @media screen and (max-width: 660px) {
     .chat-container {
         flex: none;

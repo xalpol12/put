@@ -1,4 +1,5 @@
 import { drawFromFrame } from "./canvas.js";
+import { addMessage } from "./chat.js";
 import { StrokeFrame } from "./model/point-frame.js";
 import { ChatMessagePayload, CustomMessage, DrawingPayload, GameDataPayload, GameTimerPayload, HandshakePayload, MessageType } from "./model/ws-message.js";
 import { sendMessageAsString } from "./ws-service.js";
@@ -52,6 +53,7 @@ export function initWebsocket() {
     }
 
     function handleChatMessage(e: ChatMessagePayload) {
+        addMessage(e);
         console.log(e);
     }
 
@@ -98,6 +100,12 @@ export function sendDrawing(strokeFrame: StrokeFrame) {
     console.log(`Drawing with senderId: ${strokeFrame.senderId} sent to server`);
 }
 
-export function sendChatMessage() {
+export function sendChatMessage(m: ChatMessagePayload) {
+    const message: CustomMessage = {
+        messageType: MessageType.CHAT_MESSAGE,
+        payload: m,
+    };
+    sendMessageAsString(ws, message);
+    console.log(`Chat message with content ${m.content} sent to server`);
 
 }

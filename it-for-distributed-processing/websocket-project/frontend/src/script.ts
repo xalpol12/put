@@ -1,4 +1,5 @@
 import { createCanvas } from "./modules/canvas.js";
+import { initChat } from "./modules/chat.js";
 import { postClient, postSession } from "./modules/fetch.js";
 import { CredentialsResponse } from "./modules/model/credentials-response.js";
 
@@ -28,7 +29,7 @@ async function loadPage(page: any) {
         const sessionId = sessionStorage.getItem('sessionId');
         console.log("Invoked createCanvas");
         createCanvas(userId!, sessionId!);
-        document.getElementById('sendButton')?.addEventListener('click', onChatButtonClick);
+        initChat();
     }
 
     console.log(`${page} loaded`);
@@ -85,10 +86,4 @@ function onHostButtonClick() {
             loadPage('gamepage.html')
         })
         .catch((e) => { console.error(e) });
-}
-
-function onChatButtonClick() {
-    const chatInput = document.getElementById('chatInput') as HTMLInputElement;
-    const message = chatInput.value;
-    console.log(message);
 }

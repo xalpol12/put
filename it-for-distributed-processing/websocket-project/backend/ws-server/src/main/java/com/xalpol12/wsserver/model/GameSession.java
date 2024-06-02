@@ -1,6 +1,8 @@
 package com.xalpol12.wsserver.model;
 
 import com.xalpol12.wsserver.exception.ClientNotFoundException;
+import com.xalpol12.wsserver.model.internal.Game;
+import com.xalpol12.wsserver.model.message.payload.ChatMessagePayload;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ public class GameSession {
     private final Map<String, UserData> usersData = new ConcurrentHashMap<>();
     @Getter
     private final List<String> drawnFrames = new CopyOnWriteArrayList<>();
+    private final Game game;
 
     public void addWebSocketSessionToSession(WebSocketSession session) {
         log.info("WebSocketSession {} added to a set", session.getId());
@@ -53,5 +56,24 @@ public class GameSession {
 
     public boolean hasDrawingPermission(String userId) {
         return true; // TODO: Add checking drawing permission
+    }
+
+    public ChatMessagePayload processMessage(ChatMessagePayload message) {
+        if (message.getContent().equalsIgnoreCase(game.getCurrentWord())) {
+            incrementPlayerPoints(message.getSender());
+            //TODO: change flag for already guessed in this round
+            return new ChatMessagePayload("SERVER", "Good guess!");
+        } else {
+            return message;
+        }
+    }
+
+    private void incrementPlayerPoints(String userId) {
+        if (usersData.containsKey(userId)) {
+            UserData userData = usersData.get(userId);
+            userData.incrementScore();
+            usersData.put(userId, userData);
+            log.info("Incremented user's {} score, current: {}", userId, userData.getScore());
+        }
     }
 }

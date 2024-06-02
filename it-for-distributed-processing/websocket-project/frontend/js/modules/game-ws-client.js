@@ -1,4 +1,5 @@
 import { drawFromFrame } from "./canvas.js";
+import { addMessage } from "./chat.js";
 import { MessageType } from "./model/ws-message.js";
 import { sendMessageAsString } from "./ws-service.js";
 let ws;
@@ -45,6 +46,7 @@ export function initWebsocket() {
         drawFromFrame(strokeFrame);
     }
     function handleChatMessage(e) {
+        addMessage(e);
         console.log(e);
     }
     function handleGameData(e) {
@@ -85,5 +87,11 @@ export function sendDrawing(strokeFrame) {
     sendMessageAsString(ws, drawing);
     console.log(`Drawing with senderId: ${strokeFrame.senderId} sent to server`);
 }
-export function sendChatMessage() {
+export function sendChatMessage(m) {
+    const message = {
+        messageType: MessageType.CHAT_MESSAGE,
+        payload: m,
+    };
+    sendMessageAsString(ws, message);
+    console.log(`Chat message with content ${m.content} sent to server`);
 }

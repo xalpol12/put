@@ -4,5 +4,9 @@ import lombok.Data;
 
 @Data
 public class UserData {
-    private Integer score;
+    private Integer score = 0;
+
+    public void incrementScore() {
+        score++;
+    }
 }

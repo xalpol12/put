@@ -16,7 +16,8 @@ export interface DrawingPayload {
 }
 
 export interface ChatMessagePayload {
-
+    sender: string;
+    content: string;
 }
 
 export interface GameDataPayload {

@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { createCanvas } from "./modules/canvas.js";
+import { initChat } from "./modules/chat.js";
 import { postClient, postSession } from "./modules/fetch.js";
 document.addEventListener('DOMContentLoaded', () => {
     if (isSessionStorageEmpty()) {
@@ -21,7 +22,7 @@ function isSessionStorageEmpty() {
     return !sessionStorage.getItem('userId') || !sessionStorage.getItem('sessionId');
 }
 function loadPage(page) {
-    var _a, _b, _c;
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield fetch(`./html/${page}`);
         const content = yield response.text();
@@ -35,7 +36,7 @@ function loadPage(page) {
             const sessionId = sessionStorage.getItem('sessionId');
             console.log("Invoked createCanvas");
             createCanvas(userId, sessionId);
-            (_c = document.getElementById('sendButton')) === null || _c === void 0 ? void 0 : _c.addEventListener('click', onChatButtonClick);
+            initChat();
         }
         console.log(`${page} loaded`);
     });
@@ -88,9 +89,4 @@ function onHostButtonClick() {
         loadPage('gamepage.html');
     })
         .catch((e) => { console.error(e); });
-}
-function onChatButtonClick() {
-    const chatInput = document.getElementById('chatInput');
-    const message = chatInput.value;
-    console.log(message);
 }
