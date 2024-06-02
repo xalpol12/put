@@ -1,4 +1,13 @@
-import { sendDrawing, sendHandshake } from "./game-ws-client.js";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { initWebsocket, sendDrawing, sendHandshake } from "./game-ws-client.js";
 let parent;
 let canvas;
 let ctx;
@@ -9,32 +18,45 @@ let frameCounter = 0;
 let strokeFrame;
 let isDrawing = false;
 export function createCanvas(userId, sessionId) {
-    parent = document.getElementById('canvas-flexbox');
-    canvas = document.getElementById('drawing-canvas');
-    if (!canvas) {
-        console.error("Canvas element not supported!");
-        return;
-    }
-    else {
-        console.log("Canvas element found");
-    }
-    ctx = canvas.getContext('2d');
-    if (!ctx) {
-        console.warn("Canvas context not supported");
-        return;
-    }
-    uId = userId;
-    sId = sessionId;
-    pos = { x: 0, y: 0 };
-    resize();
-    window.addEventListener('load', resize);
-    window.addEventListener('resize', resize);
-    document.addEventListener('mousemove', draw);
-    document.addEventListener('mousedown', setPosition);
-    document.addEventListener('mouseup', sendFrame);
-    document.addEventListener('mouseenter', setPosition);
-    sendHandshake(uId, sId);
-    console.log("Initialized canvas successfully!");
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                parent = document.getElementById('canvas-flexbox');
+                canvas = document.getElementById('drawing-canvas');
+                if (!canvas) {
+                    console.error("Canvas element not supported!");
+                    return;
+                }
+                else {
+                    console.log("Canvas element found");
+                }
+                ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    console.warn("Canvas context not supported");
+                    return;
+                }
+                uId = userId;
+                sId = sessionId;
+                pos = { x: 0, y: 0 };
+                resize();
+                window.addEventListener('load', resize);
+                window.addEventListener('resize', resize);
+                document.addEventListener('mousemove', draw);
+                document.addEventListener('mousedown', setPosition);
+                document.addEventListener('mouseup', sendFrame);
+                document.addEventListener('mouseenter', setPosition);
+                console.log("Before initWebsocket");
+                yield initWebsocket();
+                console.log("After initWebsocket");
+                sendHandshake(uId, sId);
+                console.log("Initialized canvas successfully!");
+                resolve();
+            }
+            catch (error) {
+                reject(error);
+            }
+        }));
+    });
 }
 function resize() {
     if (!parent || !canvas) {

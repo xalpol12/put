@@ -1,4 +1,4 @@
 package com.xalpol12.wsserver.model.message.payload;
 
-public class ChatMessagePayload {
+public class ChatMessagePayload implements Payload {
 }

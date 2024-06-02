@@ -5,18 +5,26 @@ import { sendMessageAsString } from "./ws-service.js";
 
 let ws: WebSocket;
 
-export function initDrawConnection() {
-    ws = new WebSocket('ws://localhost:8081/game');
+export function initWebsocket() {
+    return new Promise<void>((resolve, reject) => {
+        ws = new WebSocket('ws://localhost:8081/game');
 
-    ws.onopen = (e: Event) => { console.log("Opened /game connection " + e.type); }
-    ws.onmessage = (e: MessageEvent) => {
-        processMessage(e);
-    };
-    ws.onerror = (e: Event) => { console.log(e.type) };
-    ws.onclose = (e: CloseEvent) => {
-        console.log(`Code: ${e.code}, reason: ${e.reason}`);
-        ws.close();
-    }
+        ws.onopen = (e: Event) => {
+            console.log("Opened /game connection " + e.type);
+            resolve();
+        }
+        ws.onmessage = (e: MessageEvent) => {
+            processMessage(e);
+        };
+        ws.onerror = (e: Event) => {
+            console.log(e.type);
+            reject();
+        };
+        ws.onclose = (e: CloseEvent) => {
+            console.log(`Code: ${e.code}, reason: ${e.reason}`);
+            ws.close();
+        }
+    });
 
     function processMessage(e: MessageEvent) {
         const message: CustomMessage = JSON.parse(e.data);

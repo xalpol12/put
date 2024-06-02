@@ -4,6 +4,6 @@ import lombok.Data;
 import org.springframework.web.socket.TextMessage;
 
 @Data
-public class DrawingPayload {
+public class DrawingPayload implements Payload {
     TextMessage drawingFrame;
 }

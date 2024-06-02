@@ -1,4 +1,4 @@
-import { sendDrawing, sendHandshake } from "./game-ws-client.js";
+import { initWebsocket, sendDrawing, sendHandshake } from "./game-ws-client.js";
 import { Point, PointFrame, StrokeFrame, StrokeStyle } from "./model/point-frame.js";
 
 let parent: HTMLElement;
@@ -11,37 +11,47 @@ let frameCounter = 0;
 let strokeFrame: StrokeFrame;
 let isDrawing = false;
 
-export function createCanvas(userId: string, sessionId: string): void {
-    parent = document.getElementById('canvas-flexbox')!;
-    canvas = document.getElementById('drawing-canvas') as HTMLCanvasElement;
-    if (!canvas) {
-        console.error("Canvas element not supported!");
-        return;
-    } else {
-        console.log("Canvas element found");
-    }
+export async function createCanvas(userId: string, sessionId: string) {
+    return new Promise<void>(async (resolve, reject) => {
+        try {
+            parent = document.getElementById('canvas-flexbox')!;
+            canvas = document.getElementById('drawing-canvas') as HTMLCanvasElement;
+            if (!canvas) {
+                console.error("Canvas element not supported!");
+                return;
+            } else {
+                console.log("Canvas element found");
+            }
 
-    ctx = canvas.getContext('2d');
-    if (!ctx) {
-        console.warn("Canvas context not supported");
-        return;
-    }
+            ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.warn("Canvas context not supported");
+                return;
+            }
 
-    uId = userId;
-    sId = sessionId;
-    pos = { x: 0, y: 0 }
-    resize();
+            uId = userId;
+            sId = sessionId;
+            pos = { x: 0, y: 0 }
+            resize();
 
-    window.addEventListener('load', resize);
-    window.addEventListener('resize', resize);
-    document.addEventListener('mousemove', draw);
-    document.addEventListener('mousedown', setPosition);
-    document.addEventListener('mouseup', sendFrame);
-    document.addEventListener('mouseenter', setPosition);
+            window.addEventListener('load', resize);
+            window.addEventListener('resize', resize);
+            document.addEventListener('mousemove', draw);
+            document.addEventListener('mousedown', setPosition);
+            document.addEventListener('mouseup', sendFrame);
+            document.addEventListener('mouseenter', setPosition);
 
-    sendHandshake(uId, sId);
+            console.log("Before initWebsocket");
+            await initWebsocket();
+            console.log("After initWebsocket");
+            sendHandshake(uId, sId);
 
-    console.log("Initialized canvas successfully!");
+            console.log("Initialized canvas successfully!");
+            resolve();
+        } catch (error) {
+            reject(error);
+        }
+    });
 }
 
 function resize() {

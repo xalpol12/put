@@ -2,17 +2,25 @@ import { drawFromFrame } from "./canvas.js";
 import { MessageType } from "./model/ws-message.js";
 import { sendMessageAsString } from "./ws-service.js";
 let ws;
-export function initDrawConnection() {
-    ws = new WebSocket('ws://localhost:8081/game');
-    ws.onopen = (e) => { console.log("Opened /game connection " + e.type); };
-    ws.onmessage = (e) => {
-        processMessage(e);
-    };
-    ws.onerror = (e) => { console.log(e.type); };
-    ws.onclose = (e) => {
-        console.log(`Code: ${e.code}, reason: ${e.reason}`);
-        ws.close();
-    };
+export function initWebsocket() {
+    return new Promise((resolve, reject) => {
+        ws = new WebSocket('ws://localhost:8081/game');
+        ws.onopen = (e) => {
+            console.log("Opened /game connection " + e.type);
+            resolve();
+        };
+        ws.onmessage = (e) => {
+            processMessage(e);
+        };
+        ws.onerror = (e) => {
+            console.log(e.type);
+            reject();
+        };
+        ws.onclose = (e) => {
+            console.log(`Code: ${e.code}, reason: ${e.reason}`);
+            ws.close();
+        };
+    });
     function processMessage(e) {
         const message = JSON.parse(e.data);
         switch (message.messageType) {

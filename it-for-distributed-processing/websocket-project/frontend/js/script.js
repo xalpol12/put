@@ -33,6 +33,7 @@ function loadPage(page) {
         else if (page === "gamepage.html") {
             const userId = sessionStorage.getItem('userId');
             const sessionId = sessionStorage.getItem('sessionId');
+            console.log("Invoked createCanvas");
             createCanvas(userId, sessionId);
         }
         console.log(`${page} loaded`);
