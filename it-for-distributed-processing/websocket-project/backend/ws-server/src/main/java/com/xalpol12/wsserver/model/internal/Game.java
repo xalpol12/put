@@ -19,8 +19,7 @@ public class Game {
     private final Map<String, PlayerData> playersData = new ConcurrentHashMap<>();
     private final Random random = new Random();
     private final String sessionId;
-
-    private GameSocketService listener;
+    private final GameSocketService listener;
 
     @Getter
     private GameState gameState = GameState.CREATED;
@@ -29,9 +28,11 @@ public class Game {
     private String currentWord = "TEST";
     private String drawer = "TEST";
 
-    public Game(GameSocketService listener, String sessionId, int roundLength) {
+    public Game(GameSocketService listener, String userId, String sessionId, int roundLength) {
+        this.listener = listener;
         this.sessionId = sessionId;
         gameTimer = new GameTimer(roundLength);
+        addPlayer(userId);
     }
 
     public void startGame() {
@@ -54,6 +55,7 @@ public class Game {
     private void startNewRound() {
         assignNewWord();
         assignNewDrawer();
+        notifyNewWord(currentWord, drawer);
         gameTimer.startNewRound();
     }
 
@@ -65,13 +67,16 @@ public class Game {
         List<String> userList = new ArrayList<>(playersData.keySet());
         String previous = drawer;
         do {
-            int index = random.nextInt(userList.size());
+            int index = random.nextInt(0, userList.size());
             drawer = userList.get(index);
         } while (drawer.equals(previous));
     }
 
     public void addPlayer(String userId) {
         playersData.put(userId, new PlayerData());
+        if (gameState == GameState.CREATED) {
+            startGame();
+        }
     }
 
     public void modifyPlayerData(String userId, PlayerData data) {

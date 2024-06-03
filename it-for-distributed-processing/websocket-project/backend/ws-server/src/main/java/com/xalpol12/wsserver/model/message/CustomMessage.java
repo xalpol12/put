@@ -19,7 +19,7 @@ public class CustomMessage {
         return new CustomMessage(MessageType.CHAT_MESSAGE, c);
     }
 
-    public static CustomMessage createGameDataMessage(GameDataPayload gd) {
+    public static CustomMessage createGameDataMessage(NewWordPayload gd) {
         return new CustomMessage(MessageType.GAME_DATA, gd);
     }
 

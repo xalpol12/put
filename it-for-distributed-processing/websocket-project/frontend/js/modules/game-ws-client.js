@@ -53,7 +53,7 @@ export function initWebsocket() {
         console.log(e);
     }
     function handleGameTimer(e) {
-        console.log(e);
+        console.log(e.time);
     }
     function logFrame(strokeFrame) {
         console.log(`Sender ID: ${strokeFrame.senderId}`);

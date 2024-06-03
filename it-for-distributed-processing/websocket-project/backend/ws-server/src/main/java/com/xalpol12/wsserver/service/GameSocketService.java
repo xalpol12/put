@@ -69,12 +69,13 @@ public class GameSocketService implements GameEventListener {
         }
     }
 
-    public void sendGameDataMessage(String sessionId, GameDataPayload payload) throws IOException {
+    public void sendGameDataMessage(String sessionId, NewWordPayload payload) throws IOException {
         CustomMessage m = CustomMessage.createGameDataMessage(payload);
         Set<WebSocketSession> sessions = gameSessionService.getAllWSSessionsBySessionId(sessionId);
         for (WebSocketSession s : sessions) {
             s.sendMessage(GameSocketSender.wrapCustomMessage(m));
         }
+        log.info("GameData sent {}", payload.toString());
     }
 
     public void sendGameTimerMessage(String sessionId, GameTimerPayload payload) throws IOException {
@@ -97,7 +98,12 @@ public class GameSocketService implements GameEventListener {
 
     @Override
     public void onNewWord(NewWordEvent event) {
-
+        NewWordPayload payload = new NewWordPayload();
+        try {
+            sendGameDataMessage(event.getSessionId(), payload);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
     }
 
     @Override

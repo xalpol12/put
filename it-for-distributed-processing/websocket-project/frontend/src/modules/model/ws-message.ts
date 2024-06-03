@@ -25,7 +25,7 @@ export interface GameDataPayload {
 }
 
 export interface GameTimerPayload {
-
+    time: number;
 }
 
 export type Payload =

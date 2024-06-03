@@ -62,7 +62,7 @@ export function initWebsocket() {
     }
 
     function handleGameTimer(e: GameTimerPayload) {
-        console.log(e);
+        console.log(e.time);
     }
 
     function logFrame(strokeFrame: StrokeFrame) {

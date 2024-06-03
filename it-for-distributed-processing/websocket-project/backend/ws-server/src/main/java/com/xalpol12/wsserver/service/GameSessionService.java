@@ -50,10 +50,11 @@ public class GameSessionService {
     // GameSessions : Users access methods
     public SessionResponse addNewSession(SessionDTO sessionDTO) {
         String sessionId = sessionDTO.sessionId();
+        String userId = sessionDTO.userId();
         if (!keysSessions.containsKey(sessionId)) {
             log.info("Created new session with id: {}", sessionId);
             GameSocketService gss = ctx.getBean(GameSocketService.class);
-            keysSessions.put(sessionId, new GameSession(new Game(gss, sessionId, 30)));
+            keysSessions.put(sessionId, new GameSession(new Game(gss, userId, sessionId, 5)));
             return new SessionResponse(sessionDTO.userId(), sessionDTO.sessionId());
         } else {
             log.error("Session with id: {} already exists!", sessionId);

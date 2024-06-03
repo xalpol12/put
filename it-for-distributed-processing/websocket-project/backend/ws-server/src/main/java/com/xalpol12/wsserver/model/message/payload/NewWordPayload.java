@@ -5,5 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class GameDataPayload implements Payload {
+public class NewWordPayload implements Payload {
+    private final String newWord;
+    private final String newDrawer;
 }
