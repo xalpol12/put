@@ -12,6 +12,8 @@ import com.xalpol12.wsserver.model.internal.GameState;
 import com.xalpol12.wsserver.model.message.payload.ChatMessagePayload;
 import com.xalpol12.wsserver.model.message.payload.HandshakePayload;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -26,9 +28,12 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class GameSessionService {
+
     private final Map<String, GameSession> keysSessions = new ConcurrentHashMap<>();
     private final Map<WebSocketSession, HandshakePayload> webSocketSessionsIds = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    @Autowired
+    private ApplicationContext ctx;
 
     public GameSessionService() {
         scheduler.scheduleAtFixedRate(this::gameLoop, 0, 1, TimeUnit.SECONDS);
@@ -47,7 +52,8 @@ public class GameSessionService {
         String sessionId = sessionDTO.sessionId();
         if (!keysSessions.containsKey(sessionId)) {
             log.info("Created new session with id: {}", sessionId);
-            keysSessions.put(sessionId, new GameSession(new Game(sessionId, 30)));
+            GameSocketService gss = ctx.getBean(GameSocketService.class);
+            keysSessions.put(sessionId, new GameSession(new Game(gss, sessionId, 30)));
             return new SessionResponse(sessionDTO.userId(), sessionDTO.sessionId());
         } else {
             log.error("Session with id: {} already exists!", sessionId);
