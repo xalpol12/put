@@ -2,6 +2,8 @@ import { createCanvas } from "./modules/canvas.js";
 import { initChat } from "./modules/chat.js";
 import { postClient, postSession } from "./modules/fetch.js";
 import { CredentialsResponse } from "./modules/model/credentials-response.js";
+import { initScore } from "./modules/score.js";
+import { initTimerDisplay } from "./modules/timer.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     if (isSessionStorageEmpty()) {
@@ -30,6 +32,8 @@ async function loadPage(page: any) {
         console.log("Invoked createCanvas");
         createCanvas(userId!, sessionId!);
         initChat();
+        initScore();
+        initTimerDisplay
     }
 
     console.log(`${page} loaded`);

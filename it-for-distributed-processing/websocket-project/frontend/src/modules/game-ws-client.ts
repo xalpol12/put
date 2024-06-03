@@ -2,6 +2,8 @@ import { drawFromFrame } from "./canvas.js";
 import { addMessage } from "./chat.js";
 import { StrokeFrame } from "./model/point-frame.js";
 import { ChatMessagePayload, CustomMessage, DrawingPayload, NewWordPayload, GameTimerPayload, HandshakePayload, MessageType, GameScorePayload } from "./model/ws-message.js";
+import { addScoreEntry } from "./score.js";
+import { updateTimer, updateWord } from "./timer.js";
 import { sendMessageAsString } from "./ws-service.js";
 
 let ws: WebSocket;
@@ -60,14 +62,16 @@ export function initWebsocket() {
     }
 
     function handleGameTimer(e: GameTimerPayload) {
-        console.log(e.time);
+        updateTimer(e);
     }
 
     function handleNewWord(e: NewWordPayload) {
+        updateWord(e);
         console.log(`New word: ${e.newWord}; drawer: ${e.newDrawer}`);
     }
 
     function handleGameScore(e: GameScorePayload) {
+        addScoreEntry(e);
         console.log(`Game score ${e.userId}:${e.score}`);
     }
 

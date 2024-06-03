@@ -1,0 +1,19 @@
+.timer-container {
+    display: flex;
+    justify-content: center;
+    align-items: cneter;
+    padding: 10px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #ccc;
+}
+
+.timer {
+    font-size: 24px;
+    margin-right: 20px;
+}
+
+.word {
+    font-size: 24px;
+    font-weight: bold;
+    color: #007bff;
+}

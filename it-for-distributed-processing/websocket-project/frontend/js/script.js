@@ -10,6 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { createCanvas } from "./modules/canvas.js";
 import { initChat } from "./modules/chat.js";
 import { postClient, postSession } from "./modules/fetch.js";
+import { initScore } from "./modules/score.js";
+import { initTimerDisplay } from "./modules/timer.js";
 document.addEventListener('DOMContentLoaded', () => {
     if (isSessionStorageEmpty()) {
         loadPage('homepage.html');
@@ -37,6 +39,8 @@ function loadPage(page) {
             console.log("Invoked createCanvas");
             createCanvas(userId, sessionId);
             initChat();
+            initScore();
+            initTimerDisplay;
         }
         console.log(`${page} loaded`);
     });

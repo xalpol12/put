@@ -1,0 +1,16 @@
+.score-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    max-width: cal(33% - 10px);
+    margin: 5px;
+}
+
+.game-score {
+    border: 1px solid green;
+    overflow-y: auto;
+    margin-bottom: 5px;
+    padding: 10px;
+    background: #f9f9f9;
+    height: 30%;
+}
