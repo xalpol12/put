@@ -10,6 +10,7 @@ import com.xalpol12.wsserver.model.dto.SessionResponse;
 import com.xalpol12.wsserver.model.internal.Game;
 import com.xalpol12.wsserver.model.internal.GameState;
 import com.xalpol12.wsserver.model.message.payload.ChatMessagePayload;
+import com.xalpol12.wsserver.model.message.payload.GameScorePayload;
 import com.xalpol12.wsserver.model.message.payload.HandshakePayload;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -144,5 +146,16 @@ public class GameSessionService {
         HandshakePayload ids = getIdsByWebSocketSession(session);
         GameSession gs = getGameSessionById(ids.getSessionId());
         return gs.processMessage(message);
+    }
+
+    public List<GameScorePayload> getAllPlayersData(String sessionId) {
+        GameSession gs = getGameSessionById(sessionId);
+        Map<String, PlayerData> playersData = gs.getAllPlayersData();
+        List<GameScorePayload> payload = new ArrayList<>();
+        playersData.forEach((id, data) -> {
+            GameScorePayload gsp = new GameScorePayload(id, data.getScore());
+            payload.add(gsp);
+        });
+        return payload;
     }
 }

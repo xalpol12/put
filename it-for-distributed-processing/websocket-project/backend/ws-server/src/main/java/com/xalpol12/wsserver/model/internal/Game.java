@@ -81,7 +81,6 @@ public class Game {
         gameTimer.startNewRound();
     }
 
-
     private void assignNewWord() {
         currentWord = WordPool.getNextWord(currentWord);
     }
@@ -112,6 +111,10 @@ public class Game {
 
     public boolean playerExists(String userId) {
         return playersData.containsKey(userId);
+    }
+
+    public Map<String, PlayerData> getAllPlayersData() {
+        return playersData;
     }
 
     private void notifyTimeUpdate(int remainingTime) {

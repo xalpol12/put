@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -51,6 +52,10 @@ public class GameSession {
     public void addToDrawnFrames(String message) {
         drawnFrames.add(message);
         log.info("Currently frames: {}", drawnFrames.size());
+    }
+
+    public Map<String, PlayerData> getAllPlayersData() {
+        return game.getAllPlayersData();
     }
 
     public boolean hasDrawingPermission(String userId) {

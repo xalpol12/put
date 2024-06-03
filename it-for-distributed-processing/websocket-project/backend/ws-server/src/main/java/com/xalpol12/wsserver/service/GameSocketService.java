@@ -27,16 +27,21 @@ public class GameSocketService implements GameEventListener {
     public void handleHandshakeMessage(WebSocketSession session, HandshakePayload payload) throws IOException {
         gameSessionService.mapWebSocketSession(session, payload);
         List<String> drawnFrames = gameSessionService.getDrawnFrames(payload.getSessionId());
-        List<CustomMessage> messages = drawnFrames.stream()
+        List<TextMessage> messages = drawnFrames.stream()
                 .map((m) -> {
                     DrawingPayload d = convertTextMessageToDrawingPayload(m);
                     return CustomMessage.createDrawingMessage(d);
                 })
-                .toList();
-        List<TextMessage> customMessageString = messages.stream()
                 .map(GameSocketSender::wrapCustomMessage)
                 .toList();
-        sender.sendMessages(session, customMessageString);
+        sender.sendMessages(session, messages);
+
+        List<GameScorePayload> gsp = gameSessionService.getAllPlayersData(payload.getSessionId());
+        List<TextMessage> textMessages = gsp.stream()
+                .map(CustomMessage::createGameScoreMessage)
+                .map(GameSocketSender::wrapCustomMessage)
+                .toList();
+        sender.sendMessages(session, textMessages);
     }
 
     public void handleDrawingMessage(WebSocketSession session, DrawingPayload payload) throws IOException {
@@ -123,7 +128,6 @@ public class GameSocketService implements GameEventListener {
         } catch (IOException e) {
             log.error(e.getMessage());
         }
-
     }
 
     public void removeWebSocketSessionFromMap(WebSocketSession session) {
