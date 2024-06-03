@@ -1,9 +1,10 @@
 export enum MessageType {
-    HANDSHAKE = "HANDSHAKE", // to server
-    DRAWING = "DRAWING", // bidirectional
-    CHAT_MESSAGE = "CHAT_MESSAGE", // bidirectional
-    GAME_DATA = "GAME_DATA", // from server
-    GAME_TIMER = "GAME_TIMER", // from server
+    HANDSHAKE = "HANDSHAKE",        // to server
+    DRAWING = "DRAWING",            // bidirectional
+    CHAT_MESSAGE = "CHAT_MESSAGE",  // bidirectional
+    GAME_TIMER = "GAME_TIMER",      // from server
+    NEW_WORD = "NEW_WORD",          // from server
+    GAME_SCORE = "GAME_SCORE"       // from server
 }
 
 export interface HandshakePayload {
@@ -20,20 +21,27 @@ export interface ChatMessagePayload {
     content: string;
 }
 
-export interface GameDataPayload {
-
-}
-
 export interface GameTimerPayload {
     time: number;
+}
+
+export interface NewWordPayload {
+    newWord: string;
+    newDrawer: string;
+}
+
+export interface GameScorePayload {
+    userId: string;
+    score: number;
 }
 
 export type Payload =
     | HandshakePayload
     | DrawingPayload
     | ChatMessagePayload
-    | GameDataPayload
-    | GameTimerPayload;
+    | GameTimerPayload
+    | NewWordPayload
+    | GameScorePayload;
 
 export interface CustomMessage {
     messageType: MessageType;

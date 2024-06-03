@@ -58,21 +58,10 @@ public class GameSession {
     }
 
     public ChatMessagePayload processMessage(ChatMessagePayload message) {
-        if (message.getContent().equalsIgnoreCase(game.getCurrentWord())) {
-            incrementPlayerPoints(message.getSender());
-            //TODO: change flag for already guessed in this round
+        if (game.hasUserGuessedCorrectly(message.getSender(), message.getContent())) {
             return new ChatMessagePayload("SERVER", "Good guess!");
         } else {
             return message;
-        }
-    }
-
-    private void incrementPlayerPoints(String userId) {
-        if (game.playerExists(userId)) {
-            PlayerData playerData = getUserData(userId);
-            playerData.incrementScore();
-            game.modifyPlayerData(userId, playerData);
-            log.info("Incremented user's {} score, current: {}", userId, playerData.getScore());
         }
     }
 

@@ -69,21 +69,30 @@ public class GameSocketService implements GameEventListener {
         }
     }
 
-    public void sendGameDataMessage(String sessionId, NewWordPayload payload) throws IOException {
-        CustomMessage m = CustomMessage.createGameDataMessage(payload);
-        Set<WebSocketSession> sessions = gameSessionService.getAllWSSessionsBySessionId(sessionId);
-        for (WebSocketSession s : sessions) {
-            s.sendMessage(GameSocketSender.wrapCustomMessage(m));
-        }
-        log.info("GameData sent {}", payload.toString());
-    }
-
     public void sendGameTimerMessage(String sessionId, GameTimerPayload payload) throws IOException {
         CustomMessage m = CustomMessage.createGameTimerMessage(payload);
         Set<WebSocketSession> sessions = gameSessionService.getAllWSSessionsBySessionId(sessionId);
         for (WebSocketSession s : sessions) {
             s.sendMessage(GameSocketSender.wrapCustomMessage(m));
         }
+    }
+
+    public void sendNewWordMessage(String sessionId, NewWordPayload payload) throws IOException {
+        CustomMessage m = CustomMessage.createNewWordMessage(payload);
+        Set<WebSocketSession> sessions = gameSessionService.getAllWSSessionsBySessionId(sessionId);
+        for (WebSocketSession s : sessions) {
+            s.sendMessage(GameSocketSender.wrapCustomMessage(m));
+        }
+        log.info("NewWord sent {}", payload.toString());
+    }
+
+    public void sendGameScoreMessage(String sessionId, GameScorePayload payload) throws IOException {
+        CustomMessage m = CustomMessage.createGameScoreMessage(payload);
+        Set<WebSocketSession> sessions = gameSessionService.getAllWSSessionsBySessionId(sessionId);
+        for (WebSocketSession s : sessions) {
+            s.sendMessage(GameSocketSender.wrapCustomMessage(m));
+        }
+        log.info("GameScore sent {}", payload.toString());
     }
 
     @Override
@@ -98,9 +107,9 @@ public class GameSocketService implements GameEventListener {
 
     @Override
     public void onNewWord(NewWordEvent event) {
-        NewWordPayload payload = new NewWordPayload();
+        NewWordPayload payload = new NewWordPayload(event.getNewWord(), event.getNewDrawer());
         try {
-            sendGameDataMessage(event.getSessionId(), payload);
+            sendNewWordMessage(event.getSessionId(), payload);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
@@ -108,6 +117,12 @@ public class GameSocketService implements GameEventListener {
 
     @Override
     public void onScoreUpdate(ScoreUpdateEvent event) {
+        GameScorePayload payload = new GameScorePayload(event.getUserId(), event.getScore());
+        try {
+            sendGameScoreMessage(event.getSessionId(), payload);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
 
     }
 

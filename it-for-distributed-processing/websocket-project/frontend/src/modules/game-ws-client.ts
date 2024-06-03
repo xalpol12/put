@@ -1,7 +1,7 @@
 import { drawFromFrame } from "./canvas.js";
 import { addMessage } from "./chat.js";
 import { StrokeFrame } from "./model/point-frame.js";
-import { ChatMessagePayload, CustomMessage, DrawingPayload, GameDataPayload, GameTimerPayload, HandshakePayload, MessageType } from "./model/ws-message.js";
+import { ChatMessagePayload, CustomMessage, DrawingPayload, NewWordPayload, GameTimerPayload, HandshakePayload, MessageType, GameScorePayload } from "./model/ws-message.js";
 import { sendMessageAsString } from "./ws-service.js";
 
 let ws: WebSocket;
@@ -37,11 +37,14 @@ export function initWebsocket() {
             case MessageType.CHAT_MESSAGE:
                 handleChatMessage(message.payload as ChatMessagePayload);
                 break;
-            case MessageType.GAME_DATA:
-                handleGameData(message.payload as GameDataPayload);
-                break;
             case MessageType.GAME_TIMER:
                 handleGameTimer(message.payload as GameTimerPayload);
+                break;
+            case MessageType.NEW_WORD:
+                handleNewWord(message.payload as NewWordPayload);
+                break;
+            case MessageType.GAME_SCORE:
+                handleGameScore(message.payload as GameScorePayload);
                 break;
         }
     }
@@ -54,15 +57,18 @@ export function initWebsocket() {
 
     function handleChatMessage(e: ChatMessagePayload) {
         addMessage(e);
-        console.log(e);
-    }
-
-    function handleGameData(e: GameDataPayload) {
-        console.log(e);
     }
 
     function handleGameTimer(e: GameTimerPayload) {
         console.log(e.time);
+    }
+
+    function handleNewWord(e: NewWordPayload) {
+        console.log(`New word: ${e.newWord}; drawer: ${e.newDrawer}`);
+    }
+
+    function handleGameScore(e: GameScorePayload) {
+        console.log(`Game score ${e.userId}:${e.score}`);
     }
 
     function logFrame(strokeFrame: StrokeFrame) {

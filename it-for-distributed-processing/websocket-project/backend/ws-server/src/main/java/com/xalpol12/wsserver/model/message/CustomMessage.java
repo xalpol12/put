@@ -19,8 +19,8 @@ public class CustomMessage {
         return new CustomMessage(MessageType.CHAT_MESSAGE, c);
     }
 
-    public static CustomMessage createGameDataMessage(NewWordPayload gd) {
-        return new CustomMessage(MessageType.GAME_DATA, gd);
+    public static CustomMessage createDrawingMessage(DrawingPayload d) {
+        return new CustomMessage(MessageType.DRAWING, d);
     }
 
     public static CustomMessage createGameTimerMessage(GameTimerPayload gt) {
@@ -28,7 +28,11 @@ public class CustomMessage {
 
     }
 
-    public static CustomMessage createDrawingMessage(DrawingPayload d) {
-        return new CustomMessage(MessageType.DRAWING, d);
+    public static CustomMessage createNewWordMessage(NewWordPayload nw) {
+        return new CustomMessage(MessageType.NEW_WORD, nw);
+    }
+
+    public static CustomMessage createGameScoreMessage(GameScorePayload gs) {
+        return new CustomMessage(MessageType.GAME_SCORE, gs);
     }
 }

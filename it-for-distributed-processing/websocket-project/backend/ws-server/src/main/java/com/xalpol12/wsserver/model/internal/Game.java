@@ -7,6 +7,7 @@ import com.xalpol12.wsserver.model.PlayerData;
 import com.xalpol12.wsserver.service.GameSocketService;
 import com.xalpol12.wsserver.utils.WordPool;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 public class Game {
     private final GameTimer gameTimer;
     private final Map<String, PlayerData> playersData = new ConcurrentHashMap<>();
@@ -23,7 +25,7 @@ public class Game {
 
     @Getter
     private GameState gameState = GameState.CREATED;
-    // private int roundCounter;
+
     @Getter
     private String currentWord = "TEST";
     private String drawer = "TEST";
@@ -52,12 +54,33 @@ public class Game {
         }
     }
 
+    public boolean hasUserGuessedCorrectly(String userId, String userGuess) {
+        if (userGuess.equalsIgnoreCase(getCurrentWord())) {
+            incrementPlayerPoints(userId);
+            //TODO: change flag for already guessed in this round
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void incrementPlayerPoints(String userId) {
+        if (playerExists(userId)) {
+            PlayerData playerData = playersData.get(userId);
+            playerData.incrementScore();
+            modifyPlayerData(userId, playerData);
+            log.info("Incremented user's {} score, current: {}", userId, playerData.getScore());
+            notifyScoreUpdate(userId, playerData.getScore());
+        }
+    }
+
     private void startNewRound() {
         assignNewWord();
         assignNewDrawer();
         notifyNewWord(currentWord, drawer);
         gameTimer.startNewRound();
     }
+
 
     private void assignNewWord() {
         currentWord = WordPool.getNextWord(currentWord);
@@ -74,7 +97,7 @@ public class Game {
 
     public void addPlayer(String userId) {
         playersData.put(userId, new PlayerData());
-        if (gameState == GameState.CREATED) {
+        if (gameState == GameState.CREATED && playersData.size() >= 2) {
             startGame();
         }
     }
@@ -91,10 +114,6 @@ public class Game {
         return playersData.containsKey(userId);
     }
 
-    // private boolean hasGameFinished() {
-    //     return roundCounter == 0;
-    // }
-
     private void notifyTimeUpdate(int remainingTime) {
         GameTimeUpdateEvent event = new GameTimeUpdateEvent(sessionId, remainingTime);
         listener.onGameTimeUpdate(event);
@@ -105,8 +124,8 @@ public class Game {
         listener.onNewWord(event);
     }
 
-    private void notifyScoreUpdate(Map<String, PlayerData> playersData) {
-        ScoreUpdateEvent event = new ScoreUpdateEvent(sessionId, playersData);
+    private void notifyScoreUpdate(String userId, Integer currentScore) {
+        ScoreUpdateEvent event = new ScoreUpdateEvent(sessionId, userId, currentScore);
         listener.onScoreUpdate(event);
     }
 }

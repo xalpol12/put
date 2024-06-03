@@ -32,11 +32,14 @@ export function initWebsocket() {
             case MessageType.CHAT_MESSAGE:
                 handleChatMessage(message.payload);
                 break;
-            case MessageType.GAME_DATA:
-                handleGameData(message.payload);
-                break;
             case MessageType.GAME_TIMER:
                 handleGameTimer(message.payload);
+                break;
+            case MessageType.NEW_WORD:
+                handleNewWord(message.payload);
+                break;
+            case MessageType.GAME_SCORE:
+                handleGameScore(message.payload);
                 break;
         }
     }
@@ -47,13 +50,15 @@ export function initWebsocket() {
     }
     function handleChatMessage(e) {
         addMessage(e);
-        console.log(e);
-    }
-    function handleGameData(e) {
-        console.log(e);
     }
     function handleGameTimer(e) {
         console.log(e.time);
+    }
+    function handleNewWord(e) {
+        console.log(`New word: ${e.newWord}; drawer: ${e.newDrawer}`);
+    }
+    function handleGameScore(e) {
+        console.log(`Game score ${e.userId}:${e.score}`);
     }
     function logFrame(strokeFrame) {
         console.log(`Sender ID: ${strokeFrame.senderId}`);

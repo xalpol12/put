@@ -54,7 +54,7 @@ public class GameSessionService {
         if (!keysSessions.containsKey(sessionId)) {
             log.info("Created new session with id: {}", sessionId);
             GameSocketService gss = ctx.getBean(GameSocketService.class);
-            keysSessions.put(sessionId, new GameSession(new Game(gss, userId, sessionId, 5)));
+            keysSessions.put(sessionId, new GameSession(new Game(gss, userId, sessionId, 30)));
             return new SessionResponse(sessionDTO.userId(), sessionDTO.sessionId());
         } else {
             log.error("Session with id: {} already exists!", sessionId);

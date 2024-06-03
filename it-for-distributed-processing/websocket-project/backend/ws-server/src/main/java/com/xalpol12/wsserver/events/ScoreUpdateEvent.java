@@ -1,16 +1,15 @@
 package com.xalpol12.wsserver.events;
 
-import com.xalpol12.wsserver.model.PlayerData;
 import lombok.Getter;
-
-import java.util.Map;
 
 @Getter
 public class ScoreUpdateEvent extends GameEvent {
-    private final Map<String, PlayerData> userDataMap;
+    private final String userId;
+    private final Integer score;
 
-    public ScoreUpdateEvent(String sessionId, Map<String, PlayerData> userDataMap) {
+    public ScoreUpdateEvent(String sessionId, String userId, Integer score) {
         super(sessionId);
-        this.userDataMap = userDataMap;
+        this.userId = userId;
+        this.score = score;
     }
 }
