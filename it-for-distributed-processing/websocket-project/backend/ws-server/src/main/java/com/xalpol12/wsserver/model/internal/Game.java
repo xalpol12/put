@@ -1,45 +1,66 @@
 package com.xalpol12.wsserver.model.internal;
 
+import com.xalpol12.wsserver.utils.WordPool;
 import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class Game {
     private final GameTimer gameTimer;
-
-    private int roundCounter;
+    private final List<String> players = new ArrayList<>();
+    private final Random random = new Random();
+    @Getter
+    private GameState gameState = GameState.CREATED;
+    // private int roundCounter;
     @Getter
     private String currentWord = "TEST";
-    private String userWithDrawingPermissions; // TODO: implement changing drawing fellas
+    private String drawer = "TEST";
 
     public Game(int roundLength) {
         gameTimer = new GameTimer(roundLength);
     }
 
     public void startGame() {
-        assignNewWord();
+        gameState = GameState.IN_PROGRESS;
+        startNewRound();
+    }
+
+    public void finishGame() {
+        gameState = GameState.FINISHED;
     }
 
     public void tick() {
         int currentRoundTime = gameTimer.decreaseTime();
         if (currentRoundTime == 0) {
             startNewRound();
-        } else {
         }
-    }
-
-    private void assignNewWord() {
-        currentWord = WordGenerator.getNewWord();
     }
 
     private void startNewRound() {
-        if (hasGameFinished()) {
-            // signal frontend to display summary
-        } else {
-            roundCounter--;
-            gameTimer.startNewRound();
-        }
+        gameTimer.startNewRound();
+        assignNewWord();
+        assignNewDrawer();
     }
 
-    private boolean hasGameFinished() {
-        return roundCounter == 0;
+    private void assignNewWord() {
+        currentWord = WordPool.getNextWord(currentWord);
     }
+
+    private void assignNewDrawer() {
+        String previous = drawer;
+        do {
+            int index = random.nextInt(players.size());
+            drawer = players.get(index);
+        } while (drawer.equals(previous));
+    }
+
+    public void addPlayer(String userId) {
+        players.add(userId);
+    }
+
+    // private boolean hasGameFinished() {
+    //     return roundCounter == 0;
+    // }
 }

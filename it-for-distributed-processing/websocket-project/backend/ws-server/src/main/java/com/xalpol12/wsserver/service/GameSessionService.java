@@ -8,6 +8,7 @@ import com.xalpol12.wsserver.model.UserData;
 import com.xalpol12.wsserver.model.dto.SessionDTO;
 import com.xalpol12.wsserver.model.dto.SessionResponse;
 import com.xalpol12.wsserver.model.internal.Game;
+import com.xalpol12.wsserver.model.internal.GameState;
 import com.xalpol12.wsserver.model.message.payload.ChatMessagePayload;
 import com.xalpol12.wsserver.model.message.payload.HandshakePayload;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +19,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
 public class GameSessionService {
     private final Map<String, GameSession> keysSessions = new ConcurrentHashMap<>();
-    private final Map<WebSocketSession, HandshakePayload> webSocketSessionsIds = new ConcurrentHashMap<>(); // TODO: Possibly change wssession to string key?
+    private final Map<WebSocketSession, HandshakePayload> webSocketSessionsIds = new ConcurrentHashMap<>();
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
+    public GameSessionService() {
+        scheduler.scheduleAtFixedRate(this::gameLoop, 0, 1, TimeUnit.SECONDS);
+    }
+
+    private void gameLoop() {
+        for (GameSession session : keysSessions.values()) {
+            if (session.getGameState() == GameState.IN_PROGRESS) {
+                session.getGame().tick();
+            }
+        }
+    }
 
     // GameSessions : Users access methods
     public SessionResponse addNewSession(SessionDTO sessionDTO) {

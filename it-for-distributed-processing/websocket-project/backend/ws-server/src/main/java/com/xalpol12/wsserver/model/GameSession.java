@@ -2,6 +2,7 @@ package com.xalpol12.wsserver.model;
 
 import com.xalpol12.wsserver.exception.ClientNotFoundException;
 import com.xalpol12.wsserver.model.internal.Game;
+import com.xalpol12.wsserver.model.internal.GameState;
 import com.xalpol12.wsserver.model.message.payload.ChatMessagePayload;
 import lombok.Data;
 import lombok.Getter;
@@ -39,6 +40,7 @@ public class GameSession {
 
     public void addUserToSession(String clientId) {
         usersData.put(clientId, new UserData());
+        game.addPlayer(clientId);
     }
 
     public UserData getUserData(String clientId) {
@@ -75,5 +77,9 @@ public class GameSession {
             usersData.put(userId, userData);
             log.info("Incremented user's {} score, current: {}", userId, userData.getScore());
         }
+    }
+
+    public GameState getGameState() {
+        return game.getGameState();
     }
 }
