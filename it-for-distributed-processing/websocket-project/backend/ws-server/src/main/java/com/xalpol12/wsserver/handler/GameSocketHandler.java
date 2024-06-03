@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xalpol12.wsserver.model.message.CustomMessage;
-import com.xalpol12.wsserver.model.message.payload.*;
+import com.xalpol12.wsserver.model.message.payload.ChatMessagePayload;
+import com.xalpol12.wsserver.model.message.payload.DrawingPayload;
+import com.xalpol12.wsserver.model.message.payload.HandshakePayload;
 import com.xalpol12.wsserver.service.GameSocketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,16 +57,6 @@ public class GameSocketHandler extends TextWebSocketHandler {
                     ChatMessagePayload chatMessagePayload = (ChatMessagePayload) customMessage.getPayload();
                     log.info("Chat message received");
                     gameSocketService.handleChatMessage(session, chatMessagePayload);
-                }
-                case GAME_DATA -> {
-                    GameDataPayload gameDataPayload = (GameDataPayload) customMessage.getPayload();
-                    log.info("Game data message received");
-                    gameSocketService.handleGameDataMessage(session, gameDataPayload);
-                }
-                case GAME_TIMER -> {
-                    GameTimerPayload gameTimerPayload = (GameTimerPayload) customMessage.getPayload();
-                    log.info("Game timer message received");
-                    gameSocketService.handleGameTimerMessage(session, gameTimerPayload);
                 }
                 default -> log.error("Unknown message type: {}", customMessage.getMessageType());
             }

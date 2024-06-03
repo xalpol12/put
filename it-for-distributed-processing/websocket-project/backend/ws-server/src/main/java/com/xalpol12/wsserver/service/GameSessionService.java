@@ -4,7 +4,7 @@ import com.xalpol12.wsserver.exception.ClientNotFoundException;
 import com.xalpol12.wsserver.exception.SessionAlreadyExistsException;
 import com.xalpol12.wsserver.exception.SessionDoesNotExistException;
 import com.xalpol12.wsserver.model.GameSession;
-import com.xalpol12.wsserver.model.UserData;
+import com.xalpol12.wsserver.model.PlayerData;
 import com.xalpol12.wsserver.model.dto.SessionDTO;
 import com.xalpol12.wsserver.model.dto.SessionResponse;
 import com.xalpol12.wsserver.model.internal.Game;
@@ -47,7 +47,7 @@ public class GameSessionService {
         String sessionId = sessionDTO.sessionId();
         if (!keysSessions.containsKey(sessionId)) {
             log.info("Created new session with id: {}", sessionId);
-            keysSessions.put(sessionId, new GameSession(new Game(30)));
+            keysSessions.put(sessionId, new GameSession(new Game(sessionId, 30)));
             return new SessionResponse(sessionDTO.userId(), sessionDTO.sessionId());
         } else {
             log.error("Session with id: {} already exists!", sessionId);
@@ -71,7 +71,7 @@ public class GameSessionService {
         }
     }
 
-    public UserData getUserData(String sessionId, String clientId) {
+    public PlayerData getUserData(String sessionId, String clientId) {
         GameSession gs = getGameSessionById(sessionId);
         return gs.getUserData(clientId);
     }
@@ -112,6 +112,11 @@ public class GameSessionService {
     public Set<WebSocketSession> getAllWSSessionsFromGameSessionByWSSession(WebSocketSession session) {
         HandshakePayload ids = getIdsByWebSocketSession(session);
         GameSession gs = getGameSessionById(ids.getSessionId());
+        return gs.getWebSocketSessions();
+    }
+
+    public Set<WebSocketSession> getAllWSSessionsBySessionId(String sessionId) {
+        GameSession gs = getGameSessionById(sessionId);
         return gs.getWebSocketSessions();
     }
 

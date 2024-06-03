@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -19,7 +18,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Data
 public class GameSession {
     private final Set<WebSocketSession> sessions = ConcurrentHashMap.newKeySet();
-    private final Map<String, UserData> usersData = new ConcurrentHashMap<>();
     @Getter
     private final List<String> drawnFrames = new CopyOnWriteArrayList<>();
     private final Game game;
@@ -39,13 +37,12 @@ public class GameSession {
     }
 
     public void addUserToSession(String clientId) {
-        usersData.put(clientId, new UserData());
         game.addPlayer(clientId);
     }
 
-    public UserData getUserData(String clientId) {
-        if (usersData.containsKey(clientId)) {
-            return usersData.get(clientId);
+    public PlayerData getUserData(String clientId) {
+        if (game.playerExists(clientId)) {
+            return game.getPlayerData(clientId);
         } else {
             throw new ClientNotFoundException("Client with id: " + clientId + " not found");
         }
@@ -71,11 +68,11 @@ public class GameSession {
     }
 
     private void incrementPlayerPoints(String userId) {
-        if (usersData.containsKey(userId)) {
-            UserData userData = usersData.get(userId);
-            userData.incrementScore();
-            usersData.put(userId, userData);
-            log.info("Incremented user's {} score, current: {}", userId, userData.getScore());
+        if (game.playerExists(userId)) {
+            PlayerData playerData = getUserData(userId);
+            playerData.incrementScore();
+            game.modifyPlayerData(userId, playerData);
+            log.info("Incremented user's {} score, current: {}", userId, playerData.getScore());
         }
     }
 

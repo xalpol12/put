@@ -1,7 +1,10 @@
 package com.xalpol12.wsserver.service;
 
+import com.xalpol12.wsserver.events.GameEventListener;
+import com.xalpol12.wsserver.events.GameTimeUpdateEvent;
+import com.xalpol12.wsserver.events.NewWordEvent;
+import com.xalpol12.wsserver.events.ScoreUpdateEvent;
 import com.xalpol12.wsserver.model.message.CustomMessage;
-import com.xalpol12.wsserver.model.message.MessageType;
 import com.xalpol12.wsserver.model.message.payload.*;
 import com.xalpol12.wsserver.sender.GameSocketSender;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +20,7 @@ import java.util.Set;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class GameSocketService {
+public class GameSocketService implements GameEventListener {
     private final GameSessionService gameSessionService;
     private final GameSocketSender sender;
 
@@ -27,7 +30,7 @@ public class GameSocketService {
         List<CustomMessage> messages = drawnFrames.stream()
                 .map((m) -> {
                     DrawingPayload d = convertTextMessageToDrawingPayload(m);
-                    return createDrawingMessage(d);
+                    return CustomMessage.createDrawingMessage(d);
                 })
                 .toList();
         List<TextMessage> customMessageString = messages.stream()
@@ -36,19 +39,10 @@ public class GameSocketService {
         sender.sendMessages(session, customMessageString);
     }
 
-    private DrawingPayload convertTextMessageToDrawingPayload(String m) {
-        return new DrawingPayload(m);
-    }
-
-    private CustomMessage createDrawingMessage(DrawingPayload d) {
-        return new CustomMessage(MessageType.DRAWING, d);
-    }
-
-
     public void handleDrawingMessage(WebSocketSession session, DrawingPayload payload) throws IOException {
         if (!gameSessionService.hasDrawingPermission(session)) return;
         gameSessionService.addToDrawnFrames(session, payload.getDrawingFrame());
-        CustomMessage m = createDrawingMessage(payload);
+        CustomMessage m = CustomMessage.createDrawingMessage(payload);
         String senderId = session.getId();
         Set<WebSocketSession> sessions = gameSessionService.getAllWSSessionsFromGameSessionByWSSession(session);
         for (WebSocketSession s : sessions) {
@@ -63,7 +57,7 @@ public class GameSocketService {
     public void handleChatMessage(WebSocketSession session, ChatMessagePayload payload) throws IOException {
         log.info("Received chat message {}", payload.getContent());
         ChatMessagePayload serverResponse = gameSessionService.processMessage(session, payload);
-        CustomMessage message = createChatMessage(serverResponse);
+        CustomMessage message = CustomMessage.createChatMessage(serverResponse);
         TextMessage tMessage = GameSocketSender.wrapCustomMessage(message);
         if (serverResponse.getSender().equals("SERVER")) { // send server message only to user that sent the message
             session.sendMessage(tMessage);
@@ -75,19 +69,47 @@ public class GameSocketService {
         }
     }
 
-    private CustomMessage createChatMessage(ChatMessagePayload c) {
-        return new CustomMessage(MessageType.CHAT_MESSAGE, c);
+    public void sendGameDataMessage(String sessionId, GameDataPayload payload) throws IOException {
+        CustomMessage m = CustomMessage.createGameDataMessage(payload);
+        Set<WebSocketSession> sessions = gameSessionService.getAllWSSessionsBySessionId(sessionId);
+        for (WebSocketSession s : sessions) {
+            s.sendMessage(GameSocketSender.wrapCustomMessage(m));
+        }
     }
 
-    public void handleGameDataMessage(WebSocketSession session, GameDataPayload payload) {
+    public void sendGameTimerMessage(String sessionId, GameTimerPayload payload) throws IOException {
+        CustomMessage m = CustomMessage.createGameTimerMessage(payload);
+        Set<WebSocketSession> sessions = gameSessionService.getAllWSSessionsBySessionId(sessionId);
+        for (WebSocketSession s : sessions) {
+            s.sendMessage(GameSocketSender.wrapCustomMessage(m));
+        }
+    }
+
+    @Override
+    public void onGameTimeUpdate(GameTimeUpdateEvent event) {
+        GameTimerPayload payload = new GameTimerPayload(event.getRemainingTime());
+        try {
+            sendGameTimerMessage(event.getSessionId(), payload);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public void onNewWord(NewWordEvent event) {
 
     }
 
-    public void handleGameTimerMessage(WebSocketSession session, GameTimerPayload payload) {
+    @Override
+    public void onScoreUpdate(ScoreUpdateEvent event) {
 
     }
 
     public void removeWebSocketSessionFromMap(WebSocketSession session) {
         gameSessionService.removeWebSocketSessionFromMap(session);
+    }
+
+    private DrawingPayload convertTextMessageToDrawingPayload(String m) {
+        return new DrawingPayload(m);
     }
 }
