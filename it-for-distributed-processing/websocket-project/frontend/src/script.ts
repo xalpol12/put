@@ -33,7 +33,7 @@ async function loadPage(page: any) {
         createCanvas(userId!, sessionId!);
         initChat();
         initScore();
-        initTimerDisplay
+        initTimerDisplay(userId!);
     }
 
     console.log(`${page} loaded`);

@@ -2,15 +2,56 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    max-width: cal(33% - 10px);
+    max-width: calc(33% - 10px);
+    /* Corrected 'cal' to 'calc' */
     margin: 5px;
 }
 
 .game-score {
     border: 1px solid green;
+    border-radius: 5px;
+    /* Added rounded corners */
     overflow-y: auto;
     margin-bottom: 5px;
     padding: 10px;
     background: #f9f9f9;
     height: 30%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Added shadow for depth */
+}
+
+#scoreList {
+    list-style: none;
+    /* Remove default list styling */
+    padding: 0;
+    margin: 0;
+}
+
+#scoreList li {
+    padding: 5px 10px;
+    border-bottom: 1px solid #ddd;
+    /* Add bottom border for separation */
+    font-size: 16px;
+    /* Adjust font size */
+    color: #333;
+    /* Set text color */
+}
+
+#scoreList li:last-child {
+    border-bottom: none;
+    /* Remove border for the last item */
+}
+
+#scoreList li span.user-id {
+    font-weight: bold;
+    /* Highlight user ID */
+    color: #007bff;
+    /* Change color for user ID */
+}
+
+#scoreList li span.user-score {
+    float: right;
+    /* Align score to the right */
+    color: #28a745;
+    /* Change color for score */
 }

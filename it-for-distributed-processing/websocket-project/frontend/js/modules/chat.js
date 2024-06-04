@@ -11,11 +11,16 @@ import { sendChatMessage } from "./game-ws-client.js";
 let messages = [];
 let chatDiv;
 let userId;
+let inputContainer;
+let chatInput;
+let sendButton;
 export function initChat() {
-    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         chatDiv = document.getElementById('chatHistory');
-        (_a = document.getElementById('sendButton')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', onChatButtonClick);
+        inputContainer = document.querySelector('.input-container');
+        chatInput = document.getElementById('chatInput');
+        sendButton = document.getElementById('sendButton');
+        sendButton.addEventListener('click', onChatButtonClick);
         userId = sessionStorage.getItem('userId');
     });
 }
@@ -53,4 +58,9 @@ function sendMessage(m) {
         content: m
     };
     sendChatMessage(message);
+}
+export function toggleChat(enable) {
+    chatInput.disabled = !enable;
+    sendButton.disabled = !enable;
+    inputContainer.style.display = enable ? 'block' : 'none';
 }

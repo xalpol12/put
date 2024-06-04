@@ -1,8 +1,10 @@
+import { toggleChat } from "./chat.js";
 import { GameTimerPayload, NewWordPayload } from "./model/ws-message.js";
 
 let timerElement: HTMLElement;
 let wordElement: HTMLElement;
 let userId: string;
+let isInitialPhase = true;
 
 export async function initTimerDisplay(id: string) {
     timerElement = document.getElementById('timer')!;
@@ -13,11 +15,22 @@ export async function initTimerDisplay(id: string) {
 
 export function updateTimer(m: GameTimerPayload) {
     timerElement.textContent = `Time left: ${m.time}s`;
+    if (m.time === "0" && !isInitialPhase) {
+        toggleChat(true);
+        wordElement.textContent = ``;
+        wordElement.style.display = 'hidden';
+    }
 }
 
 export function updateWord(m: NewWordPayload) {
     if (m.newDrawer === userId) {
+        toggleChat(false);
         wordElement.textContent = `Word: ${m.newWord}`;
         wordElement.style.display = 'block';
+        if (isInitialPhase) isInitialPhase = false;
+    } else {
+        toggleChat(true);
+        wordElement.textContent = ``;
+        wordElement.style.display = 'hidden';
     }
 }

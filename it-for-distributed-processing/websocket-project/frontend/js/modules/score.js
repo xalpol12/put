@@ -8,15 +8,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 let scoreList;
-let score = [];
+let scores = [];
 export function initScore() {
     return __awaiter(this, void 0, void 0, function* () {
         scoreList = document.getElementById('scoreList');
     });
 }
 export function addScoreEntry(m) {
-    score.push(m);
-    const listItem = document.createElement('li');
-    listItem.textContent = `${m.userId}: ${m.score}`;
-    scoreList.appendChild(listItem);
+    const existingScore = scores.find(score => score.userId === m.userId);
+    if (existingScore) {
+        existingScore.score = m.score;
+    }
+    else {
+        scores.push(m);
+    }
+    scores.sort((a, b) => b.score - a.score);
+    scoreList.innerHTML = '';
+    scores.forEach(score => {
+        const listItem = document.createElement('li');
+        const userIdSpan = document.createElement('span');
+        userIdSpan.className = 'user-id';
+        userIdSpan.textContent = score.userId;
+        const userScoreSpan = document.createElement('span');
+        userScoreSpan.className = 'user-score';
+        userScoreSpan.textContent = score.score.toString();
+        listItem.appendChild(userIdSpan);
+        listItem.appendChild(userScoreSpan);
+        scoreList.appendChild(listItem);
+    });
 }

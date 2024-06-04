@@ -5,9 +5,16 @@ let messages: ChatMessagePayload[] = [];
 let chatDiv: HTMLElement;
 let userId: string;
 
+let inputContainer: HTMLElement;
+let chatInput: HTMLInputElement;
+let sendButton: HTMLInputElement;
+
 export async function initChat() {
     chatDiv = document.getElementById('chatHistory')!;
-    document.getElementById('sendButton')?.addEventListener('click', onChatButtonClick);
+    inputContainer = document.querySelector('.input-container') as HTMLElement;
+    chatInput = document.getElementById('chatInput') as HTMLInputElement;
+    sendButton = document.getElementById('sendButton') as HTMLInputElement;
+    sendButton.addEventListener('click', onChatButtonClick);
     userId = sessionStorage.getItem('userId')!;
 }
 
@@ -46,4 +53,10 @@ function sendMessage(m: string) {
         content: m
     };
     sendChatMessage(message);
+}
+
+export function toggleChat(enable: boolean) {
+    chatInput.disabled = !enable;
+    sendButton.disabled = !enable;
+    inputContainer.style.display = enable ? 'block' : 'none';
 }

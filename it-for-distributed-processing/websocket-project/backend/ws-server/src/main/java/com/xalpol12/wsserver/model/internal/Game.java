@@ -96,6 +96,9 @@ public class Game {
 
     public void addPlayer(String userId) {
         playersData.put(userId, new PlayerData());
+        if (playersData.size() >= 2) {
+            notifyScoreUpdate(userId, 0);
+        }
         if (gameState == GameState.CREATED && playersData.size() >= 2) {
             startGame();
         }

@@ -22,7 +22,7 @@ export interface ChatMessagePayload {
 }
 
 export interface GameTimerPayload {
-    time: number;
+    time: string;
 }
 
 export interface NewWordPayload {

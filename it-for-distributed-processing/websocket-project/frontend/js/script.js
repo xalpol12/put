@@ -40,7 +40,7 @@ function loadPage(page) {
             createCanvas(userId, sessionId);
             initChat();
             initScore();
-            initTimerDisplay;
+            initTimerDisplay(userId);
         }
         console.log(`${page} loaded`);
     });
