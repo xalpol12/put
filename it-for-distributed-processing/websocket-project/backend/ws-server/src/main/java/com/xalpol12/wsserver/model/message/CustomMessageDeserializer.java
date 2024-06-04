@@ -30,6 +30,7 @@ public class CustomMessageDeserializer extends JsonDeserializer<CustomMessage> {
             case GAME_TIMER -> payload = mapper.treeToValue(payloadNode, GameTimerPayload.class);
             case NEW_WORD -> payload = mapper.treeToValue(payloadNode, NewWordPayload.class);
             case GAME_SCORE -> payload = mapper.treeToValue(payloadNode, GameScorePayload.class);
+            case CLEAR_BOARD -> payload = mapper.treeToValue(payloadNode, ClearBoardPayload.class);
             default -> throw new IllegalArgumentException("Unknown message type: " + messageType);
         }
         log.info("Deserialized object of type " + messageType);

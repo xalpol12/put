@@ -54,6 +54,10 @@ public class GameSession {
         log.info("Currently frames: {}", drawnFrames.size());
     }
 
+    public void clearDrawnFrames() {
+        drawnFrames.clear();
+    }
+
     public Map<String, PlayerData> getAllPlayersData() {
         return game.getAllPlayersData();
     }

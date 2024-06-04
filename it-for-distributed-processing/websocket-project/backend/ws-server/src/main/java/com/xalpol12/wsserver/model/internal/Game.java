@@ -1,5 +1,6 @@
 package com.xalpol12.wsserver.model.internal;
 
+import com.xalpol12.wsserver.events.ClearBoardEvent;
 import com.xalpol12.wsserver.events.GameTimeUpdateEvent;
 import com.xalpol12.wsserver.events.NewWordEvent;
 import com.xalpol12.wsserver.events.ScoreUpdateEvent;
@@ -77,6 +78,7 @@ public class Game {
     private void startNewRound() {
         assignNewWord();
         assignNewDrawer();
+        notifyClearBoard();
         notifyNewWord(currentWord, drawer);
         gameTimer.startNewRound();
     }
@@ -133,5 +135,10 @@ public class Game {
     private void notifyScoreUpdate(String userId, Integer currentScore) {
         ScoreUpdateEvent event = new ScoreUpdateEvent(sessionId, userId, currentScore);
         listener.onScoreUpdate(event);
+    }
+
+    private void notifyClearBoard() {
+        ClearBoardEvent event = new ClearBoardEvent(sessionId);
+        listener.onClearBoard(event);
     }
 }

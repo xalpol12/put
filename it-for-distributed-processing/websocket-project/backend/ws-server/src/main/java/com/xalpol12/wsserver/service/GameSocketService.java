@@ -1,9 +1,6 @@
 package com.xalpol12.wsserver.service;
 
-import com.xalpol12.wsserver.events.GameEventListener;
-import com.xalpol12.wsserver.events.GameTimeUpdateEvent;
-import com.xalpol12.wsserver.events.NewWordEvent;
-import com.xalpol12.wsserver.events.ScoreUpdateEvent;
+import com.xalpol12.wsserver.events.*;
 import com.xalpol12.wsserver.model.message.CustomMessage;
 import com.xalpol12.wsserver.model.message.payload.*;
 import com.xalpol12.wsserver.sender.GameSocketSender;
@@ -100,6 +97,15 @@ public class GameSocketService implements GameEventListener {
         log.info("GameScore sent {}", payload.toString());
     }
 
+    public void sendClearBoardMessage(String sessionId, ClearBoardPayload payload) throws IOException {
+        CustomMessage m = CustomMessage.createClearBoardMessage(payload);
+        Set<WebSocketSession> sessions = gameSessionService.getAllWSSessionsBySessionId(sessionId);
+        for (WebSocketSession s : sessions) {
+            s.sendMessage(GameSocketSender.wrapCustomMessage(m));
+        }
+        log.info("ClearBoard sent {}", payload.toString());
+    }
+
     @Override
     public void onGameTimeUpdate(GameTimeUpdateEvent event) {
         GameTimerPayload payload = new GameTimerPayload(event.getRemainingTime());
@@ -128,6 +134,18 @@ public class GameSocketService implements GameEventListener {
         } catch (IOException e) {
             log.error(e.getMessage());
         }
+    }
+
+    @Override
+    public void onClearBoard(ClearBoardEvent event) {
+        ClearBoardPayload payload = new ClearBoardPayload(event.getSessionId());
+        gameSessionService.clearDrawnFrames(event.getSessionId());
+        try {
+            sendClearBoardMessage(event.getSessionId(), payload);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+
     }
 
     public void removeWebSocketSessionFromMap(WebSocketSession session) {

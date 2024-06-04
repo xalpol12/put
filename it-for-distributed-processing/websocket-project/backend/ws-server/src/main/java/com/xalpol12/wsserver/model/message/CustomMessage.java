@@ -35,4 +35,8 @@ public class CustomMessage {
     public static CustomMessage createGameScoreMessage(GameScorePayload gs) {
         return new CustomMessage(MessageType.GAME_SCORE, gs);
     }
+
+    public static CustomMessage createClearBoardMessage(ClearBoardPayload cb) {
+        return new CustomMessage(MessageType.CLEAR_BOARD, cb);
+    }
 }

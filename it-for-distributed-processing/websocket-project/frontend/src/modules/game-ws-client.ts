@@ -1,4 +1,4 @@
-import { drawFromFrame } from "./canvas.js";
+import { clearCanvas, drawFromFrame } from "./canvas.js";
 import { addMessage } from "./chat.js";
 import { StrokeFrame } from "./model/point-frame.js";
 import { ChatMessagePayload, CustomMessage, DrawingPayload, NewWordPayload, GameTimerPayload, HandshakePayload, MessageType, GameScorePayload } from "./model/ws-message.js";
@@ -48,6 +48,9 @@ export function initWebsocket() {
             case MessageType.GAME_SCORE:
                 handleGameScore(message.payload as GameScorePayload);
                 break;
+            case MessageType.CLEAR_BOARD:
+                handleClearBoard();
+                break;
         }
     }
 
@@ -73,6 +76,11 @@ export function initWebsocket() {
     function handleGameScore(e: GameScorePayload) {
         addScoreEntry(e);
         console.log(`Game score ${e.userId}:${e.score}`);
+    }
+
+    function handleClearBoard() {
+        clearCanvas();
+        console.log(`Clear board message received`);
     }
 
     function logFrame(strokeFrame: StrokeFrame) {

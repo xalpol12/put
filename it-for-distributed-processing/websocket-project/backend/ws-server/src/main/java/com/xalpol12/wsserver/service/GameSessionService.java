@@ -142,6 +142,11 @@ public class GameSessionService {
         return gs.getDrawnFrames();
     }
 
+    public void clearDrawnFrames(String sessionId) {
+        GameSession gs = getGameSessionById(sessionId);
+        gs.clearDrawnFrames();
+    }
+
     public ChatMessagePayload processMessage(WebSocketSession session, ChatMessagePayload message) {
         HandshakePayload ids = getIdsByWebSocketSession(session);
         GameSession gs = getGameSessionById(ids.getSessionId());

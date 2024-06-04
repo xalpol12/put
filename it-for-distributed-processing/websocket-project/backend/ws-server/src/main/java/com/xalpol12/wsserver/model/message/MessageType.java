@@ -9,5 +9,6 @@ public enum MessageType {
     CHAT_MESSAGE,
     GAME_TIMER,
     NEW_WORD,
-    GAME_SCORE;
+    GAME_SCORE,
+    CLEAR_BOARD;
 }

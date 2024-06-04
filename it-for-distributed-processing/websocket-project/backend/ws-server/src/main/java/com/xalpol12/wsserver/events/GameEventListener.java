@@ -6,4 +6,6 @@ public interface GameEventListener {
     void onNewWord(NewWordEvent event);
 
     void onScoreUpdate(ScoreUpdateEvent event);
+
+    void onClearBoard(ClearBoardEvent event);
 }
