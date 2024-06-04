@@ -1,3 +1,4 @@
+import { toggleDrawing } from "./canvas.js";
 import { toggleChat } from "./chat.js";
 import { GameTimerPayload, NewWordPayload } from "./model/ws-message.js";
 
@@ -17,6 +18,7 @@ export function updateTimer(m: GameTimerPayload) {
     timerElement.textContent = `Time left: ${m.time}s`;
     if (m.time === "0" && !isInitialPhase) {
         toggleChat(true);
+        toggleDrawing(false);
         wordElement.textContent = ``;
         wordElement.style.display = 'hidden';
     }
@@ -25,11 +27,13 @@ export function updateTimer(m: GameTimerPayload) {
 export function updateWord(m: NewWordPayload) {
     if (m.newDrawer === userId) {
         toggleChat(false);
+        toggleDrawing(true);
         wordElement.textContent = `Word: ${m.newWord}`;
         wordElement.style.display = 'block';
         if (isInitialPhase) isInitialPhase = false;
     } else {
         toggleChat(true);
+        toggleDrawing(false);
         wordElement.textContent = ``;
         wordElement.style.display = 'hidden';
     }

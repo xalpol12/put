@@ -38,6 +38,7 @@ export function addMessage(m: ChatMessagePayload) {
         messageElement.classList.add('user');
     } else if (m.sender === 'SERVER') {
         messageElement.classList.add('server');
+        toggleChat(false);
     } else {
         messageElement.classList.add('other');
     }

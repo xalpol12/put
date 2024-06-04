@@ -17,6 +17,7 @@ let pos;
 let frameCounter = 0;
 let strokeFrame;
 let isDrawing = false;
+let isDrawingEnabled = true;
 export function createCanvas(userId, sessionId) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
@@ -67,18 +68,18 @@ function resize() {
     canvas.height = parent.offsetHeight;
 }
 function setPosition(e) {
-    if (!canvas)
+    if (!canvas || !isDrawingEnabled)
         return;
     pos.x = e.clientX - canvas.offsetLeft;
     pos.y = e.clientY - canvas.offsetTop;
 }
-function clear() {
+export function clearCanvas() {
     if (!canvas)
         return;
     ctx === null || ctx === void 0 ? void 0 : ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 function draw(e) {
-    if (e.buttons !== 1)
+    if (e.buttons !== 1 || !isDrawingEnabled)
         return;
     if (ctx === null) {
         console.warn("ctx null in canvas.js draw() func");
@@ -127,7 +128,7 @@ function initializeStrokeFrame(lineWidth, lineCap, strokeStyle, from) {
     };
 }
 function sendFrame() {
-    if (!isDrawing)
+    if (!isDrawing || !isDrawingEnabled)
         return;
     isDrawing = false;
     console.log("isDrawing = false");
@@ -156,4 +157,10 @@ export function drawFromFrame(strokeFrame) {
         ctx.stroke();
     }
     console.log(`Drawn from frame: ${strokeFrame}`);
+}
+export function toggleDrawing(enable) {
+    isDrawingEnabled = enable;
+    if (!enable) {
+        isDrawing = false;
+    }
 }
