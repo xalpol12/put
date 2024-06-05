@@ -1,13 +1,15 @@
 import { clearCanvas, drawFromFrame } from "./canvas.js";
 import { addMessage } from "./chat.js";
 import { MessageType } from "./model/ws-message.js";
+import { decodeProtobufMessage, encodeProtobufMessage } from "./proto/proto-converter.js";
 import { addScoreEntry } from "./score.js";
 import { updateTimer, updateWord } from "./timer.js";
-import { sendMessageAsString } from "./ws-service.js";
+import { sendMessageAsBinary } from "./ws-service.js";
 let ws;
 export function initWebsocket() {
     return new Promise((resolve, reject) => {
         ws = new WebSocket('ws://localhost:8081/game');
+        ws.binaryType = "arraybuffer";
         ws.onopen = (e) => {
             console.log("Opened /game connection " + e.type);
             resolve();
@@ -26,27 +28,35 @@ export function initWebsocket() {
     });
     function processMessage(e) {
         console.log(e.data);
-        const message = JSON.parse(e.data);
-        switch (message.messageType) {
-            case MessageType.DRAWING:
-                handleDrawing(message.payload);
-                break;
-            case MessageType.CHAT_MESSAGE:
-                handleChatMessage(message.payload);
-                break;
-            case MessageType.GAME_TIMER:
-                handleGameTimer(message.payload);
-                break;
-            case MessageType.NEW_WORD:
-                handleNewWord(message.payload);
-                break;
-            case MessageType.GAME_SCORE:
-                handleGameScore(message.payload);
-                break;
-            case MessageType.CLEAR_BOARD:
-                handleClearBoard();
-                break;
-        }
+        const binaryData = new Uint8Array(e.data);
+        decodeProtobufMessage(binaryData)
+            .then((message) => {
+            switch (message.messageType) {
+                case MessageType.DRAWING:
+                    handleDrawing(message.payload);
+                    break;
+                case MessageType.CHAT_MESSAGE:
+                    handleChatMessage(message.payload);
+                    break;
+                case MessageType.GAME_TIMER:
+                    handleGameTimer(message.payload);
+                    break;
+                case MessageType.NEW_WORD:
+                    handleNewWord(message.payload);
+                    break;
+                case MessageType.GAME_SCORE:
+                    handleGameScore(message.payload);
+                    break;
+                case MessageType.CLEAR_BOARD:
+                    handleClearBoard();
+                    break;
+                default:
+                    console.error("Unknown message type:", message.messageType);
+            }
+        })
+            .catch((error) => {
+            console.error("Error decoding Protobuf message:", error);
+        });
     }
     function handleDrawing(e) {
         const strokeFrame = JSON.parse(e.drawingFrame);
@@ -90,7 +100,8 @@ export function sendHandshake(userId, sessionId) {
             sessionId: sessionId,
         }
     };
-    sendMessageAsString(ws, handshake);
+    const serializedMessage = encodeProtobufMessage(handshake);
+    sendMessageAsBinary(ws, serializedMessage);
     console.log(`Handshake with ${handshake.payload} sent to server`);
 }
 export function sendDrawing(strokeFrame) {
@@ -100,7 +111,8 @@ export function sendDrawing(strokeFrame) {
             drawingFrame: JSON.stringify(strokeFrame),
         }
     };
-    sendMessageAsString(ws, drawing);
+    const serializedMessage = encodeProtobufMessage(drawing);
+    sendMessageAsBinary(ws, serializedMessage);
     console.log(`Drawing with senderId: ${strokeFrame.senderId} sent to server`);
 }
 export function sendChatMessage(m) {
@@ -108,6 +120,7 @@ export function sendChatMessage(m) {
         messageType: MessageType.CHAT_MESSAGE,
         payload: m,
     };
-    sendMessageAsString(ws, message);
+    const serializedMessage = encodeProtobufMessage(message);
+    sendMessageAsBinary(ws, serializedMessage);
     console.log(`Chat message with content ${m.content} sent to server`);
 }

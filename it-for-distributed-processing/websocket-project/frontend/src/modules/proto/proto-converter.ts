@@ -1,0 +1,30 @@
+import { CustomMessage } from "../model/ws-message.js";
+
+export function decodeProtobufMessage(binaryMessage: Uint8Array): any {
+    const root = protobuf.loadSync("./messages.proto");
+    const CustomMessage = root.lookupType("com.xalpol12.websocket.CustomMessage");
+    const decodedMessage = CustomMessage.decode(binaryMessage);
+
+    const decodedObject = CustomMessage.toObject(decodedMessage, {
+        defaults: true,
+        enums: String,
+        longs: String,
+        bytes: String,
+        arrays: true,
+        objects: true,
+        oneofs: true
+    });
+
+    return decodedObject;
+}
+
+export function encodeProtobufMessage(message: CustomMessage): Uint8Array {
+    const root = protobuf.loadSync("./messages.proto");
+    const CustomMessage = root.lookupType("com.xalpol12.websocket.CustomMessage");
+    const errMsg = CustomMessage.verify(message);
+    if (errMsg) {
+        throw new Error(`Protobuf verification failed: ${errMsg}`);
+    }
+    const encodedMessage = CustomMessage.encode(message).finish();
+    return encodedMessage;
+}

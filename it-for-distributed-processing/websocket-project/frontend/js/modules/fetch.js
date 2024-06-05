@@ -19,7 +19,7 @@ export function postSession(userId, sessionId) {
             body: JSON.stringify(b),
         });
         if (!response.ok) {
-            throw new Error('Error while calling POST /sessions');
+            throw new Error(`Session ${sessionId} already exists!`);
         }
         return response.json();
     });
@@ -36,7 +36,7 @@ export function postClient(userId, sessionId) {
             body: JSON.stringify(b),
         });
         if (!response.ok) {
-            throw new Error(`Error while calling POST /sessions/${sessionId}`);
+            throw new Error(`Session ${sessionId} does not exist!`);
         }
         return response.json();
     });

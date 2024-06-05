@@ -13,5 +13,8 @@
   "main": "js/index.js",
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "protobufjs": "^7.3.0"
+  }
 }
