@@ -12,7 +12,7 @@ export async function postSession(userId: string, sessionId: string): Promise<Cr
     });
 
     if (!response.ok) {
-        throw new Error('Error while calling POST /sessions');
+        throw new Error(`Session ${sessionId} already exists!`);
     }
 
     return response.json();
@@ -30,7 +30,7 @@ export async function postClient(userId: string, sessionId: string): Promise<Cre
     });
 
     if (!response.ok) {
-        throw new Error(`Error while calling POST /sessions/${sessionId}`);
+        throw new Error(`Session ${sessionId} does not exist!`);
     }
 
     return response.json();

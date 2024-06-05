@@ -80,7 +80,7 @@ function onJoinButtonClick() {
         saveInSessionStorage(credentials);
         loadPage('gamepage.html');
     })
-        .catch((e) => { console.error(e); });
+        .catch((e) => { alert(e); });
 }
 function onHostButtonClick() {
     console.log("Host button clicked");
@@ -92,5 +92,5 @@ function onHostButtonClick() {
         saveInSessionStorage(credentials);
         loadPage('gamepage.html');
     })
-        .catch((e) => { console.error(e); });
+        .catch((e) => { alert(e); });
 }
