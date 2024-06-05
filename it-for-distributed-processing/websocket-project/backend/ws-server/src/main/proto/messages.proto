@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package com.xalpol12.websocket;
+
+option java_multiple_files = true;
+option java_package = "com.xalpol12.wsserver.protos";
+option java_outer_classname = "CustomMessageProtos";
+
+enum MessageType {
+  HANDSHAKE = 0;
+  DRAWING = 1;
+  CHAT_MESSAGE = 2;
+  GAME_TIMER = 3;
+  NEW_WORD = 4;
+  GAME_SCORE = 5;
+  CLEAR_BOARD = 6;
+}
+
+message CustomMessage {
+  MessageType messageType = 1;
+  oneof payload {
+    HandshakePayload HandshakePayload = 2;
+    DrawingPayload drawingPayload = 3;
+    ChatMessagePayload chatMessagePayload = 4;
+    GameTimerPayload gameTimerPayload = 5;
+    NewWordPayload newWordPayload = 6;
+    GameScorePayload gameScorePayload = 7;
+    ClearBoardPayload clearBoardPayload = 8;
+  }
+}
+
+message HandshakePayload {
+  string userId = 1;
+  string sessionId = 2;
+}
+
+message DrawingPayload { string drawingFrame = 1; }
+
+message ChatMessagePayload {
+  string sender = 1;
+  string content = 2;
+}
+
+message GameTimerPayload { int32 time = 1; }
+
+message NewWordPayload {
+  string newWord = 1;
+  string newDrawer = 2;
+}
+
+message GameScorePayload {
+  string userId = 1;
+  int32 score = 2;
+}
+
+message ClearBoardPayload { string sessionId = 1; }
