@@ -3,7 +3,7 @@ package com.xalpol12.wsserver.model;
 import com.xalpol12.wsserver.exception.ClientNotFoundException;
 import com.xalpol12.wsserver.model.internal.Game;
 import com.xalpol12.wsserver.model.internal.GameState;
-import com.xalpol12.wsserver.model.message.payload.ChatMessagePayload;
+import com.xalpol12.wsserver.protos.ChatMessagePayload;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -68,7 +68,10 @@ public class GameSession {
 
     public ChatMessagePayload processMessage(ChatMessagePayload message) {
         if (game.hasUserGuessedCorrectly(message.getSender(), message.getContent())) {
-            return new ChatMessagePayload("SERVER", "Good guess!");
+            return ChatMessagePayload.newBuilder()
+                    .setSender("SERVER")
+                    .setContent("Good guess!")
+                    .build();
         } else {
             return message;
         }

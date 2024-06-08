@@ -100,9 +100,7 @@ export function sendHandshake(userId, sessionId) {
             sessionId: sessionId,
         }
     };
-    const serializedMessage = encodeProtobufMessage(handshake);
-    sendMessageAsBinary(ws, serializedMessage);
-    console.log(`Handshake with ${handshake.payload} sent to server`);
+    sendMessage(handshake);
 }
 export function sendDrawing(strokeFrame) {
     const drawing = {
@@ -111,16 +109,18 @@ export function sendDrawing(strokeFrame) {
             drawingFrame: JSON.stringify(strokeFrame),
         }
     };
-    const serializedMessage = encodeProtobufMessage(drawing);
-    sendMessageAsBinary(ws, serializedMessage);
-    console.log(`Drawing with senderId: ${strokeFrame.senderId} sent to server`);
+    sendMessage(drawing);
 }
 export function sendChatMessage(m) {
     const message = {
         messageType: MessageType.CHAT_MESSAGE,
         payload: m,
     };
-    const serializedMessage = encodeProtobufMessage(message);
-    sendMessageAsBinary(ws, serializedMessage);
-    console.log(`Chat message with content ${m.content} sent to server`);
+    sendMessage(message);
+}
+function sendMessage(m) {
+    encodeProtobufMessage(m).then((serializedMessage) => {
+        sendMessageAsBinary(ws, serializedMessage);
+        console.log(`Message with ${m.payload} sent to server`);
+    });
 }

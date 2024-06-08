@@ -22,7 +22,7 @@ export function initTimerDisplay(id) {
 }
 export function updateTimer(m) {
     timerElement.textContent = `Time left: ${m.time}s`;
-    if (m.time === "0" && !isInitialPhase) {
+    if (m.time === 0 && !isInitialPhase) {
         toggleChat(true);
         toggleDrawing(false);
         wordElement.textContent = ``;

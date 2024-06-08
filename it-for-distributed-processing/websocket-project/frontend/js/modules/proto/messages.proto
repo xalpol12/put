@@ -19,7 +19,7 @@ enum MessageType {
 message CustomMessage {
   MessageType messageType = 1;
   oneof payload {
-    HandshakePayload HandshakePayload = 2;
+    HandshakePayload handshakePayload = 2;
     DrawingPayload drawingPayload = 3;
     ChatMessagePayload chatMessagePayload = 4;
     GameTimerPayload gameTimerPayload = 5;

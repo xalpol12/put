@@ -1,5 +1,10 @@
 {
     "compilerOptions": {
+        "moduleResolution": "node",
+        "baseUrl": ".",
+        "paths": {
+            "*": ["node_modules/@types/*"]
+        },
         "target": "ES6",
         "module": "es6",
         "outDir": "./js",

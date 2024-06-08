@@ -9,9 +9,9 @@ import com.xalpol12.wsserver.model.dto.SessionDTO;
 import com.xalpol12.wsserver.model.dto.SessionResponse;
 import com.xalpol12.wsserver.model.internal.Game;
 import com.xalpol12.wsserver.model.internal.GameState;
-import com.xalpol12.wsserver.model.message.payload.ChatMessagePayload;
-import com.xalpol12.wsserver.model.message.payload.GameScorePayload;
-import com.xalpol12.wsserver.model.message.payload.HandshakePayload;
+import com.xalpol12.wsserver.protos.ChatMessagePayload;
+import com.xalpol12.wsserver.protos.GameScorePayload;
+import com.xalpol12.wsserver.protos.HandshakePayload;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -158,7 +158,10 @@ public class GameSessionService {
         Map<String, PlayerData> playersData = gs.getAllPlayersData();
         List<GameScorePayload> payload = new ArrayList<>();
         playersData.forEach((id, data) -> {
-            GameScorePayload gsp = new GameScorePayload(id, data.getScore());
+            GameScorePayload gsp = GameScorePayload.newBuilder()
+                    .setUserId(id)
+                    .setScore(data.getScore())
+                    .build();
             payload.add(gsp);
         });
         return payload;

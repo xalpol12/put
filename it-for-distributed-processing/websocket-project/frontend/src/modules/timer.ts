@@ -16,7 +16,7 @@ export async function initTimerDisplay(id: string) {
 
 export function updateTimer(m: GameTimerPayload) {
     timerElement.textContent = `Time left: ${m.time}s`;
-    if (m.time === "0" && !isInitialPhase) {
+    if (m.time === 0 && !isInitialPhase) {
         toggleChat(true);
         toggleDrawing(false);
         wordElement.textContent = ``;

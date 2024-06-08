@@ -1,13 +1,13 @@
 package com.xalpol12.wsserver.service;
 
 import com.xalpol12.wsserver.events.*;
-import com.xalpol12.wsserver.model.message.CustomMessage;
-import com.xalpol12.wsserver.model.message.payload.*;
+import com.xalpol12.wsserver.protos.*;
 import com.xalpol12.wsserver.sender.GameSocketSender;
+import com.xalpol12.wsserver.utils.CustomMessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
@@ -24,27 +24,27 @@ public class GameSocketService implements GameEventListener {
     public void handleHandshakeMessage(WebSocketSession session, HandshakePayload payload) throws IOException {
         gameSessionService.mapWebSocketSession(session, payload);
         List<String> drawnFrames = gameSessionService.getDrawnFrames(payload.getSessionId());
-        List<TextMessage> messages = drawnFrames.stream()
+        List<BinaryMessage> messages = drawnFrames.stream()
                 .map((m) -> {
                     DrawingPayload d = convertTextMessageToDrawingPayload(m);
-                    return CustomMessage.createDrawingMessage(d);
+                    return CustomMessageUtils.createDrawingMessage(d);
                 })
                 .map(GameSocketSender::wrapCustomMessage)
                 .toList();
         sender.sendMessages(session, messages);
 
         List<GameScorePayload> gsp = gameSessionService.getAllPlayersData(payload.getSessionId());
-        List<TextMessage> textMessages = gsp.stream()
-                .map(CustomMessage::createGameScoreMessage)
+        List<BinaryMessage> textMessages = gsp.stream()
+                .map(CustomMessageUtils::createGameScoreMessage)
                 .map(GameSocketSender::wrapCustomMessage)
                 .toList();
         sender.sendMessages(session, textMessages);
     }
 
-    public void handleDrawingMessage(WebSocketSession session, DrawingPayload payload) throws IOException {
+    public void handleDrawingMessage(WebSocketSession session, com.xalpol12.wsserver.protos.DrawingPayload payload) throws IOException {
         if (!gameSessionService.hasDrawingPermission(session)) return;
         gameSessionService.addToDrawnFrames(session, payload.getDrawingFrame());
-        CustomMessage m = CustomMessage.createDrawingMessage(payload);
+        CustomMessage m = CustomMessageUtils.createDrawingMessage(payload);
         String senderId = session.getId();
         Set<WebSocketSession> sessions = gameSessionService.getAllWSSessionsFromGameSessionByWSSession(session);
         for (WebSocketSession s : sessions) {
@@ -59,20 +59,20 @@ public class GameSocketService implements GameEventListener {
     public void handleChatMessage(WebSocketSession session, ChatMessagePayload payload) throws IOException {
         log.info("Received chat message {}", payload.getContent());
         ChatMessagePayload serverResponse = gameSessionService.processMessage(session, payload);
-        CustomMessage message = CustomMessage.createChatMessage(serverResponse);
-        TextMessage tMessage = GameSocketSender.wrapCustomMessage(message);
+        CustomMessage message = CustomMessageUtils.createChatMessage(serverResponse);
+        BinaryMessage bMessage = GameSocketSender.wrapCustomMessage(message);
         if (serverResponse.getSender().equals("SERVER")) { // send server message only to user that sent the message
-            session.sendMessage(tMessage);
+            session.sendMessage(bMessage);
         } else {
             Set<WebSocketSession> sessions = gameSessionService.getAllWSSessionsFromGameSessionByWSSession(session);
             for (WebSocketSession s : sessions) {
-                s.sendMessage(tMessage);
+                s.sendMessage(bMessage);
             }
         }
     }
 
     public void sendGameTimerMessage(String sessionId, GameTimerPayload payload) throws IOException {
-        CustomMessage m = CustomMessage.createGameTimerMessage(payload);
+        CustomMessage m = CustomMessageUtils.createGameTimerMessage(payload);
         Set<WebSocketSession> sessions = gameSessionService.getAllWSSessionsBySessionId(sessionId);
         for (WebSocketSession s : sessions) {
             s.sendMessage(GameSocketSender.wrapCustomMessage(m));
@@ -80,7 +80,7 @@ public class GameSocketService implements GameEventListener {
     }
 
     public void sendNewWordMessage(String sessionId, NewWordPayload payload) throws IOException {
-        CustomMessage m = CustomMessage.createNewWordMessage(payload);
+        CustomMessage m = CustomMessageUtils.createNewWordMessage(payload);
         Set<WebSocketSession> sessions = gameSessionService.getAllWSSessionsBySessionId(sessionId);
         for (WebSocketSession s : sessions) {
             s.sendMessage(GameSocketSender.wrapCustomMessage(m));
@@ -89,7 +89,7 @@ public class GameSocketService implements GameEventListener {
     }
 
     public void sendGameScoreMessage(String sessionId, GameScorePayload payload) throws IOException {
-        CustomMessage m = CustomMessage.createGameScoreMessage(payload);
+        CustomMessage m = CustomMessageUtils.createGameScoreMessage(payload);
         Set<WebSocketSession> sessions = gameSessionService.getAllWSSessionsBySessionId(sessionId);
         for (WebSocketSession s : sessions) {
             s.sendMessage(GameSocketSender.wrapCustomMessage(m));
@@ -98,7 +98,7 @@ public class GameSocketService implements GameEventListener {
     }
 
     public void sendClearBoardMessage(String sessionId, ClearBoardPayload payload) throws IOException {
-        CustomMessage m = CustomMessage.createClearBoardMessage(payload);
+        CustomMessage m = CustomMessageUtils.createClearBoardMessage(payload);
         Set<WebSocketSession> sessions = gameSessionService.getAllWSSessionsBySessionId(sessionId);
         for (WebSocketSession s : sessions) {
             s.sendMessage(GameSocketSender.wrapCustomMessage(m));
@@ -108,7 +108,9 @@ public class GameSocketService implements GameEventListener {
 
     @Override
     public void onGameTimeUpdate(GameTimeUpdateEvent event) {
-        GameTimerPayload payload = new GameTimerPayload(event.getRemainingTime());
+        GameTimerPayload payload = GameTimerPayload.newBuilder()
+                .setTime(event.getRemainingTime())
+                .build();
         try {
             sendGameTimerMessage(event.getSessionId(), payload);
         } catch (IOException e) {
@@ -118,7 +120,10 @@ public class GameSocketService implements GameEventListener {
 
     @Override
     public void onNewWord(NewWordEvent event) {
-        NewWordPayload payload = new NewWordPayload(event.getNewWord(), event.getNewDrawer());
+        NewWordPayload payload = NewWordPayload.newBuilder()
+                .setNewWord(event.getNewWord())
+                .setNewDrawer(event.getNewDrawer())
+                .build();
         try {
             sendNewWordMessage(event.getSessionId(), payload);
         } catch (IOException e) {
@@ -128,7 +133,10 @@ public class GameSocketService implements GameEventListener {
 
     @Override
     public void onScoreUpdate(ScoreUpdateEvent event) {
-        GameScorePayload payload = new GameScorePayload(event.getUserId(), event.getScore());
+        GameScorePayload payload = GameScorePayload.newBuilder()
+                .setUserId(event.getUserId())
+                .setScore(event.getScore())
+                .build();
         try {
             sendGameScoreMessage(event.getSessionId(), payload);
         } catch (IOException e) {
@@ -138,7 +146,9 @@ public class GameSocketService implements GameEventListener {
 
     @Override
     public void onClearBoard(ClearBoardEvent event) {
-        ClearBoardPayload payload = new ClearBoardPayload(event.getSessionId());
+        ClearBoardPayload payload = ClearBoardPayload.newBuilder()
+                .setSessionId(event.getSessionId())
+                .build();
         gameSessionService.clearDrawnFrames(event.getSessionId());
         try {
             sendClearBoardMessage(event.getSessionId(), payload);
@@ -153,6 +163,6 @@ public class GameSocketService implements GameEventListener {
     }
 
     private DrawingPayload convertTextMessageToDrawingPayload(String m) {
-        return new DrawingPayload(m);
+        return DrawingPayload.newBuilder().setDrawingFrame(m).build();
     }
 }
