@@ -8,6 +8,22 @@ export enum MessageType {
     CLEAR_BOARD = 6
 }
 
+export namespace MessageType {
+    const stringToEnumMap: { [key: string]: MessageType } = {
+        "HANDSHAKE": MessageType.HANDSHAKE,
+        "DRAWING": MessageType.DRAWING,
+        "CHAT_MESSAGE": MessageType.CHAT_MESSAGE,
+        "GAME_TIMER": MessageType.GAME_TIMER,
+        "NEW_WORD": MessageType.NEW_WORD,
+        "GAME_SCORE": MessageType.GAME_SCORE,
+        "CLEAR_BOARD": MessageType.CLEAR_BOARD
+    };
+
+    export function fromString(key: MessageType): MessageType | undefined {
+        return stringToEnumMap[key];
+    }
+}
+
 export interface HandshakePayload {
     userId: string;
     sessionId: string;

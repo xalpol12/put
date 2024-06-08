@@ -31,27 +31,31 @@ export function initWebsocket() {
         const binaryData = new Uint8Array(e.data);
         decodeProtobufMessage(binaryData)
             .then((message) => {
-            switch (message.messageType) {
-                case MessageType.DRAWING:
-                    handleDrawing(message.payload);
-                    break;
-                case MessageType.CHAT_MESSAGE:
-                    handleChatMessage(message.payload);
-                    break;
-                case MessageType.GAME_TIMER:
-                    handleGameTimer(message.payload);
-                    break;
-                case MessageType.NEW_WORD:
-                    handleNewWord(message.payload);
-                    break;
-                case MessageType.GAME_SCORE:
-                    handleGameScore(message.payload);
-                    break;
-                case MessageType.CLEAR_BOARD:
-                    handleClearBoard();
-                    break;
-                default:
-                    console.error("Unknown message type:", message.messageType);
+            const messageType = MessageType.fromString(message.messageType);
+            if (messageType === undefined) {
+                console.error("Unknown message type:", message.messageType);
+                return;
+            }
+            if (message.messageType == "DRAWING") {
+                handleDrawing(message.drawingPayload);
+            }
+            else if (message.messageType == "CHAT_MESSAGE") {
+                handleChatMessage(message.chatMessagePayload);
+            }
+            else if (message.messageType == "GAME_TIMER") {
+                handleGameTimer(message.gameTimerPayload);
+            }
+            else if (message.messageType == "NEW_WORD") {
+                handleNewWord(message.newWordPayload);
+            }
+            else if (message.messageType == "GAME_SCORE") {
+                handleGameScore(message.gameScorePayload);
+            }
+            else if (message.messageType == "CLEAR_BOARD") {
+                handleClearBoard();
+            }
+            else {
+                console.error("Unknown message type:", message.messageType);
             }
         })
             .catch((error) => {

@@ -36,27 +36,26 @@ export function initWebsocket() {
         const binaryData: Uint8Array = new Uint8Array(e.data);
         decodeProtobufMessage(binaryData)
             .then((message: CustomMessage) => {
-                switch (message.messageType) {
-                    case MessageType.DRAWING:
-                        handleDrawing(message.payload as DrawingPayload);
-                        break;
-                    case MessageType.CHAT_MESSAGE:
-                        handleChatMessage(message.payload as ChatMessagePayload);
-                        break;
-                    case MessageType.GAME_TIMER:
-                        handleGameTimer(message.payload as GameTimerPayload);
-                        break;
-                    case MessageType.NEW_WORD:
-                        handleNewWord(message.payload as NewWordPayload);
-                        break;
-                    case MessageType.GAME_SCORE:
-                        handleGameScore(message.payload as GameScorePayload);
-                        break;
-                    case MessageType.CLEAR_BOARD:
-                        handleClearBoard();
-                        break;
-                    default:
-                        console.error("Unknown message type:", message.messageType);
+                const messageType = MessageType.fromString(message.messageType);
+                if (messageType === undefined) {
+                    console.error("Unknown message type:", message.messageType);
+                    return;
+                }
+                if (message.messageType == "DRAWING") {
+                    handleDrawing(message.drawingPayload as DrawingPayload);
+                } else if (message.messageType == "CHAT_MESSAGE") {
+                    handleChatMessage(message.chatMessagePayload as ChatMessagePayload);
+                } else if (message.messageType == "GAME_TIMER") {
+                    handleGameTimer(message.gameTimerPayload as GameTimerPayload);
+                } else if (message.messageType == "NEW_WORD") {
+                    handleNewWord(message.newWordPayload as NewWordPayload);
+                } else if (message.messageType == "GAME_SCORE") {
+                    handleGameScore(message.gameScorePayload as GameScorePayload);
+                } else if (message.messageType == "CLEAR_BOARD") {
+                    handleClearBoard();
+                } else {
+                    console.error("Unknown message type:", message.messageType);
+
                 }
             })
             .catch((error: any) => {

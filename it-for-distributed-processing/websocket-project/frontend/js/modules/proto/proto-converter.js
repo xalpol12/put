@@ -31,16 +31,14 @@ export function encodeProtobufMessage(message) {
         console.log(`CustomMessage type: ${message.messageType}; payload: ${JSON.stringify(message.payload)}`);
         const root = yield protobuf.load("./js/modules/proto/messages.proto");
         const CustomMessageType = root.lookupType("com.xalpol12.websocket.CustomMessage");
-        const messageObject = CustomMessageType.create({
-            messageType: message.messageType
-        });
-        if (message.messageType == MessageType.HANDSHAKE) {
-            // const HandshakeMesssageType = root.lookupType("com.xalpol12.websocket.HandshakePayload");
-            // const payload = HandshakeMesssageType.create(message.payload);
-            // const encodedMessage = HandshakeMesssageType.encode(payload).finish();
-            // console.log('Encoded message bytes:', Array.from(encodedMessage));
-            messageObject.handshakePayload = message.payload;
-        }
+        // Ensure payload is correctly constructed
+        const messageObject = {
+            messageType: message.messageType,
+        };
+        // Assign the appropriate payload field based on messageType
+        const payloadField = getOneofPayloadName(message.messageType);
+        messageObject[payloadField] = message.payload;
+        // Verify the message structure
         const errMsg = CustomMessageType.verify(messageObject);
         if (errMsg) {
             throw new Error(`Protobuf verification failed: ${errMsg}`);
