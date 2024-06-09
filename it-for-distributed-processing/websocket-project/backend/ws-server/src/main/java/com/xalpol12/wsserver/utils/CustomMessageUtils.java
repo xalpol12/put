@@ -27,7 +27,7 @@ public class CustomMessageUtils {
 
     public static CustomMessage createNewWordMessage(NewWordPayload nw) {
         return CustomMessage.newBuilder()
-                .setMessageType(MessageType.GAME_SCORE)
+                .setMessageType(MessageType.NEW_WORD)
                 .setNewWordPayload(nw)
                 .build();
     }
