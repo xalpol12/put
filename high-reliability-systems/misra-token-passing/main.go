@@ -1,21 +1,43 @@
 package main
 
 import (
-	"fmt"
+	"flag"
+	"misra-token-passing/network"
+	"misra-token-passing/utils"
 )
 
-//TIP <p>To run your code, right-click the code and select <b>Run</b>.</p> <p>Alternatively, click
-// the <icon src="AllIcons.Actions.Execute"/> icon in the gutter and select the <b>Run</b> menu item from here.</p>
+var (
+	nextInRing network.ConnectionInfo
+	nodePort   int
+)
 
 func main() {
-	//TIP <p>Press <shortcut actionId="ShowIntentionActions"/> when your caret is at the underlined text
-	// to see how GoLand suggests fixing the warning.</p><p>Alternatively, if available, click the lightbulb to view possible fixes.</p>
-	s := "gopher"
-	fmt.Println("Hello and welcome, %s!", s)
+	setVariables()
+	network.OpenServer(nodePort)
+	
+}
 
-	for i := 1; i <= 5; i++ {
-		//TIP <p>To start your debugging session, right-click your code in the editor and select the Debug option.</p> <p>We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-		// for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.</p>
-		fmt.Println("i =", 100/i)
+func setVariables() {
+	nodePortPtr := flag.Int("node_port", 0, "Port number of the node in the ring")
+	nextIpPtr := flag.String("next_ip", "", "IP address of the next node in the ring")
+	nextPortPtr := flag.Int("next_port", 0, "Port number of the next node in the ring")
+
+	flag.Parse()
+
+	nodePort = *nodePortPtr
+	if nodePort == 0 {
+		utils.GetIntEnvOrDefault("NODE_PORT", 8089)
 	}
+
+	nextIp := *nextIpPtr
+	if nextIp == "" {
+		utils.GetEnvOrDefault("NEXT_IP", "192.168.0.1")
+	}
+
+	nextPort := *nextPortPtr
+	if nextPort == 0 {
+		utils.GetIntEnvOrDefault("NEXT_PORT", 8089)
+	}
+
+	nextInRing = network.ConnectionInfo{Address: nextIp, Port: nextPort}
 }
