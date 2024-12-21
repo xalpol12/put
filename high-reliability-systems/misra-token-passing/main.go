@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"misra-token-passing/misra"
 	"misra-token-passing/network"
 	"misra-token-passing/utils"
 )
@@ -13,8 +14,7 @@ var (
 
 func main() {
 	setVariables()
-	network.OpenServer(nodePort)
-	
+	network.Listen(misra.Receive, nodePort)
 }
 
 func setVariables() {
@@ -36,7 +36,7 @@ func setVariables() {
 
 	nextPort := *nextPortPtr
 	if nextPort == 0 {
-		utils.GetIntEnvOrDefault("NEXT_PORT", 8089)
+		utils.GetIntEnvOrDefault("NEXT_PORT", 8090)
 	}
 
 	nextInRing = network.ConnectionInfo{Address: nextIp, Port: nextPort}

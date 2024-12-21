@@ -1,22 +1,33 @@
 package misra
 
 import (
+	"fmt"
 	"misra-token-passing/network"
 	"strconv"
+	"time"
 )
 
-var sum = 0
-var ping = 0
-var pong = 0
+var m = 0
+var ping = 1
+var pong = -1
 
-func Receive(value int) {
-	if abs(value) < abs(sum) {
+func Receive(message string) {
+	value, err := strconv.Atoi(message)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	if abs(value) < abs(m) {
 		return
 	}
-	if sum == value {
+	if abs(m) == abs(value) {
 		regenerate(value)
 	}
-	incarnate(value)
+	fmt.Println("Computing 1 sec...")
+	time.Sleep(1 * time.Second)
+	if m+value == 0 {
+		incarnate(value)
+	}
 }
 
 func regenerate(value int) {
@@ -29,21 +40,14 @@ func incarnate(value int) {
 	pong = -ping
 }
 
-func SendPing(info network.ConnectionInfo) {
-	go network.Send(info, strconv.Itoa(ping))
-}
-
-func SendPong(info network.ConnectionInfo) {
-	go network.Send(info, strconv.Itoa(pong))
-}
-
-func send() {
-
-}
-
 func abs(x int) int {
 	if x < 0 {
 		return -x
 	}
 	return x
+}
+
+func Send(value int, info network.ConnectionInfo) {
+	m = value
+	network.Send(strconv.Itoa(value), info)
 }
