@@ -11,24 +11,15 @@ type ConnectionInfo struct {
 	Port    int
 }
 
-func Send(data string, info ConnectionInfo) {
-	conn, err := net.Dial("tcp", info.Address+":"+strconv.Itoa(info.Port))
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	_, err = conn.Write([]byte(data))
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	conn.Close()
+type Client struct {
+	NodePort  int
+	ConnInfo  ConnectionInfo
+	ReceiveCb func(message string)
+	SendCb    func(val int)
 }
 
-func Listen(callback func(message string), nodePort int) {
-	ln, err := net.Listen("tcp", "localhost:"+strconv.Itoa(nodePort))
+func (client *Client) Listen() {
+	ln, err := net.Listen("tcp", "localhost:"+strconv.Itoa(client.NodePort))
 	if err != nil {
 		fmt.Println(ln)
 		return
@@ -48,24 +39,40 @@ func Listen(callback func(message string), nodePort int) {
 			continue
 		}
 
-		go handleConnection(callback, conn)
+		go func() {
+			defer conn.Close()
+
+			buf := make([]byte, 1024)
+			_, err := conn.Read(buf)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			fmt.Printf("Received message: %s\n", string(buf))
+			if parsed, err := strconv.Atoi(string(buf)); err == nil {
+				client.ReceiveCb(strconv.Itoa(parsed))
+				client.SendCb(parsed)
+				client.send(strconv.Itoa(parsed))
+			} else {
+				fmt.Println(err)
+			}
+		}()
 	}
 }
 
-func handleConnection(callback func(message string), conn net.Conn) {
-	defer conn.Close()
-
-	buf := make([]byte, 1024)
-	_, err := conn.Read(buf)
+func (client *Client) send(data string) {
+	conn, err := net.Dial("tcp", client.ConnInfo.Address+":"+strconv.Itoa(client.ConnInfo.Port))
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	fmt.Printf("Received message: %s\n", string(buf))
-	if parsed, err := strconv.Atoi(string(buf)); err == nil {
-		callback(strconv.Itoa(parsed))
-	} else {
+	_, err = conn.Write([]byte(data))
+	if err != nil {
 		fmt.Println(err)
+		return
 	}
+
+	conn.Close()
 }

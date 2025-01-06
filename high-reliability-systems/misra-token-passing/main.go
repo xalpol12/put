@@ -14,7 +14,8 @@ var (
 
 func main() {
 	setVariables()
-	network.Listen(misra.Receive, nodePort)
+	client := network.Client{NodePort: nodePort, ConnInfo: nextInRing, ReceiveCb: misra.ReceiveCb, SendCb: misra.SendCb}
+	client.Listen()
 }
 
 func setVariables() {
