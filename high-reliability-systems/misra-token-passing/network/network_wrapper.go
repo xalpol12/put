@@ -2,6 +2,7 @@ package network
 
 import (
 	"fmt"
+	"misra-token-passing/logger"
 	"net"
 	"strconv"
 )
@@ -21,21 +22,21 @@ type Client struct {
 func (client *Client) Listen() {
 	ln, err := net.Listen("tcp", "localhost:"+strconv.Itoa(client.NodePort))
 	if err != nil {
-		fmt.Println(ln)
+		logger.ErrorErr(err)
 		return
 	}
 
 	defer func(ln net.Listener) {
 		err := ln.Close()
 		if err != nil {
-			fmt.Println(err)
+			logger.ErrorErr(err)
 		}
 	}(ln)
 
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
-			fmt.Println(err)
+			logger.ErrorErr(err)
 			continue
 		}
 
@@ -45,32 +46,30 @@ func (client *Client) Listen() {
 			buf := make([]byte, 1024)
 			_, err := conn.Read(buf)
 			if err != nil {
-				fmt.Println(err)
+				logger.ErrorErr(err)
 				return
 			}
 
-			fmt.Printf("Received message: %s\n", string(buf))
+			logger.Info("Received message: %s\n", string(buf))
 			if parsed, err := strconv.Atoi(string(buf)); err == nil {
-				client.ReceiveCb(strconv.Itoa(parsed))
-				client.SendCb(parsed)
-				client.send(strconv.Itoa(parsed))
+				// TODO send through the channel
 			} else {
-				fmt.Println(err)
+				logger.ErrorErr(err)
 			}
 		}()
 	}
 }
 
-func (client *Client) send(data string) {
+func (client *Client) Send(value int) {
 	conn, err := net.Dial("tcp", client.ConnInfo.Address+":"+strconv.Itoa(client.ConnInfo.Port))
 	if err != nil {
-		fmt.Println(err)
+		logger.ErrorErr(err)
 		return
 	}
 
 	_, err = conn.Write([]byte(data))
 	if err != nil {
-		fmt.Println(err)
+		logger.ErrorErr(err)
 		return
 	}
 

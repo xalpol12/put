@@ -2,25 +2,23 @@ package misra
 
 import (
 	"fmt"
+	"misra-token-passing/model"
+	"misra-token-passing/utils"
 	"strconv"
 	"time"
 )
 
-var m = 0
-var ping = 1
-var pong = -1
-
-func ReceiveCb(message string) {
+func (node *model.Node) ReceiveToken(token int) {
 	value, err := strconv.Atoi(message)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	if abs(value) < abs(m) {
+	if utils.Abs(value) < utils.Abs(m) {
 		fmt.Printf("Received: %d, less than expected: %d\n", value, m)
 		return
 	}
-	if abs(m) == abs(value) {
+	if utils.Abs(m) == utils.Abs(value) {
 		regenerate(value)
 	}
 	if m+value == 0 {
@@ -28,24 +26,6 @@ func ReceiveCb(message string) {
 		time.Sleep(1 * time.Second)
 		incarnate(value)
 	}
-}
-
-func regenerate(value int) {
-	ping = abs(value)
-	pong = -ping
-	fmt.Printf("Regenerated ping: %d, pong: %d\n", ping)
-}
-
-func incarnate(value int) {
-	ping = abs(value) + 1
-	pong = -ping
-}
-
-func abs(x int) int {
-	if x < 0 {
-		return -x
-	}
-	return x
 }
 
 func SendCb(value int) {
