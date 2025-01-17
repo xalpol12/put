@@ -4,7 +4,7 @@ import (
 	"misra-token-passing/logger"
 	"misra-token-passing/network"
 	"misra-token-passing/utils"
-	"sync"
+	"os"
 	"time"
 )
 
@@ -30,7 +30,6 @@ type Node struct {
 	ping      int
 	pong      int
 	state     NodeState
-	mutex     sync.Mutex
 	tokenChan chan int
 }
 
@@ -40,6 +39,10 @@ func NewNode(isInit bool, nodePort int, nextInRing *network.ConnectionInfo) *Nod
 			NodePort: nodePort,
 			ConnInfo: nextInRing,
 		},
+		m:         0,
+		ping:      0,
+		pong:      0,
+		state:     NO_TOKEN,
 		tokenChan: make(chan int, 100),
 	}
 
@@ -64,27 +67,25 @@ func (node *Node) Start() {
 }
 
 func (node *Node) listen() {
-	go node.client.Listen()
+	node.client.Listen()
 }
 
 func (node *Node) handleState() {
 	for {
 		switch node.state {
 		case NO_TOKEN:
-			time.Sleep(100 * time.Second)
+			continue
 		case PING_TOKEN:
 			logger.Success("Ping token acquired. Entering critical section...")
 			time.Sleep(1 * time.Second)
 			logger.Success("Exiting critical section...")
 			node.send(PING)
 		case PONG_TOKEN:
-			logger.Info("Pong")
 			node.send(PONG)
 		case BOTH_TOKENS:
 			node.incarnate(node.ping)
 			node.send(PING)
 			node.send(PONG)
-			logger.Info("BOTH")
 		}
 	}
 }
@@ -92,12 +93,11 @@ func (node *Node) handleState() {
 func (node *Node) processTokens() {
 	for token := range node.tokenChan {
 		node.processToken(token)
+		time.Sleep(50 * time.Millisecond)
 	}
 }
 
 func (node *Node) processToken(token int) {
-	node.mutex.Lock()
-	defer node.mutex.Unlock()
 
 	// token < m: ignore
 	// token == m: ping or pong lost
@@ -134,9 +134,9 @@ func (node *Node) processToken(token int) {
 		switch node.state {
 		case NO_TOKEN:
 			node.state = PONG_TOKEN
-		case PONG_TOKEN:
+		case PING_TOKEN:
 			node.state = BOTH_TOKENS
-		case PING_TOKEN, BOTH_TOKENS:
+		case PONG_TOKEN, BOTH_TOKENS:
 			logger.Error("Huh, shouldn't have happened...")
 		}
 	}
@@ -147,11 +147,11 @@ func (node *Node) send(token TokenType) {
 	case PING:
 		err := node.client.Send(node.ping)
 		if err != nil {
-			logger.Error("Error sending PING: %w", err)
-			return
+			logger.Error("Error sending PING: %v", err)
+			node.disconnect()
 		}
 		node.m = node.ping
-		logger.Info("Ping: %d sent successfully", node.ping)
+		logger.Success("Ping: %d sent successfully", node.ping)
 		if node.state == PING_TOKEN {
 			node.state = NO_TOKEN
 		}
@@ -161,11 +161,11 @@ func (node *Node) send(token TokenType) {
 	case PONG:
 		err := node.client.Send(node.pong)
 		if err != nil {
-			logger.Error("Error sending PONG: %w", err)
-			return
+			logger.Error("Error sending PONG: %v", err)
+			node.disconnect()
 		}
 		node.m = node.pong
-		logger.Info("Pong: %d sent successfully", node.pong)
+		logger.Success("Pong: %d sent successfully", node.pong)
 		if node.state == PONG_TOKEN {
 			node.state = NO_TOKEN
 		}
@@ -185,5 +185,13 @@ func (node *Node) regenerate(value int) {
 func (node *Node) incarnate(value int) {
 	node.ping = utils.Abs(value) + 1
 	node.pong = -node.ping
-	logger.Warn("Incarnated ping: %d, pong: %d", node.ping, node.pong)
+	logger.Info("Incarnated ping: %d, pong: %d", node.ping, node.pong)
+}
+
+func (node *Node) disconnect() {
+	err := node.client.Close()
+	if err != nil {
+		logger.Error("Error closing client: %v", err)
+	}
+	os.Exit(1)
 }

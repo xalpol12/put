@@ -122,7 +122,7 @@ func (client *Client) handleConnection(conn net.Conn) {
 	}
 }
 
-func (client *Client) close() error {
+func (client *Client) Close() error {
 	client.mutex.Lock()
 	defer client.mutex.Unlock()
 
