@@ -1,10 +1,14 @@
 package network
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"misra-token-passing/logger"
 	"net"
 	"strconv"
+	"strings"
+	"sync"
 )
 
 type ConnectionInfo struct {
@@ -13,10 +17,55 @@ type ConnectionInfo struct {
 }
 
 type Client struct {
-	NodePort  int
-	ConnInfo  ConnectionInfo
-	ReceiveCb func(message string)
-	SendCb    func(val int)
+	NodePort    int
+	ConnInfo    *ConnectionInfo
+	ReceiveCb   func(val int)
+	SendCb      func(val int)
+	conn        net.Conn
+	mutex       sync.Mutex
+	isConnected bool
+}
+
+func (client *Client) Send(value int) error {
+	client.mutex.Lock()
+	defer client.mutex.Unlock()
+
+	if !client.isConnected {
+		err := client.connect()
+		if err != nil {
+			return fmt.Errorf("failed to establish connection: %w", err)
+		}
+	}
+
+	data := []byte(strconv.Itoa(value) + "\n")
+	_, err := client.conn.Write(data)
+	if err != nil {
+		client.isConnected = false
+		client.conn.Close()
+		return fmt.Errorf("send failed: %w", err)
+	}
+
+	if client.SendCb != nil {
+		client.SendCb(value)
+	}
+
+	return nil
+}
+
+func (client *Client) connect() error {
+	if client.isConnected {
+		return nil
+	}
+
+	addr := fmt.Sprintf("%s:%d", client.ConnInfo.Address, client.ConnInfo.Port)
+	conn, err := net.Dial("tcp", addr)
+	if err != nil {
+		return fmt.Errorf("connect fail: %w", err)
+	}
+
+	client.conn = conn
+	client.isConnected = true
+	return nil
 }
 
 func (client *Client) Listen() {
@@ -25,13 +74,9 @@ func (client *Client) Listen() {
 		logger.ErrorErr(err)
 		return
 	}
+	defer ln.Close()
 
-	defer func(ln net.Listener) {
-		err := ln.Close()
-		if err != nil {
-			logger.ErrorErr(err)
-		}
-	}(ln)
+	logger.Info("Listening on port %d", client.NodePort)
 
 	for {
 		conn, err := ln.Accept()
@@ -40,38 +85,52 @@ func (client *Client) Listen() {
 			continue
 		}
 
-		go func() {
-			defer conn.Close()
-
-			buf := make([]byte, 1024)
-			_, err := conn.Read(buf)
-			if err != nil {
-				logger.ErrorErr(err)
-				return
-			}
-
-			logger.Info("Received message: %s\n", string(buf))
-			if parsed, err := strconv.Atoi(string(buf)); err == nil {
-				// TODO send through the channel
-			} else {
-				logger.ErrorErr(err)
-			}
-		}()
+		go client.handleConnection(conn)
 	}
 }
 
-func (client *Client) Send(value int) {
-	conn, err := net.Dial("tcp", client.ConnInfo.Address+":"+strconv.Itoa(client.ConnInfo.Port))
-	if err != nil {
-		logger.ErrorErr(err)
-		return
+func (client *Client) handleConnection(conn net.Conn) {
+	defer func() {
+		if err := conn.Close(); err != nil {
+			logger.Error("Error closing connection: %v", err)
+		}
+	}()
+
+	reader := bufio.NewReader(conn)
+	for {
+		message, err := reader.ReadString('\n')
+		if err != nil {
+			if err == io.EOF {
+				logger.Info("Client disconnected")
+			} else {
+				logger.Error("Error reading message: %v", err)
+			}
+			return
+		}
+		message = strings.TrimSpace(message)
+		logger.Info("Received message: %s", message)
+
+		parsed, parsedErr := strconv.Atoi(message)
+		if parsedErr != nil {
+			logger.Error("Failed to parse message: %s", message)
+			continue
+		}
+
+		if client.ReceiveCb != nil {
+			client.ReceiveCb(parsed)
+		}
+	}
+}
+
+func (client *Client) close() error {
+	client.mutex.Lock()
+	defer client.mutex.Unlock()
+
+	if !client.isConnected {
+		return nil
 	}
 
-	_, err = conn.Write([]byte(data))
-	if err != nil {
-		logger.ErrorErr(err)
-		return
-	}
-
-	conn.Close()
+	err := client.conn.Close()
+	client.isConnected = false
+	return err
 }

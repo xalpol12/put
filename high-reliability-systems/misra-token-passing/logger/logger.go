@@ -6,23 +6,23 @@ import (
 )
 
 func Error(format string, args ...interface{}) {
-	log(red, format, args...)
+	log(red, warn, format, args...)
 }
 
 func ErrorErr(error error) {
-	log(red, "%s", error)
+	log(red, err, "%s", error)
 }
 
 func Warn(format string, args ...interface{}) {
-	log(yellow, format, args...)
+	log(yellow, warn, format, args...)
 }
 
 func Info(format string, args ...interface{}) {
-	log(white, format, args...)
+	log(white, info, format, args...)
 }
 
 func Success(format string, args ...interface{}) {
-	log(green, format, args...)
+	log(green, success, format, args...)
 }
 
 type color string
@@ -33,13 +33,21 @@ const (
 	green  color = "\033[32m"
 	white  color = "\033[37m"
 )
-
 const (
 	colorReset = "\033[0m"
 )
 
-func log(color color, format string, args ...interface{}) {
+type label string
+
+const (
+	err     label = "ERROR"
+	warn    label = "WARN"
+	info    label = "INFO"
+	success label = "SUCCESS"
+)
+
+func log(color color, label label, format string, args ...interface{}) {
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	message := fmt.Sprintf(format, args...)
-	fmt.Printf("%s%s [%s] %s%s\n", color, timestamp, "LOG", message, colorReset)
+	fmt.Printf("%s%s [%s] %s%s\n", color, timestamp, label, message, colorReset)
 }
