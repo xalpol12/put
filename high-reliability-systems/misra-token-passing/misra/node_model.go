@@ -1,6 +1,7 @@
 package misra
 
 import (
+	"math/rand"
 	"misra-token-passing/logger"
 	"misra-token-passing/network"
 	"misra-token-passing/utils"
@@ -31,26 +32,41 @@ type Node struct {
 	pong      int
 	state     NodeState
 	tokenChan chan int
+	pingLoss  float64
+	pongLoss  float64
 }
 
-func NewNode(isInit bool, nodePort int, nextInRing *network.ConnectionInfo) *Node {
+var (
+	rng = rand.New(rand.NewSource(time.Now().UnixNano()))
+)
+
+func NewNode(args *utils.InitArgs) *Node {
+
 	node := &Node{
 		client: network.Client{
-			NodePort: nodePort,
-			ConnInfo: nextInRing,
+			NodePort: args.NodePort,
+			ConnInfo: args.NextInRing,
 		},
 		m:         0,
 		ping:      0,
 		pong:      0,
 		state:     NO_TOKEN,
 		tokenChan: make(chan int, 100),
+		pingLoss:  args.PingLoss,
+		pongLoss:  args.PongLoss,
+	}
+
+	rand.Seed(time.Now().UnixNano())
+	if args.PingLoss != 0 || args.PongLoss != 0 {
+		logger.Success("Node initialized with non-zero token loss chance, ping loss chance: %d%, pong loss chance %d%",
+			args.PingLoss*100, args.PongLoss*100)
 	}
 
 	node.client.ReceiveCb = func(token int) {
 		node.tokenChan <- token
 	}
 
-	if isInit {
+	if args.IsInit {
 		logger.Info("Node is initiator, sending initial tokens...")
 		node.send(PING)
 		node.send(PONG)
@@ -143,6 +159,24 @@ func (node *Node) processToken(token int) {
 }
 
 func (node *Node) send(token TokenType) {
+
+	// Random loss possibility
+	if node.pingLoss != 0 || node.pongLoss != 0 {
+		number := rng.Float64()
+		switch token {
+		case PING:
+			if number <= node.pingLoss {
+				logger.Warn("Ping: %d lost, has not been sent!", node.ping)
+				return
+			}
+		case PONG:
+			if number <= node.pongLoss {
+				logger.Warn("Pong: %d lost, has not been sent!", node.pong)
+				return
+			}
+		}
+	}
+
 	switch token {
 	case PING:
 		err := node.client.Send(node.ping)

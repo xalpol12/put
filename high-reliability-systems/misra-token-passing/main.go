@@ -6,8 +6,8 @@ import (
 )
 
 func main() {
-	isInit, nodePort, nextInRing := utils.ReadArguments()
-	node := misra.NewNode(isInit, nodePort, nextInRing)
+	args := utils.ReadArguments()
+	node := misra.NewNode(args)
 	node.Start()
 	select {}
 }
