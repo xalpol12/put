@@ -1,28 +1,12 @@
 package misra
 
 import (
-	"math/rand"
 	"misra-token-passing/logger"
+	"misra-token-passing/model"
 	"misra-token-passing/network"
 	"misra-token-passing/utils"
 	"os"
 	"time"
-)
-
-type NodeState int
-
-const (
-	NO_TOKEN NodeState = iota
-	PING_TOKEN
-	PONG_TOKEN
-	BOTH_TOKENS
-)
-
-type TokenType int
-
-const (
-	PING TokenType = iota
-	PONG
 )
 
 type Node struct {
@@ -30,15 +14,9 @@ type Node struct {
 	m         int
 	ping      int
 	pong      int
-	state     NodeState
+	state     model.NodeState
 	tokenChan chan int
-	pingLoss  float64
-	pongLoss  float64
 }
-
-var (
-	rng = rand.New(rand.NewSource(time.Now().UnixNano()))
-)
 
 func NewNode(args *utils.InitArgs) *Node {
 
@@ -46,19 +24,18 @@ func NewNode(args *utils.InitArgs) *Node {
 		client: network.Client{
 			NodePort: args.NodePort,
 			ConnInfo: args.NextInRing,
+			PingLoss: args.PingLoss,
+			PongLoss: args.PongLoss,
 		},
 		m:         0,
 		ping:      0,
 		pong:      0,
-		state:     NO_TOKEN,
+		state:     model.NO_TOKEN,
 		tokenChan: make(chan int, 100),
-		pingLoss:  args.PingLoss,
-		pongLoss:  args.PongLoss,
 	}
 
-	rand.Seed(time.Now().UnixNano())
 	if args.PingLoss != 0 || args.PongLoss != 0 {
-		logger.Success("Node initialized with non-zero token loss chance, ping loss chance: %d%, pong loss chance %d%",
+		logger.Success("Node initialized with non-zero token loss chance, ping loss chance: %.2f percent, pong loss chance: %.2f percent",
 			args.PingLoss*100, args.PongLoss*100)
 	}
 
@@ -68,9 +45,9 @@ func NewNode(args *utils.InitArgs) *Node {
 
 	if args.IsInit {
 		logger.Info("Node is initiator, sending initial tokens...")
-		node.send(PING)
-		node.send(PONG)
-		node.state = BOTH_TOKENS
+		node.send(model.PING)
+		node.send(model.PONG)
+		node.state = model.BOTH_TOKENS
 	}
 
 	return node
@@ -89,19 +66,19 @@ func (node *Node) listen() {
 func (node *Node) handleState() {
 	for {
 		switch node.state {
-		case NO_TOKEN:
+		case model.NO_TOKEN:
 			continue
-		case PING_TOKEN:
+		case model.PING_TOKEN:
 			logger.Success("Ping token acquired. Entering critical section...")
 			time.Sleep(1 * time.Second)
 			logger.Success("Exiting critical section...")
-			node.send(PING)
-		case PONG_TOKEN:
-			node.send(PONG)
-		case BOTH_TOKENS:
+			node.send(model.PING)
+		case model.PONG_TOKEN:
+			node.send(model.PONG)
+		case model.BOTH_TOKENS:
 			node.incarnate(node.ping)
-			node.send(PING)
-			node.send(PONG)
+			node.send(model.PING)
+			node.send(model.PONG)
 		}
 	}
 }
@@ -137,74 +114,58 @@ func (node *Node) processToken(token int) {
 	if token > 0 {
 		node.incarnate(token)
 		switch node.state {
-		case NO_TOKEN:
-			node.state = PING_TOKEN
-		case PONG_TOKEN:
-			node.state = BOTH_TOKENS
-		case PING_TOKEN, BOTH_TOKENS:
+		case model.NO_TOKEN:
+			node.state = model.PING_TOKEN
+		case model.PONG_TOKEN:
+			node.state = model.BOTH_TOKENS
+		case model.PING_TOKEN, model.BOTH_TOKENS:
 			logger.Error("Huh, shouldn't have happened...")
 		}
 	}
 	if token < 0 {
 		node.incarnate(token)
 		switch node.state {
-		case NO_TOKEN:
-			node.state = PONG_TOKEN
-		case PING_TOKEN:
-			node.state = BOTH_TOKENS
-		case PONG_TOKEN, BOTH_TOKENS:
+		case model.NO_TOKEN:
+			node.state = model.PONG_TOKEN
+		case model.PING_TOKEN:
+			node.state = model.BOTH_TOKENS
+		case model.PONG_TOKEN, model.BOTH_TOKENS:
 			logger.Error("Huh, shouldn't have happened...")
 		}
 	}
 }
 
-func (node *Node) send(token TokenType) {
+func (node *Node) send(token model.TokenType) {
 
-	// Random loss possibility
-	if node.pingLoss != 0 || node.pongLoss != 0 {
-		number := rng.Float64()
-		switch token {
-		case PING:
-			if number <= node.pingLoss {
-				logger.Warn("Ping: %d lost, has not been sent!", node.ping)
-				return
-			}
-		case PONG:
-			if number <= node.pongLoss {
-				logger.Warn("Pong: %d lost, has not been sent!", node.pong)
-				return
-			}
-		}
-	}
-
+	var err error
 	switch token {
-	case PING:
-		err := node.client.Send(node.ping)
+	case model.PING:
+		err = node.client.Send(node.ping, token)
 		if err != nil {
 			logger.Error("Error sending PING: %v", err)
 			node.disconnect()
 		}
 		node.m = node.ping
 		logger.Success("Ping: %d sent successfully", node.ping)
-		if node.state == PING_TOKEN {
-			node.state = NO_TOKEN
+		if node.state == model.PING_TOKEN {
+			node.state = model.NO_TOKEN
 		}
-		if node.state == BOTH_TOKENS {
-			node.state = PONG_TOKEN
+		if node.state == model.BOTH_TOKENS {
+			node.state = model.PONG_TOKEN
 		}
-	case PONG:
-		err := node.client.Send(node.pong)
+	case model.PONG:
+		err = node.client.Send(node.pong, token)
 		if err != nil {
 			logger.Error("Error sending PONG: %v", err)
 			node.disconnect()
 		}
 		node.m = node.pong
 		logger.Success("Pong: %d sent successfully", node.pong)
-		if node.state == PONG_TOKEN {
-			node.state = NO_TOKEN
+		if node.state == model.PONG_TOKEN {
+			node.state = model.NO_TOKEN
 		}
-		if node.state == BOTH_TOKENS {
-			node.state = PING_TOKEN
+		if node.state == model.BOTH_TOKENS {
+			node.state = model.PING_TOKEN
 		}
 	}
 }
@@ -212,7 +173,7 @@ func (node *Node) send(token TokenType) {
 func (node *Node) regenerate(value int) {
 	node.ping = utils.Abs(value)
 	node.pong = -node.ping
-	node.state = BOTH_TOKENS
+	node.state = model.BOTH_TOKENS
 	logger.Warn("Regenerated ping: %d, pong: %d", node.ping, node.pong)
 }
 

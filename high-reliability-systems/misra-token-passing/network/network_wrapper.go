@@ -4,11 +4,14 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"math/rand"
 	"misra-token-passing/logger"
+	"misra-token-passing/model"
 	"net"
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 )
 
 type ConnectionInfo struct {
@@ -21,12 +24,18 @@ type Client struct {
 	ConnInfo    *ConnectionInfo
 	ReceiveCb   func(val int)
 	SendCb      func(val int)
+	PingLoss    float64
+	PongLoss    float64
 	conn        net.Conn
 	mutex       sync.Mutex
 	isConnected bool
 }
 
-func (client *Client) Send(value int) error {
+var (
+	rng = rand.New(rand.NewSource(time.Now().UnixNano()))
+)
+
+func (client *Client) Send(value int, token model.TokenType) error {
 	client.mutex.Lock()
 	defer client.mutex.Unlock()
 
@@ -37,16 +46,18 @@ func (client *Client) Send(value int) error {
 		}
 	}
 
-	data := []byte(strconv.Itoa(value) + "\n")
-	_, err := client.conn.Write(data)
-	if err != nil {
-		client.isConnected = false
-		client.conn.Close()
-		return fmt.Errorf("send failed: %w", err)
-	}
+	if !client.shouldDrop(token) {
+		data := []byte(strconv.Itoa(value) + "\n")
+		_, err := client.conn.Write(data)
+		if err != nil {
+			client.isConnected = false
+			client.conn.Close()
+			return fmt.Errorf("send failed: %w", err)
+		}
 
-	if client.SendCb != nil {
-		client.SendCb(value)
+		if client.SendCb != nil {
+			client.SendCb(value)
+		}
 	}
 
 	return nil
@@ -133,4 +144,27 @@ func (client *Client) Close() error {
 	err := client.conn.Close()
 	client.isConnected = false
 	return err
+}
+
+func (client *Client) shouldDrop(token model.TokenType) bool {
+
+	// Random loss possibility
+	var tokenLost bool
+	if client.PingLoss != 0 || client.PongLoss != 0 {
+		number := rng.Float64()
+		switch token {
+		case model.PING:
+			if number <= client.PingLoss {
+				logger.Warn("Ping: %d lost, has not been sent!", token)
+				tokenLost = true
+			}
+		case model.PONG:
+			if number <= client.PongLoss {
+				logger.Warn("Pong: %d lost, has not been sent!", token)
+				tokenLost = true
+			}
+		}
+	}
+
+	return tokenLost
 }

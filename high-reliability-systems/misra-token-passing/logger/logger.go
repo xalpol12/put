@@ -47,7 +47,7 @@ const (
 )
 
 func log(color color, label label, format string, args ...interface{}) {
-	timestamp := time.Now().Format("2006-01-02 15:04:05")
+	timestamp := time.Now().Format(`2006-01-02 15:04:05`)
 	message := fmt.Sprintf(format, args...)
 	fmt.Printf("%s%s [%s] %s%s\n", color, timestamp, label, message, colorReset)
 }
