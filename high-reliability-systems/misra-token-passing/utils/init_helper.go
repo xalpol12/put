@@ -13,6 +13,7 @@ type InitArgs struct {
 	NodePort   int
 	PingLoss   float64
 	PongLoss   float64
+	SleepTime  int
 }
 
 func ReadArguments() *InitArgs {
@@ -22,6 +23,7 @@ func ReadArguments() *InitArgs {
 	nextPortPtr := flag.Int("next_port", 0, "Port number of the next node in the ring")
 	pingLossPtr := flag.Float64("ping_loss", 0, "Chance of the ping loss (values from 0 to 1)")
 	pongLossPtr := flag.Float64("pong_loss", 0, "Chance of the pong loss (values from 0 to 1)")
+	sleepTimePtr := flag.Int("sleep_time", 1, "Sleep duration when in critical section")
 
 	flag.Parse()
 
@@ -31,17 +33,12 @@ func ReadArguments() *InitArgs {
 		os.Exit(1)
 	}
 
-	isInit := *isInitPtr
-	nodePort := *nodePortPtr
-	nextIp := *nextIpPtr
-	nextPort := *nextPortPtr
-	pingLoss := *pingLossPtr
-	pongLoss := *pongLossPtr
 	return &InitArgs{
-		IsInit:     isInit,
-		NodePort:   nodePort,
-		NextInRing: &network.ConnectionInfo{Address: nextIp, Port: nextPort},
-		PingLoss:   pingLoss,
-		PongLoss:   pongLoss,
+		IsInit:     *isInitPtr,
+		NodePort:   *nodePortPtr,
+		NextInRing: &network.ConnectionInfo{Address: *nextIpPtr, Port: *nextPortPtr},
+		PingLoss:   *pingLossPtr,
+		PongLoss:   *pongLossPtr,
+		SleepTime:  *sleepTimePtr,
 	}
 }

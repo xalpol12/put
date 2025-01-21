@@ -16,6 +16,7 @@ type Node struct {
 	pong      int
 	state     model.NodeState
 	tokenChan chan int
+	sleepTime int
 }
 
 func NewNode(args *utils.InitArgs) *Node {
@@ -28,10 +29,11 @@ func NewNode(args *utils.InitArgs) *Node {
 			PongLoss: args.PongLoss,
 		},
 		m:         0,
-		ping:      0,
-		pong:      0,
+		ping:      1,
+		pong:      -1,
 		state:     model.NO_TOKEN,
 		tokenChan: make(chan int, 100),
+		sleepTime: args.SleepTime,
 	}
 
 	if args.PingLoss != 0 || args.PongLoss != 0 {
@@ -45,9 +47,9 @@ func NewNode(args *utils.InitArgs) *Node {
 
 	if args.IsInit {
 		logger.Info("Node is initiator, sending initial tokens...")
+		node.state = model.BOTH_TOKENS
 		node.send(model.PING)
 		node.send(model.PONG)
-		node.state = model.BOTH_TOKENS
 	}
 
 	return node
@@ -56,7 +58,6 @@ func NewNode(args *utils.InitArgs) *Node {
 func (node *Node) Start() {
 	go node.listen()
 	go node.handleState()
-	go node.processTokens()
 }
 
 func (node *Node) listen() {
@@ -67,11 +68,21 @@ func (node *Node) handleState() {
 	for {
 		switch node.state {
 		case model.NO_TOKEN:
-			continue
+			select {
+			case token := <-node.tokenChan:
+				node.processToken(token)
+			}
 		case model.PING_TOKEN:
-			logger.Success("Ping token acquired. Entering critical section...")
-			time.Sleep(1 * time.Second)
-			logger.Success("Exiting critical section...")
+			logger.Special("Ping token acquired. Entering critical section...")
+			time.Sleep(2 * time.Second)
+			logger.Special("Exiting critical section...")
+			select {
+			case token := <-node.tokenChan:
+				node.processToken(token)
+				continue
+			default:
+				node.send(model.PING)
+			}
 			node.send(model.PING)
 		case model.PONG_TOKEN:
 			node.send(model.PONG)
@@ -80,13 +91,6 @@ func (node *Node) handleState() {
 			node.send(model.PING)
 			node.send(model.PONG)
 		}
-	}
-}
-
-func (node *Node) processTokens() {
-	for token := range node.tokenChan {
-		node.processToken(token)
-		time.Sleep(50 * time.Millisecond)
 	}
 }
 
@@ -112,7 +116,7 @@ func (node *Node) processToken(token int) {
 		}
 	}
 	if token > 0 {
-		node.incarnate(token)
+		node.ping = token
 		switch node.state {
 		case model.NO_TOKEN:
 			node.state = model.PING_TOKEN
@@ -123,7 +127,7 @@ func (node *Node) processToken(token int) {
 		}
 	}
 	if token < 0 {
-		node.incarnate(token)
+		node.pong = token
 		switch node.state {
 		case model.NO_TOKEN:
 			node.state = model.PONG_TOKEN

@@ -25,12 +25,17 @@ func Success(format string, args ...interface{}) {
 	log(green, success, format, args...)
 }
 
+func Special(format string, args ...interface{}) {
+	log(blue, success, format, args...)
+}
+
 type color string
 
 const (
 	red    color = "\033[31m"
 	yellow color = "\033[33m"
 	green  color = "\033[32m"
+	blue   color = "\033[34m"
 	white  color = "\033[37m"
 )
 const (

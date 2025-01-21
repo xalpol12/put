@@ -46,7 +46,7 @@ func (client *Client) Send(value int, token model.TokenType) error {
 		}
 	}
 
-	if !client.shouldDrop(token) {
+	if !client.tokenDropped(token) {
 		data := []byte(strconv.Itoa(value) + "\n")
 		_, err := client.conn.Write(data)
 		if err != nil {
@@ -146,7 +146,7 @@ func (client *Client) Close() error {
 	return err
 }
 
-func (client *Client) shouldDrop(token model.TokenType) bool {
+func (client *Client) tokenDropped(token model.TokenType) bool {
 
 	// Random loss possibility
 	var tokenLost bool
@@ -155,12 +155,12 @@ func (client *Client) shouldDrop(token model.TokenType) bool {
 		switch token {
 		case model.PING:
 			if number <= client.PingLoss {
-				logger.Warn("Ping: %d lost, has not been sent!", token)
+				logger.Warn("Ping lost, has not been sent!")
 				tokenLost = true
 			}
 		case model.PONG:
 			if number <= client.PongLoss {
-				logger.Warn("Pong: %d lost, has not been sent!", token)
+				logger.Warn("Pong lost, has not been sent!")
 				tokenLost = true
 			}
 		}
